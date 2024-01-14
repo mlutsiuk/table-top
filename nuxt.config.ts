@@ -3,12 +3,10 @@ export default defineNuxtConfig({
   modules: [
     '@pinia/nuxt',
     '@vueuse/nuxt',
+    '@nuxtjs/google-fonts',
     '@nuxt/ui',
     'nuxt-icon'
   ],
-  ui: {
-    icons: ['tabler']
-  },
   imports: {
     dirs: [
       'store'
@@ -18,5 +16,13 @@ export default defineNuxtConfig({
   typescript: {
     strict: true
   },
-  ssr: false
+  ssr: false,
+  ui: {
+    icons: ['tabler']
+  },
+  googleFonts: {
+    families: {
+      Inter: true
+    }
+  }
 })

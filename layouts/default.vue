@@ -1,5 +1,5 @@
 <template>
-  <div class="overflow-y-none h-screen bg-red-300">
+  <div class="overflow-y-none h-screen">
     <slot />
   </div>
 </template>
