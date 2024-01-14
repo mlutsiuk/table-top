@@ -1,0 +1,31 @@
+# define base image
+FROM node:20-slim AS base
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+# build prod app
+FROM base AS build
+
+COPY --link package.json pnpm-lock.yaml ./
+
+RUN npm install -g pnpm && \
+    pnpm config set auto-install-peers true && \
+    pnpm config set shamefully-hoist true && \
+    pnpm install --production=false
+
+COPY --link . ./
+
+RUN pnpm run build
+
+# running app
+FROM base
+
+COPY --from=build /app/.output ./
+
+ENV PORT=5000
+ENV HOST=0.0.0.0
+EXPOSE 5000
+
+CMD [ "node", "/app/server/index.mjs" ]
