@@ -6,7 +6,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  REGISTRY_OWNER: neural-dynamics-web
+  REGISTRY_OWNER: mlutsiuk
   IMAGE_NAME: app-front
 
 permissions:
