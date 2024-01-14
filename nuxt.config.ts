@@ -6,6 +6,9 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     'nuxt-icon'
   ],
+  ui: {
+    icons: ['tabler']
+  },
   imports: {
     dirs: [
       'store'
