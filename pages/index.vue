@@ -41,9 +41,9 @@ const pointer = usePointer()
     <hr>
     <h3 class="font-mono text-3xl">Iconify</h3>
     <div class="flex flex-row gap-">
-      <Icon name="logos:nuxt-icon" color="black" size="36px" />
+      <!-- <Icon name="logos:nuxt-icon" color="black" size="36px" />
       <Icon name="logos:pinia" color="black" size="36px" />
-      <Icon name="logos:vueuse" color="black" size="36px" />
+      <Icon name="logos:vueuse" color="black" size="36px" /> -->
     </div>
 
   </div>
