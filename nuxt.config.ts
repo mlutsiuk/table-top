@@ -18,7 +18,12 @@ export default defineNuxtConfig({
   },
   ssr: false,
   ui: {
-    icons: ['tabler']
+    safelistColors: [
+      'tamer-grey'
+    ],
+    icons: [
+      'tabler'
+    ]
   },
   googleFonts: {
     families: {

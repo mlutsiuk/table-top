@@ -16,7 +16,6 @@ definePageMeta({
     <div>
       <UButton
         icon="i-tabler-chevron-right"
-        color="primary"
         variant="solid"
         label="Button"
         :trailing="false"
