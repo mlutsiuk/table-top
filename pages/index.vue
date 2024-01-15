@@ -9,10 +9,11 @@ const { data, status } = useFetch('/api/users')
 <template>
   <div class="px-4 py-8 border-gray-200 border-2 rounded flex flex-col gap-3">
     <ColorModeButton />
+    <pre>
+      {{ data }}
+    </pre>
 
     {{ status }}
-
-    {{ data }}
 
     <h2 class="font-mono text-4xl">
       Its index page
