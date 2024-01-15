@@ -2,11 +2,17 @@
 definePageMeta({
   layout: 'default'
 })
+
+const { data, status } = useFetch('/api/users')
 </script>
 
 <template>
   <div class="px-4 py-8 border-gray-200 border-2 rounded flex flex-col gap-3">
     <ColorModeButton />
+
+    {{ status }}
+
+    {{ data }}
 
     <h2 class="font-mono text-4xl">
       Its index page
