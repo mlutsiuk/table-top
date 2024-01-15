@@ -1,5 +1,5 @@
 export default defineEventHandler(async ({ context }) => {
-  return {
-    hello: 'world'
-  }
+  const users = await context.prisma.user.findMany()
+
+  return users
 })
