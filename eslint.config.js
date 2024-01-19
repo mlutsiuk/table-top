@@ -13,6 +13,9 @@ export default antfu({
     stylistic: {
       'style/comma-dangle': ['error', 'never']
     }
+  },
+  rules: {
+    'antfu/top-level-function': 'off'
   }
 }, ...compat.config({
   extends: ['plugin:tailwindcss/recommended'],
