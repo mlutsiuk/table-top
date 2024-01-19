@@ -8,6 +8,11 @@ export default antfu({
     prettierOptions: {
       trailingComma: 'none'
     }
+  },
+  overrides: {
+    stylistic: {
+      'style/comma-dangle': ['error', 'never']
+    }
   }
 }, ...compat.config({
   extends: ['plugin:tailwindcss/recommended'],
