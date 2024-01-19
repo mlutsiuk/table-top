@@ -11,6 +11,7 @@ import { SpeedInsights } from '@vercel/speed-insights/vue'
       <NuxtPage />
     </NuxtLayout>
 
+    <UNotifications />
     <SpeedInsights />
   </div>
 </template>
