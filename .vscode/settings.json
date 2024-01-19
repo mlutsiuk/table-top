@@ -54,7 +54,7 @@
     "*.css": "tailwindcss"
   },
   "editor.quickSuggestions": {
-      "strings": true
+    "strings": true
   },
   "tailwindCSS.experimental.classRegex": [
     ["ui:\\s*{([^)]*)\\s*}", "[\"'`]([^\"'`]*).*?[\"'`]"],
