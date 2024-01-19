@@ -15,7 +15,8 @@ export default antfu({
     }
   },
   rules: {
-    'antfu/top-level-function': 'off'
+    'antfu/top-level-function': 'off',
+    'ts/consistent-type-definitions': 'off'
   }
 }, ...compat.config({
   extends: ['plugin:tailwindcss/recommended'],
@@ -23,4 +24,4 @@ export default antfu({
     'tailwindcss/no-custom-classname': 'off',
     'tailwindcss/migration-from-tailwind-2': 'off'
   }
-})) 
+}))
