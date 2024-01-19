@@ -21,6 +21,7 @@
     "@vercel/speed-insights": "^1.0.5",
     "@vueuse/nuxt": "^10.7.2",
     "eslint-plugin-format": "^0.1.0",
+    "eslint-plugin-tailwindcss": "^3.14.0",
     "vue-tsc": "1.8.19"
   },
   "devDependencies": {
