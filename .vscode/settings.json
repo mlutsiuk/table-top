@@ -62,9 +62,10 @@
   ],
   "tailwindCSS.classAttributes": [
     "class",
-    "ui"
+    "ui",
+    "active-class",
+    "inactive-class"
   ],
-
 
   "editor.tabSize": 2
 }
