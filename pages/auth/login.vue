@@ -2,6 +2,20 @@
 definePageMeta({
   layout: 'hero'
 })
+
+const inLoading = ref(false)
+const login = async () => {
+  inLoading.value = true
+  const { data } = await useFetch('/api/auth/google/redirect')
+
+  if (data.value) {
+    const { redirectUrl } = data.value
+
+    navigateTo(redirectUrl, {
+      external: true
+    })
+  }
+}
 </script>
 
 <template>
@@ -10,7 +24,7 @@ definePageMeta({
     <ColorModeButton />
   </div>
 
-  <div class="flex flex-col gap-4 rounded-xl bg-white p-6 dark:bg-gray-800 dark:border-gray-700 border">
+  <div class="flex flex-col gap-4 rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
     <h1 class="text-3xl font-bold">
       Log in
     </h1>
@@ -22,6 +36,8 @@ definePageMeta({
       variant="outline"
       block
       icon="i-logos-google-icon"
+      :loading="inLoading"
+      @click="login"
     >
       Log in with Google
     </UButton>

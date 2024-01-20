@@ -22,10 +22,24 @@ export default defineNuxtConfig({
   typescript: {
     strict: true
   },
+  experimental: {
+    typedPages: true
+  },
   ssr: false,
   googleFonts: {
     families: {
       Inter: true
     }
+  },
+  runtimeConfig: {
+    jwt: {
+      secret: '',
+      alg: '',
+      exp: ''
+    },
+
+    googleClientId: '',
+    googleClientSecret: '',
+    googleCallbackUrl: ''
   }
 })
