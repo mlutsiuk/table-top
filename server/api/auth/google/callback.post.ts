@@ -27,5 +27,12 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  return user
+  const token = await signUserJwt({
+    userId: user.id
+  })
+
+  return {
+    user,
+    token
+  }
 })

@@ -25,7 +25,7 @@ onMounted(async () => {
 
   if (data.value) {
     useToast().add({
-      title: `Hello, ${data.value.name}`,
+      title: `Hello, ${data.value.user.name}`,
       description: 'You have successfully logged in',
       timeout: 5000
     })
