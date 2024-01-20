@@ -32,6 +32,12 @@ export default defineNuxtConfig({
     }
   },
   runtimeConfig: {
+    jwt: {
+      secret: '',
+      alg: '',
+      exp: ''
+    },
+
     googleClientId: '',
     googleClientSecret: '',
     googleCallbackUrl: ''
