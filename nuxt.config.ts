@@ -30,5 +30,10 @@ export default defineNuxtConfig({
     families: {
       Inter: true
     }
+  },
+  runtimeConfig: {
+    googleClientId: '',
+    googleClientSecret: '',
+    googleCallbackUrl: ''
   }
 })
