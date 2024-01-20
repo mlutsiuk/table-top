@@ -1,15 +1,31 @@
-import { SignJWT } from 'jose'
+import { SignJWT, jwtVerify } from 'jose'
 import type { JWTPayload } from '~/types/jwt'
 
-export const signUserJwt = async (payload: JWTPayload) => {
-  const { secret, alg, exp } = useRuntimeConfig().jwt
+const getEncodedSecret = () => {
+  const { secret } = useRuntimeConfig().jwt
 
-  const encodedSecret = new TextEncoder().encode(secret)
-  const token = await new SignJWT(payload)
+  return new TextEncoder().encode(secret)
+}
+
+export const signUserJwt = async (payload: JWTPayload) => {
+  const { alg, exp } = useRuntimeConfig().jwt
+
+  const secret = getEncodedSecret()
+
+  return await new SignJWT(payload)
     .setProtectedHeader({ alg })
     .setIssuedAt()
     .setExpirationTime(exp)
-    .sign(encodedSecret)
+    .sign(secret)
+}
 
-  return token
+export const verifyUserJwt = async (token: string) => {
+  const secret = getEncodedSecret()
+
+  const { payload, protectedHeader } = await jwtVerify<JWTPayload>(token, secret)
+
+  return {
+    payload,
+    protectedHeader
+  }
 }
