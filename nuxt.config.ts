@@ -13,13 +13,16 @@ export default defineNuxtConfig({
       'store'
     ]
   },
+  ui: {
+    icons: [
+      'logos'
+    ]
+  },
   devtools: { enabled: true },
   typescript: {
     strict: true
   },
   ssr: false,
-  ui: {
-  },
   googleFonts: {
     families: {
       Inter: true
