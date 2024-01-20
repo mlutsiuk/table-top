@@ -7,8 +7,12 @@ const { data, status } = useFetch('/api/users')
 </script>
 
 <template>
-  <div class="px-4 py-8 border-gray-200 border-2 rounded flex flex-col gap-3">
-    <ColorModeButton />
+  <div class="flex flex-col gap-3 rounded border-2 border-gray-200 px-4 py-8">
+    <div class="flex flex-row gap-2">
+      <ColorModeButton />
+
+      <ColorPicker />
+    </div>
     <pre>
       {{ data }}
     </pre>
@@ -27,7 +31,6 @@ const { data, status } = useFetch('/api/users')
         label="Button"
         :trailing="false"
       />
-
     </div>
   </div>
 </template>
