@@ -24,6 +24,8 @@ onMounted(async () => {
   await execute()
 
   if (data.value) {
+    useAuthStore().saveToken(data.value.token)
+
     useToast().add({
       title: `Hello, ${data.value.user.name}`,
       description: 'You have successfully logged in',
