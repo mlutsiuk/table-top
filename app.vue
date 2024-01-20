@@ -17,6 +17,6 @@ import { SpeedInsights } from '@vercel/speed-insights/vue'
 
 <style>
 body {
-  @apply antialiased font-sans text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-900;
+  @apply antialiased font-sans text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-900;
 }
 </style>
