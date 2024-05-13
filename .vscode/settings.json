@@ -46,6 +46,7 @@
     "nuxtjs",
     "pinia",
     "tailwindcss",
+    "trpc",
     "vueuse"
   ],
 

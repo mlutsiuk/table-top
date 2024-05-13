@@ -20,6 +20,8 @@
     "@nuxt/ui": "^2.12.3",
     "@pinia/nuxt": "^0.5.1",
     "@prisma/client": "^5.8.1",
+    "@trpc/client": "^10.45.2",
+    "@trpc/server": "^10.45.2",
     "@vercel/analytics": "^1.1.2",
     "@vercel/speed-insights": "^1.0.5",
     "@vueuse/nuxt": "^10.7.2",
@@ -27,6 +29,7 @@
     "eslint-plugin-tailwindcss": "^3.14.0",
     "googleapis": "^131.0.0",
     "jose": "^5.2.0",
+    "trpc-nuxt": "^0.10.21",
     "vue-tsc": "1.8.19",
     "zod": "^3.22.4"
   },
