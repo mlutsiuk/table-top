@@ -5,34 +5,27 @@ definePageMeta({
 
 const route = useRoute('auth-google-callback')
 
-const { data, execute } = useFetch('/api/auth/google/callback', {
-  method: 'POST',
-  body: {
-    code: route.query.code
-  },
-  immediate: false
+if (!route.query.code) {
+  useToast().add({
+    title: `Failed to login, try again`,
+    timeout: 5000
+  })
+
+  useRouter().push('/auth/login')
+}
+
+const response = await useTrpc().auth.handleGoogleCallback.query({
+  code: route.query.code as string
 })
+if (response) {
+  useAuthStore().saveToken(response.token)
 
-onMounted(async () => {
-  if (!route.query.code) {
-    useToast().add({
-      title: `Failed to login, try again`,
-      timeout: 5000
-    })
-  }
-
-  await execute()
-
-  if (data.value) {
-    useAuthStore().saveToken(data.value.token)
-
-    useToast().add({
-      title: `Hello, ${data.value.user.name}`,
-      description: 'You have successfully logged in',
-      timeout: 5000
-    })
-  }
-})
+  useToast().add({
+    title: `Hello, ${response.user.name}`,
+    description: 'You have successfully logged in',
+    timeout: 5000
+  })
+}
 </script>
 
 <template>

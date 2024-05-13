@@ -1,6 +1,10 @@
 export default defineAppConfig({
   ui: {
     primary: 'blue',
-    gray: 'slate'
+    gray: 'slate',
+
+    icons: {
+      dynamic: true
+    }
   }
 })

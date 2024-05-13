@@ -8,17 +8,11 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@vueuse/nuxt',
     '@nuxtjs/google-fonts',
-    '@nuxt/ui',
-    'nuxt-icon'
+    '@nuxt/ui'
   ],
   imports: {
     dirs: [
       'store'
-    ]
-  },
-  ui: {
-    icons: [
-      'logos'
     ]
   },
   devtools: { enabled: true },

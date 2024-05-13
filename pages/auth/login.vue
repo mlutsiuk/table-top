@@ -3,18 +3,16 @@ definePageMeta({
   layout: 'hero'
 })
 
+const trpcClient = useTrpc()
+
 const inLoading = ref(false)
 const login = async () => {
   inLoading.value = true
-  const { data } = await useFetch('/api/auth/google/redirect')
+  const { redirectUrl } = await trpcClient.auth.getAuthUrl.query()
 
-  if (data.value) {
-    const { redirectUrl } = data.value
-
-    navigateTo(redirectUrl, {
-      external: true
-    })
-  }
+  navigateTo(redirectUrl, {
+    external: true
+  })
 }
 </script>
 

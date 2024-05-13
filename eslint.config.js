@@ -24,4 +24,4 @@ export default antfu({
     'tailwindcss/no-custom-classname': 'off',
     'tailwindcss/migration-from-tailwind-2': 'off'
   }
-}))
+})) 
