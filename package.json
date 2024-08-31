@@ -1,7 +1,7 @@
 {
   "name": "table-top",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "build": "nuxt build",
@@ -26,6 +26,7 @@
     "dayjs": "^1.11.11",
     "googleapis": "^131.0.0",
     "jose": "^5.3.0",
+    "superjson": "^2.2.1",
     "trpc-nuxt": "^0.10.21",
     "vue-tsc": "1.8.19",
     "zod": "^3.23.8"

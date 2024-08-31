@@ -45,6 +45,7 @@
     "nuxt",
     "nuxtjs",
     "pinia",
+    "superjson",
     "tailwindcss",
     "trpc",
     "vueuse"

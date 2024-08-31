@@ -1,42 +1,32 @@
 import type { User } from '@prisma/client'
 
-type State = {
-  user: User | null
-  accessToken: string | null
-}
+export const useAuthStore = defineStore('auth', () => {
+  const user = ref<User | null>(null)
+  const accessToken = ref<string | null>(null)
 
-export const useAuthStore = defineStore('auth', {
-  state: (): State => ({
-    user: null,
-    accessToken: null
-  }),
-  getters: {
+  const saveToken = (token: string) => {
+    accessToken.value = token
+    useCookie('access-token').value = token
+  }
+  const fetchUser = async () => {
+    const response = await useTrpc().auth.getCurrentUser.query()
 
-  },
-  actions: {
-    saveToken(token: string) {
-      this.accessToken = token
-      useCookie('access-token').value = token
-    },
-    async fetchUser() {
-      const token = useAuthStore().accessToken
+    if (response)
+      user.value = response
+  }
 
-      const { data } = await useFetch('/api/user', {
-        headers: token
-          ? {
-              Authorization: `Bearer ${token}`
-            }
-          : {}
-      })
+  const logout = () => {
+    user.value = null
+    accessToken.value = null
 
-      if (data.value)
-        this.user = data.value
-    },
-    logout() {
-      this.user = null
-      this.accessToken = null
+    useCookie('access-token').value = null
+  }
 
-      useCookie('access-token').value = null
-    }
+  return {
+    user,
+    accessToken,
+    saveToken,
+    fetchUser,
+    logout
   }
 })

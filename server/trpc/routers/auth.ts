@@ -1,5 +1,6 @@
 import { z } from 'zod'
-import { publicProcedure, router } from '../trpc'
+import { TRPCError } from '@trpc/server'
+import { privateProcedure, publicProcedure, router } from '../trpc'
 
 export const authRouter = router({
   handleGoogleCallback: publicProcedure.input(
@@ -44,5 +45,22 @@ export const authRouter = router({
     return {
       redirectUrl
     }
+  }),
+
+  getCurrentUser: privateProcedure.query(async ({ ctx }) => {
+    if (!ctx.auth) {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'User is not authenticated'
+      })
+    }
+
+    const user = await ctx.prisma.user.findFirst({
+      where: {
+        id: ctx.auth.id
+      }
+    })
+
+    return user
   })
 })

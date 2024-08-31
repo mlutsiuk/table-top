@@ -13,9 +13,7 @@ const { data, status } = useFetch('/api/users')
 
       <ColorPicker />
     </div>
-    <pre>
-      {{ data }}
-    </pre>
+    <pre>{{ data }}</pre>
 
     {{ status }}
 
