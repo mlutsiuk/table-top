@@ -48,13 +48,6 @@ export const authRouter = router({
   }),
 
   getCurrentUser: privateProcedure.query(async ({ ctx }) => {
-    if (!ctx.auth) {
-      throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: 'User is not authenticated'
-      })
-    }
-
     const user = await ctx.prisma.user.findFirst({
       where: {
         id: ctx.auth.id
