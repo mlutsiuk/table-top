@@ -1,9 +1,11 @@
 import { z } from 'zod'
 import { publicProcedure, router } from '../trpc'
 import { authRouter } from './auth'
+import { campaignRouter } from './campaign'
 
 export const appRouter = router({
   auth: authRouter,
+  campaign: campaignRouter,
 
   hello: publicProcedure
     .input(
