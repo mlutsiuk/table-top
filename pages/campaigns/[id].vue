@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const route = useRoute('campaigns-id')
 
-const { data, status } = useTrpc().campaign.getCampaignDetails.useQuery({
+const { data, status, refresh } = useTrpc().campaign.getCampaignDetails.useQuery({
   campaignId: route.params.id as string
 })
 
@@ -47,7 +47,10 @@ const tabs = [{
           class="w-full"
         >
           <template #funds>
-            <CampaignFunds :campaign="data" />
+            <CampaignFunds
+              :campaign="data"
+              @fund-added="refresh"
+            />
           </template>
 
           <template #players>

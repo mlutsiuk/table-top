@@ -4,11 +4,43 @@ import type { Campaign } from '@prisma/client'
 const props = defineProps<{
   campaign: Campaign
 }>()
+const emit = defineEmits<{
+  fundAdded: []
+}>()
 
 const newFund = reactive({
   title: '',
   amount: 0
 })
+
+const addFund = async () => {
+  if (newFund.title && newFund.amount) {
+    await useTrpc().campaign.updateFundScheme.mutate({
+      campaignId: props.campaign.id,
+      fundScheme: [
+        ...props.campaign.fundScheme,
+        {
+          amount: newFund.amount,
+          label: newFund.title
+        }
+      ]
+    })
+
+    newFund.title = ''
+    newFund.amount = 0
+
+    emit('fundAdded')
+  }
+}
+
+const deleteFund = async (index: number) => {
+  await useTrpc().campaign.updateFundScheme.mutate({
+    campaignId: props.campaign.id,
+    fundScheme: props.campaign.fundScheme.filter((_, i) => i !== index)
+  })
+
+  emit('fundAdded')
+}
 </script>
 
 <template>
@@ -24,13 +56,30 @@ const newFund = reactive({
     </div>
     <div
       v-else
-      class="flex flex-col gap-1"
+      class="flex w-fit flex-col gap-1"
     >
       <div
         v-for="(fund, index) in campaign.fundScheme"
         :key="index"
       >
-        {{ fund }}
+        <div class="flex flex-row items-center justify-between gap-6 bg-gray-200 px-4 font-mono dark:bg-gray-800">
+          <div class="flex flex-row items-center gap-2">
+            <div class="min-w-16 text-3xl">
+              {{ fund.amount }}
+            </div>
+            <div class="dark:text-gray-400">
+              {{ fund.label }}
+            </div>
+          </div>
+
+          <UButton
+            icon="i-mdi-delete"
+            variant="link"
+            color="red"
+            class="justify-self-end"
+            @click="deleteFund(index)"
+          />
+        </div>
       </div>
     </div>
 
@@ -47,8 +96,8 @@ const newFund = reactive({
       />
 
       <UButton
-        @click=""
         label="Add"
+        @click="addFund"
       />
     </div>
   </div>
