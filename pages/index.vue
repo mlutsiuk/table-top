@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-  layout: 'default'
+  middleware: 'auth'
 })
 
 const { data, status } = useFetch('/api/users')
