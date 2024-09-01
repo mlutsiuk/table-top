@@ -34,5 +34,27 @@ export const campaignRouter = router({
     })
 
     return campaign
+  }),
+  updateFundScheme: privateProcedure.input(
+    z.object({
+      campaignId: z.string().uuid(),
+      fundScheme: z.array(
+        z.object({
+          amount: z.number().int(),
+          label: z.string().min(1).max(50)
+        })
+      )
+    })
+  ).mutation(async ({ input, ctx }) => {
+    const campaign = await ctx.prisma.campaign.update({
+      where: {
+        id: input.campaignId
+      },
+      data: {
+        fundScheme: input.fundScheme
+      }
+    })
+
+    return campaign
   })
 })

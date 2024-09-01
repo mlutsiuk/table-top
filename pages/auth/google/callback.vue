@@ -25,6 +25,8 @@ if (response) {
     description: 'You have successfully logged in',
     timeout: 5000
   })
+
+  useRouter().push({ name: 'index' })
 }
 </script>
 
