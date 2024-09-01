@@ -21,6 +21,11 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   typescript: {
+    tsConfig: {
+      include: [
+        './prisma/json-types.ts'
+      ]
+    },
     strict: true
   },
 

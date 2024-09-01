@@ -28,7 +28,8 @@ export const campaignRouter = router({
     const campaign = await ctx.prisma.campaign.create({
       data: {
         title: input.title,
-        masterId: ctx.auth.id
+        masterId: ctx.auth.id,
+        fundScheme: []
       }
     })
 
