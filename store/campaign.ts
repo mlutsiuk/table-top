@@ -43,6 +43,7 @@ export const useCampaignStore = defineStore('campaign', () => {
     campaign,
 
     fetchCampaign,
+    saveCampaign,
     updateFundsScheme
   }
 })

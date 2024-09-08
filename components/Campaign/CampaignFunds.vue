@@ -4,17 +4,16 @@ import type { Campaign } from '@prisma/client'
 const props = defineProps<{
   campaign: Campaign
 }>()
-const emit = defineEmits<{
-  fundAdded: []
-}>()
+
+const campaignStore = useCampaignStore()
 
 const deleteFund = async (index: number) => {
-  await useTrpc().campaign.updateFundScheme.mutate({
+  const updated = await useTrpc().campaign.updateFundScheme.mutate({
     campaignId: props.campaign.id,
     fundScheme: props.campaign.fundScheme.filter((_, i) => i !== index)
   })
 
-  emit('fundAdded')
+  campaignStore.saveCampaign(updated)
 }
 </script>
 
