@@ -1,9 +1,8 @@
 <script setup lang="ts">
 const route = useRoute('campaigns-id')
+const campaignStore = useCampaignStore()
 
-const { data, status, refresh } = useTrpc().campaign.getCampaignDetails.useQuery({
-  campaignId: route.params.id as string
-})
+campaignStore.fetchCampaign(route.params.id as string)
 
 const tabs = [{
   slot: 'funds',
@@ -24,15 +23,15 @@ const tabs = [{
   <div class="flex flex-col gap-6">
     <div class="flex flex-col gap-1">
       <h1 class="text-3xl font-medium">
-        {{ data?.title }}
+        {{ campaignStore.campaign?.title }}
       </h1>
       <div class="text-sm dark:text-gray-400">
-        {{ data?.id }}
+        {{ campaignStore.campaign?.id }}
       </div>
     </div>
 
     <div
-      v-if="!data"
+      v-if="!campaignStore.campaign"
       class="flex h-32 items-center justify-center"
     >
       <KLoader class="size-8" />
@@ -48,8 +47,7 @@ const tabs = [{
         >
           <template #funds>
             <CampaignFunds
-              :campaign="data"
-              @fund-added="refresh"
+              :campaign="campaignStore.campaign"
             />
           </template>
 
@@ -70,8 +68,7 @@ const tabs = [{
 
         <UDivider />
 
-        <pre>{{ data }}</pre>
-        <pre>Status - {{ status }}</pre>
+        <pre>{{ campaignStore.campaign }}</pre>
       </div>
     </div>
   </div>

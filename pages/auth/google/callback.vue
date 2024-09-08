@@ -19,6 +19,7 @@ const response = await useTrpc().auth.handleGoogleCallback.query({
 })
 if (response) {
   useAuthStore().saveToken(response.token)
+  await useAuthStore().fetchUser()
 
   useToast().add({
     title: `Hello, ${response.user.name}`,

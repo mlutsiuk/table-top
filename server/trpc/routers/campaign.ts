@@ -46,12 +46,16 @@ export const campaignRouter = router({
       )
     })
   ).mutation(async ({ input, ctx }) => {
+    const sortedScheme = input.fundScheme
+      .slice()
+      .sort((a, b) => a.amount - b.amount)
+
     const campaign = await ctx.prisma.campaign.update({
       where: {
         id: input.campaignId
       },
       data: {
-        fundScheme: input.fundScheme
+        fundScheme: sortedScheme
       }
     })
 

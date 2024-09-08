@@ -8,31 +8,6 @@ const emit = defineEmits<{
   fundAdded: []
 }>()
 
-const newFund = reactive({
-  title: '',
-  amount: 0
-})
-
-const addFund = async () => {
-  if (newFund.title && newFund.amount) {
-    await useTrpc().campaign.updateFundScheme.mutate({
-      campaignId: props.campaign.id,
-      fundScheme: [
-        ...props.campaign.fundScheme,
-        {
-          amount: newFund.amount,
-          label: newFund.title
-        }
-      ]
-    })
-
-    newFund.title = ''
-    newFund.amount = 0
-
-    emit('fundAdded')
-  }
-}
-
 const deleteFund = async (index: number) => {
   await useTrpc().campaign.updateFundScheme.mutate({
     campaignId: props.campaign.id,
@@ -83,22 +58,6 @@ const deleteFund = async (index: number) => {
       </div>
     </div>
 
-    <div class="flex flex-row gap-2">
-      <UInput
-        v-model="newFund.title"
-        placeholder="Title"
-      />
-
-      <UInput
-        v-model="newFund.amount"
-        placeholder="Amount"
-        type="number"
-      />
-
-      <UButton
-        label="Add"
-        @click="addFund"
-      />
-    </div>
+    <CampaignFundAddForm />
   </div>
 </template>

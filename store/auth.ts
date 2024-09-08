@@ -1,4 +1,5 @@
 import type { User } from '@prisma/client'
+import { TRPCError } from '@trpc/server'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)
@@ -9,10 +10,17 @@ export const useAuthStore = defineStore('auth', () => {
     useCookie('access-token').value = token
   }
   const fetchUser = async () => {
-    const response = await useTrpc().auth.getCurrentUser.query()
+    try {
+      const response = await useTrpc().auth.getCurrentUser.query()
 
-    if (response)
       user.value = response
+    }
+    catch (e) {
+      if (e instanceof TRPCError) {
+        alert('Check console')
+        console.error(e.cause, e.code, e.message, e.name, e.stack)
+      }
+    }
   }
 
   const logout = () => {

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 definePageMeta({
-  layout: 'hero'
+  layout: 'hero',
+  middleware: 'guest'
 })
 
 const trpcClient = useTrpc()
