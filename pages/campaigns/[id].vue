@@ -46,7 +46,7 @@ const tabs = [{
           class="w-full"
         >
           <template #funds>
-            <CampaignFunds
+            <CampaignFund
               :campaign="campaignStore.campaign"
             />
           </template>
