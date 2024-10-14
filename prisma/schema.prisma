@@ -23,16 +23,17 @@ model User {
 }
 
 model Campaign {
-  id             String         @id @default(uuid()) @map("_id")
-  title          String
-  createdAt      DateTime       @default(now())
+  id              String           @id @default(uuid()) @map("_id")
+  title           String
+  createdAt       DateTime         @default(now())
   /// [FundScheme]
-  fundScheme     Json           @default("[]")
-  masterId       String
-  master         User           @relation(fields: [masterId], references: [id])
-  players        Player[]
-  scheetSchemas  SheetSchema[]
-  itemCategories ItemCategory[]
+  fundScheme      Json             @default("[]")
+  masterId        String
+  master          User             @relation(fields: [masterId], references: [id])
+  players         Player[]
+  scheetSchemas   SheetSchema[]
+  itemCategories  ItemCategory[]
+  materialFolders MaterialFolder[]
 }
 
 model Player {
@@ -74,4 +75,19 @@ model Item {
   title      String
   categoryId String
   category   ItemCategory @relation(fields: [categoryId], references: [id])
+}
+
+model MaterialFolder {
+  id         String     @id @default(uuid()) @map("_id")
+  title      String
+  campaignId String
+  campaign   Campaign   @relation(fields: [campaignId], references: [id])
+  materials  Material[]
+}
+
+model Material {
+  id       String         @id @default(uuid()) @map("_id")
+  title    String
+  folderId String
+  folder   MaterialFolder @relation(fields: [folderId], references: [id])
 }
