@@ -48,7 +48,7 @@ const { schema, onSubmit } = useForm({
     class="flex flex-row gap-2"
     @submit="onSubmit"
   >
-    <UFormGroup
+    <UFormField
       name="title"
       label="Title"
     >
@@ -56,9 +56,9 @@ const { schema, onSubmit } = useForm({
         v-model="state.title"
         placeholder="Gold"
       />
-    </UFormGroup>
+    </UFormField>
 
-    <UFormGroup
+    <UFormField
       name="amount"
       label="Amount"
     >
@@ -67,7 +67,7 @@ const { schema, onSubmit } = useForm({
         placeholder="Amount"
         type="number"
       />
-    </UFormGroup>
+    </UFormField>
 
     <UButton
       label="Add"

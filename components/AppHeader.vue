@@ -15,14 +15,14 @@ const { user } = storeToRefs(useAuthStore())
     <div class="grow">
       <UButton
         variant="link"
-        color="white"
+        color="neutral"
         :to="{ name: 'campaigns' }"
         label="Campaigns"
       />
     </div>
 
     <div class="flex flex-row items-center gap-2">
-      <ColorPicker />
+      <ThemePicker />
       <ColorModeButton />
 
       <UAvatar

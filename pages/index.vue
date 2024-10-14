@@ -11,7 +11,7 @@ const { data, status } = useFetch('/api/users')
     <div class="flex flex-row gap-2">
       <ColorModeButton />
 
-      <ColorPicker />
+      <ThemePicker />
     </div>
     <pre>{{ data }}</pre>
 

@@ -49,7 +49,7 @@ const deleteFund = async (index: number) => {
           <UButton
             icon="i-mdi-delete"
             variant="link"
-            color="red"
+            color="error"
             class="justify-self-end"
             @click="deleteFund(index)"
           />

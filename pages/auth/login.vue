@@ -19,7 +19,7 @@ const login = async () => {
 
 <template>
   <div class="absolute right-6 top-6 flex flex-row gap-2">
-    <ColorPicker />
+    <ThemePicker />
     <ColorModeButton />
   </div>
 

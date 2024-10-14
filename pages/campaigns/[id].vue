@@ -66,7 +66,7 @@ const tabs = [{
           Details
         </h2>
 
-        <UDivider />
+        <!-- <UDivider /> -->
 
         <pre>{{ campaignStore.campaign }}</pre>
       </div>

@@ -8,7 +8,6 @@ export default defineNuxtConfig({
     '@nuxt/devtools',
     '@pinia/nuxt',
     '@vueuse/nuxt',
-    '@nuxtjs/google-fonts',
     '@nuxt/ui'
   ],
 
@@ -34,12 +33,6 @@ export default defineNuxtConfig({
   },
 
   ssr: false,
-
-  googleFonts: {
-    families: {
-      Inter: true
-    }
-  },
 
   runtimeConfig: {
     jwt: {
