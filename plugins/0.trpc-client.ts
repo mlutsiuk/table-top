@@ -10,15 +10,15 @@ export default defineNuxtPlugin(() => {
   const { accessToken } = storeToRefs(useAuthStore())
 
   const client = createTRPCNuxtClient<AppRouter>({
-    transformer: superjson,
     links: [
       httpBatchLink({
         url: '/api/trpc',
         headers: () => ({
           Authorization: accessToken.value ? `Bearer ${accessToken.value}` : undefined
-        })
+        }),
+        transformer: superjson,
       })
-    ]
+    ],
   })
 
   return {

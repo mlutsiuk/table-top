@@ -12,19 +12,15 @@ const emit = defineEmits<{
 }>()
 const form = ref<InstanceType<typeof UForm> | null>(null)
 const clear = (path?: string) => {
-  // @ts-expect-error - Types of exposed methods are not inferred correctly
   form.value?.clear(path)
 }
 const submit = () => {
-  // @ts-expect-error - Types of exposed methods are not inferred correctly
   form.value?.submit()
 }
 const setErrors = (errors: FormError[], path?: string) => {
-  // @ts-expect-error - Types of exposed methods are not inferred correctly
   form.value?.setErrors(errors, path)
 }
 const getErrors = (path?: string) => {
-  // @ts-expect-error - Types of exposed methods are not inferred correctly
   return form.value?.getErrors(path)
 }
 defineExpose({

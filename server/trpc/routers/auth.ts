@@ -20,7 +20,7 @@ export const authRouter = router({
       user = await ctx.prisma.user.create({
         data: {
           email: email!,
-          name: name ?? email!.split('@')[0]
+          name: name ?? email!.split('@')[0]!
         }
       })
     }
