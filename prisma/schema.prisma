@@ -1,6 +1,5 @@
 datasource db {
-  provider = "mongodb"
-  url      = env("MONGODB_URI")
+  provider = "postgresql"
 }
 
 generator client {
@@ -13,82 +12,80 @@ generator json {
 }
 
 model User {
-  id         String     @id @default(uuid()) @map("_id")
+  id         String     @id @default(uuid())
   email      String     @unique
   name       String
   createdAt  DateTime   @default(now())
-  masterMode Boolean    @default(false)
-  campaigns  Campaign[]
-  players    Player[]
+  // masterMode Boolean    @default(false)
+  // campaigns  Campaign[]
+  // players    Player[]
 }
 
-model Campaign {
-  id              String           @id @default(uuid()) @map("_id")
-  title           String
-  createdAt       DateTime         @default(now())
-  /// [FundScheme]
-  fundScheme      Json             @default("[]")
-  masterId        String
-  master          User             @relation(fields: [masterId], references: [id])
-  players         Player[]
-  scheetSchemas   SheetSchema[]
-  itemCategories  ItemCategory[]
-  materialFolders MaterialFolder[]
-}
+// model Campaign {
+//   id              String           @id @default(uuid()) @map("_id")
+//   title           String
+//   createdAt       DateTime         @default(now())
+//   /// [FundScheme]
+//   fundScheme      Json             @default("[]")
+//   masterId        String
+//   master          User             @relation(fields: [masterId], references: [id])
+//   players         Player[]
+//   sheetSchemas   SheetSchema[]
+// }
 
-model Player {
-  id         String   @id @default(uuid()) @map("_id")
-  name       String
-  funds      Int      @default(0)
-  userId     String
-  user       User     @relation(fields: [userId], references: [id])
-  campaignId String
-  campaign   Campaign @relation(fields: [campaignId], references: [id])
-}
+// model Player {
+//   id         String   @id @default(uuid()) @map("_id")
+//   name       String
+//   funds      Int      @default(0)
+//   userId     String
+//   user       User     @relation(fields: [userId], references: [id])
+//   campaignId String
+//   campaign   Campaign @relation(fields: [campaignId], references: [id])
+// }
 
-model SheetSchema {
-  id           String        @id @default(uuid()) @map("_id")
-  title        String
-  structure    Json
-  campaignId   String
-  campaign     Campaign      @relation(fields: [campaignId], references: [id])
-  playerSheets PlayerSheet[]
-}
+// model SheetSchema {
+//   id           String        @id @default(uuid()) @map("_id")
+//   title        String
+//   structure    Json
+//   campaignId   String
+//   campaign     Campaign      @relation(fields: [campaignId], references: [id])
+//   playerSheets PlayerSheet[]
+// }
 
-model PlayerSheet {
-  id       String      @id @default(uuid()) @map("_id")
-  values   Json
-  schemaId String
-  schema   SheetSchema @relation(fields: [schemaId], references: [id])
-}
+// model PlayerSheet {
+//   id       String      @id @default(uuid()) @map("_id")
+//   values   Json
+//   schemaId String
+//   schema   SheetSchema @relation(fields: [schemaId], references: [id])
+// }
 
-model ItemCategory {
-  id         String   @id @default(uuid()) @map("_id")
-  title      String
-  campaignId String
-  campaign   Campaign @relation(fields: [campaignId], references: [id])
-  items      Item[]
-}
+// model ItemCategory {
+//   id         String   @id @default(uuid()) @map("_id")
+//   title      String
+//   campaignId String
+//   campaign   Campaign @relation(fields: [campaignId], references: [id])
+//   items      Item[]
+// }
 
-model Item {
-  id         String       @id @default(uuid()) @map("_id")
-  title      String
-  categoryId String
-  category   ItemCategory @relation(fields: [categoryId], references: [id])
-}
+// model Item {
+//   id         String       @id @default(uuid()) @map("_id")
+//   title      String
+//   categoryId String
+//   category   ItemCategory @relation(fields: [categoryId], references: [id])
+// }
 
-model MaterialFolder {
-  id         String     @id @default(uuid()) @map("_id")
-  title      String
-  campaignId String
-  campaign   Campaign   @relation(fields: [campaignId], references: [id])
-  materials  Material[]
-}
+// model MaterialFolder {
+//   id         String     @id @default(uuid()) @map("_id")
+//   title      String
+//   campaignId String
+//   campaign   Campaign   @relation(fields: [campaignId], references: [id])
+//   materials  Material[]
+// }
 
-model Material {
-  id       String         @id @default(uuid()) @map("_id")
-  title    String
-  icon     String?
-  folderId String
-  folder   MaterialFolder @relation(fields: [folderId], references: [id])
-}
+// model Material {
+//   id       String         @id @default(uuid()) @map("_id")
+//   title    String
+//   icon     String?
+//   folderId String
+//   folder   MaterialFolder @relation(fields: [folderId], references: [id])
+// }
