@@ -5,6 +5,12 @@
   --font-family-sans: 'Inter', sans-serif;
 }
 
+@plugin "@tailwindcss/typography";
+
 body {
   @apply antialiased font-sans text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-900;
 }
+
+/* :root {
+  --color-
+} */

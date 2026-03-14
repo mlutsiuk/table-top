@@ -3,7 +3,6 @@
 </script>
 
 <template>
-  <div>
-    bob
-  </div>
+  <MaterialEditor
+   class="grow bg-gray-800" />
 </template>

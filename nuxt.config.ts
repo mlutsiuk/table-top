@@ -46,7 +46,5 @@ export default defineNuxtConfig({
     googleClientId: '',
     googleClientSecret: '',
     googleCallbackUrl: ''
-  },
-
-  compatibilityDate: '2024-09-01'
+  }
 })
