@@ -7,8 +7,7 @@ const route = useRoute('auth-google-callback')
 
 if (!route.query.code) {
   useToast().add({
-    title: `Failed to login, try again`,
-    timeout: 5000
+    title: `Failed to login, try again`
   })
 
   useRouter().push('/auth/login')
@@ -23,8 +22,7 @@ if (response) {
 
   useToast().add({
     title: `Hello, ${response.user.name}`,
-    description: 'You have successfully logged in',
-    timeout: 5000
+    description: 'You have successfully logged in'
   })
 
   useRouter().push({ name: 'index' })

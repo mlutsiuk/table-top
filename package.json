@@ -12,7 +12,7 @@
     "start": "node .output/server/index.mjs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "ts-check": "vue-tsc --noEmit"
+    "test:typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
     "@nuxt/ui": "^3.3.7",

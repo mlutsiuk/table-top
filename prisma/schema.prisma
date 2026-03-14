@@ -16,22 +16,21 @@ model User {
   email      String     @unique
   name       String
   createdAt  DateTime   @default(now())
-  // masterMode Boolean    @default(false)
-  // campaigns  Campaign[]
+  campaigns  Campaign[]
   // players    Player[]
 }
 
-// model Campaign {
-//   id              String           @id @default(uuid()) @map("_id")
-//   title           String
-//   createdAt       DateTime         @default(now())
-//   /// [FundScheme]
-//   fundScheme      Json             @default("[]")
-//   masterId        String
-//   master          User             @relation(fields: [masterId], references: [id])
-//   players         Player[]
-//   sheetSchemas   SheetSchema[]
-// }
+model Campaign {
+  id              String           @id @default(uuid())
+  title           String
+  createdAt       DateTime         @default(now())
+  // /// [FundScheme]
+  // fundScheme      Json             @default("[]")
+  masterId        String
+  master          User             @relation(fields: [masterId], references: [id])
+  // players         Player[]
+  // sheetSchemas   SheetSchema[]
+}
 
 // model Player {
 //   id         String   @id @default(uuid()) @map("_id")

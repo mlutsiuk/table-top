@@ -23,7 +23,7 @@ const { schema, onSubmit } = useForm({
 
     isLoading.value = true
     const newScheme = [
-      ...campaignStore.campaign.fundScheme,
+      // ...campaignStore.campaign.fundScheme,
       {
         amount: data.amount,
         label: data.title

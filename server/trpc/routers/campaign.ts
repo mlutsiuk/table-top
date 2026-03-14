@@ -28,37 +28,36 @@ export const campaignRouter = router({
     const campaign = await ctx.prisma.campaign.create({
       data: {
         title: input.title,
-        masterId: ctx.auth.id,
-        fundScheme: []
+        masterId: ctx.auth.id
       }
     })
 
     return campaign
   }),
-  updateFundScheme: privateProcedure.input(
-    z.object({
-      campaignId: z.string().uuid(),
-      fundScheme: z.array(
-        z.object({
-          amount: z.number().int(),
-          label: z.string().min(1).max(50)
-        })
-      )
-    })
-  ).mutation(async ({ input, ctx }) => {
-    const sortedScheme = input.fundScheme
-      .slice()
-      .sort((a, b) => a.amount - b.amount)
+  // updateFundScheme: privateProcedure.input(
+  //   z.object({
+  //     campaignId: z.string().uuid(),
+  //     fundScheme: z.array(
+  //       z.object({
+  //         amount: z.number().int(),
+  //         label: z.string().min(1).max(50)
+  //       })
+  //     )
+  //   })
+  // ).mutation(async ({ input, ctx }) => {
+  //   const sortedScheme = input.fundScheme
+  //     .slice()
+  //     .sort((a, b) => a.amount - b.amount)
 
-    const campaign = await ctx.prisma.campaign.update({
-      where: {
-        id: input.campaignId
-      },
-      data: {
-        fundScheme: sortedScheme
-      }
-    })
+  //   const campaign = await ctx.prisma.campaign.update({
+  //     where: {
+  //       id: input.campaignId
+  //     },
+  //     data: {
+  //       fundScheme: sortedScheme
+  //     }
+  //   })
 
-    return campaign
-  })
+  //   return campaign
+  // })
 })

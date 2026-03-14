@@ -7,14 +7,14 @@ const props = defineProps<{
 
 const campaignStore = useCampaignStore()
 
-const deleteFund = async (index: number) => {
-  const updated = await useTrpc().campaign.updateFundScheme.mutate({
-    campaignId: props.campaign.id,
-    fundScheme: props.campaign.fundScheme.filter((_, i) => i !== index)
-  })
+// const deleteFund = async (index: number) => {
+//   const updated = await useTrpc().campaign.updateFundScheme.mutate({
+//     campaignId: props.campaign.id,
+//     fundScheme: props.campaign.fundScheme.filter((_, i) => i !== index)
+//   })
 
-  campaignStore.saveCampaign(updated)
-}
+//   campaignStore.saveCampaign(updated)
+// }
 </script>
 
 <template>
@@ -23,7 +23,7 @@ const deleteFund = async (index: number) => {
       Campaign funds settings
     </h3>
 
-    <div v-if="campaign.fundScheme.length === 0">
+    <!-- <div v-if="campaign.fundScheme.length === 0">
       <div class="text-gray-400">
         Scheme is not defined
       </div>
@@ -55,7 +55,7 @@ const deleteFund = async (index: number) => {
           />
         </div>
       </div>
-    </div>
+    </div> -->
 
     <CampaignFundAddForm />
   </div>

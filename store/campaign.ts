@@ -27,12 +27,12 @@ export const useCampaignStore = defineStore('campaign', () => {
       return
 
     try {
-      const updatedCampaign = await useTrpc().campaign.updateFundScheme.mutate({
-        campaignId: campaign.value.id,
-        fundScheme: newScheme
-      })
+      // const updatedCampaign = await useTrpc().campaign.updateFundScheme.mutate({
+      //   campaignId: campaign.value.id,
+      //   fundScheme: newScheme
+      // })
 
-      saveCampaign(updatedCampaign)
+      // saveCampaign(updatedCampaign)
     }
     catch {
       // TODO

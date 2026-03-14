@@ -10,7 +10,7 @@ export default eventHandler(async (event) => {
   if (authorizationHeader) {
     const token = authorizationHeader.split(' ')[1]
     try {
-      const decoded = await verifyUserJwt(token)
+      const decoded = await verifyUserJwt(token)  // FIXME
 
       event.context.auth = {
         id: decoded.payload.userId
