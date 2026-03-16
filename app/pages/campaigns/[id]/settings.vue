@@ -21,7 +21,7 @@ const tabs = [{
     v-if="!campaignStore.campaign"
     class="flex h-32 items-center justify-center"
   >
-    <KLoader class="size-8" />
+    <Loader class="size-8" />
   </div>
   <div
     v-else

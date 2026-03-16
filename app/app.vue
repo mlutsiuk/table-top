@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { SpeedInsights } from '@vercel/speed-insights/vue'
+import 'vue-sonner/style.css'
+import { Toaster } from '@/components/ui/sonner'
 </script>
 
 <template>
-  <UApp>
+  <div>
     <NuxtLoadingIndicator />
 
     <NuxtLayout>
@@ -11,5 +13,7 @@ import { SpeedInsights } from '@vercel/speed-insights/vue'
     </NuxtLayout>
 
     <SpeedInsights />
-  </UApp>
+
+    <Toaster />
+  </div>
 </template>

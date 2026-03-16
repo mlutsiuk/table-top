@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { toast } from 'vue-sonner'
+
 definePageMeta({
   layout: 'hero'
 })
@@ -6,9 +8,7 @@ definePageMeta({
 const route = useRoute('auth-google-callback')
 
 if (!route.query.code) {
-  useToast().add({
-    title: `Failed to login, try again`
-  })
+  toast.error(`Failed to login, try again`)
 
   useRouter().push('/auth/login')
 }
@@ -20,7 +20,7 @@ if (response) {
   useAuthStore().saveToken(response.token)
   await useAuthStore().fetchUser()
 
-  useToast().add({
+  toast({
     title: `Hello, ${response.user.name}`,
     description: 'You have successfully logged in'
   })
@@ -30,7 +30,7 @@ if (response) {
 </script>
 
 <template>
-  <UIcon
+  <Icon
     name="i-svg-spinners-180-ring"
     class="text-primary size-10"
     dynamic

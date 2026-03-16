@@ -23,7 +23,7 @@ const createCampaign = async () => {
 
       <div class="flex flex-row gap-2">
         <UInput v-model="newCampaignTitle" />
-        <UButton
+        <Button
           label="Create Campaign"
           @click="createCampaign"
         />
@@ -32,9 +32,9 @@ const createCampaign = async () => {
 
     <div
       v-if="!data || status === 'pending'"
-      class="flex min-h-[200px] items-center justify-center"
+      class="flex min-h-50 items-center justify-center"
     >
-      <KLoader class="size-8" />
+      <Loader class="size-8" />
     </div>
     <div
       v-else

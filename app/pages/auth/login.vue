@@ -19,7 +19,6 @@ const login = async () => {
 
 <template>
   <div class="absolute right-6 top-6 flex flex-row gap-2">
-    <ThemePicker />
     <ColorModeButton />
   </div>
 
@@ -30,15 +29,16 @@ const login = async () => {
 
     <p>Log in to get access to great gaming experience</p>
 
-    <UButton
-      size="xl"
+    <Button
       variant="outline"
-      block
-      icon="i-logos-google-icon"
       :loading="inLoading"
       @click="login"
     >
+      <Icon
+        name="logos:google-icon"
+      />
+
       Log in with Google
-    </UButton>
+    </Button>
   </div>
 </template>

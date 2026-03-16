@@ -7,12 +7,12 @@ defineProps<{
 </script>
 
 <template>
-  <KLink
+  <NuxtLink
     class="rounded-lg bg-gray-200 hover:bg-gray-300 p-6 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
     :to="{ name: 'campaigns-id', params: { id: campaign.id } }"
   >
     <div class="text-lg font-bold">
       {{ campaign.title }}
     </div>
-  </KLink>
+  </NuxtLink>
 </template>

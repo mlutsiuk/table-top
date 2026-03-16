@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ScrollAreaRoot, ScrollAreaScrollbar, ScrollAreaThumb, ScrollAreaViewport, TreeItem, TreeRoot } from 'radix-vue'
+import { ScrollAreaRoot, ScrollAreaScrollbar, ScrollAreaThumb, ScrollAreaViewport, TreeItem, TreeRoot } from 'reka-ui'
 
 const items = (() => {
   const res = [
@@ -70,18 +70,18 @@ const items = (() => {
           class="my-0.5 flex items-center rounded px-2 py-1 outline-none focus:ring-1 data-[selected]:bg-[--ui-color-primary-900]"
         >
           <template v-if="item.hasChildren">
-            <UIcon
+            <Icon
               v-if="!isExpanded"
               name="lucide:folder"
               class="size-4"
             />
-            <UIcon
+            <Icon
               v-else
               name="lucide:folder-open"
               class="size-4"
             />
           </template>
-          <UIcon
+          <Icon
             v-else
             :name="item.value.icon || 'lucide:file'"
             class="size-4"
