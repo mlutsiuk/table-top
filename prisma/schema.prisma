@@ -15,76 +15,32 @@ model User {
   id         String     @id @default(uuid())
   email      String     @unique
   name       String
-  createdAt  DateTime   @default(now())
+  createdAt  DateTime   @default(now()) @map("created_at")
   campaigns  Campaign[]
-  // players    Player[]
+
+  @@map("users")
 }
 
 model Campaign {
   id              String           @id @default(uuid())
   title           String
-  createdAt       DateTime         @default(now())
-  // /// [FundScheme]
-  // fundScheme      Json             @default("[]")
-  masterId        String
+  createdAt       DateTime         @default(now()) @map("created_at")
+  masterId        String           @map("master_id")
   master          User             @relation(fields: [masterId], references: [id])
-  // players         Player[]
-  // sheetSchemas   SheetSchema[]
+  folders         Folder[]
+
+  @@map("campaigns")
 }
 
-// model Player {
-//   id         String   @id @default(uuid()) @map("_id")
-//   name       String
-//   funds      Int      @default(0)
-//   userId     String
-//   user       User     @relation(fields: [userId], references: [id])
-//   campaignId String
-//   campaign   Campaign @relation(fields: [campaignId], references: [id])
-// }
-
-// model SheetSchema {
-//   id           String        @id @default(uuid()) @map("_id")
-//   title        String
-//   structure    Json
-//   campaignId   String
-//   campaign     Campaign      @relation(fields: [campaignId], references: [id])
-//   playerSheets PlayerSheet[]
-// }
-
-// model PlayerSheet {
-//   id       String      @id @default(uuid()) @map("_id")
-//   values   Json
-//   schemaId String
-//   schema   SheetSchema @relation(fields: [schemaId], references: [id])
-// }
-
-// model ItemCategory {
-//   id         String   @id @default(uuid()) @map("_id")
-//   title      String
-//   campaignId String
-//   campaign   Campaign @relation(fields: [campaignId], references: [id])
-//   items      Item[]
-// }
-
-// model Item {
-//   id         String       @id @default(uuid()) @map("_id")
-//   title      String
-//   categoryId String
-//   category   ItemCategory @relation(fields: [categoryId], references: [id])
-// }
-
-// model MaterialFolder {
-//   id         String     @id @default(uuid()) @map("_id")
-//   title      String
-//   campaignId String
-//   campaign   Campaign   @relation(fields: [campaignId], references: [id])
-//   materials  Material[]
-// }
-
-// model Material {
-//   id       String         @id @default(uuid()) @map("_id")
-//   title    String
-//   icon     String?
-//   folderId String
-//   folder   MaterialFolder @relation(fields: [folderId], references: [id])
-// }
+model Folder {
+  id          String   @id @default(uuid())
+  title       String
+  
+  parentId    String?  @map("parent_id")
+  parent      Folder?  @relation("SubFolders", fields: [parentId], references: [id])
+  subFolders  Folder[] @relation("SubFolders")
+  campaignId  String   @map("campaign_id")
+  campaign    Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  
+  @@map("folders")
+}
