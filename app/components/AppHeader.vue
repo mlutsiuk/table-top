@@ -25,8 +25,8 @@ const { user } = storeToRefs(useAuthStore())
     <div class="flex flex-row items-center gap-2">
       <ColorModeButton />
 
-      <UAvatar
-        :alt="user!.name"
+      <UserAvatar
+        :user="user!"
         size="md"
       />
     </div>
