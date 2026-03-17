@@ -1,12 +1,12 @@
 -- CreateTable
-CREATE TABLE "Campaign" (
+CREATE TABLE "campaigns" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "masterId" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "master_id" TEXT NOT NULL,
 
-    CONSTRAINT "Campaign_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "campaigns_pkey" PRIMARY KEY ("id")
 );
 
 -- AddForeignKey
-ALTER TABLE "Campaign" ADD CONSTRAINT "Campaign_masterId_fkey" FOREIGN KEY ("masterId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "campaigns" ADD CONSTRAINT "campaigns_master_id_fkey" FOREIGN KEY ("master_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
