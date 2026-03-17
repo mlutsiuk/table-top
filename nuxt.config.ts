@@ -67,5 +67,22 @@ export default defineNuxtConfig({
     googleClientId: '',
     googleClientSecret: '',
     googleCallbackUrl: ''
+  },
+
+  vite: {
+    optimizeDeps: {
+      include: [
+        '@vue/devtools-core',
+        '@vue/devtools-kit',
+        '@vercel/analytics',
+        'superjson',
+        '@vercel/speed-insights/vue',
+        '@trpc/server',
+        'lucide-vue-next',
+        'vue-sonner',
+        'clsx',
+        'tailwind-merge',
+      ]
+    }
   }
 })
