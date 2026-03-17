@@ -14,12 +14,16 @@ const isDark = computed({
 <template>
   <ClientOnly>
     <Button
-      :icon="isDark ? 'heroicons:moon-20-solid' : 'heroicons:sun-20-solid'"
-      color="gray"
       variant="ghost"
+      size="icon-sm"
       aria-label="Theme"
       @click="isDark = !isDark"
-    />
+    >
+      <Icon
+        :name="isDark ? 'heroicons:moon-20-solid' : 'heroicons:sun-20-solid'"
+        class="size-5"
+      />
+    </Button>
 
     <template #fallback>
       <div class="w-8 h-8" />
