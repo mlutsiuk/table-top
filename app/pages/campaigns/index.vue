@@ -22,11 +22,16 @@ const createCampaign = async () => {
       </h1>
 
       <div class="flex flex-row gap-2">
-        <UInput v-model="newCampaignTitle" />
-        <Button
-          label="Create Campaign"
-          @click="createCampaign"
+        <Input
+          v-model="newCampaignTitle"
+          placeholder="My Fantasy Journey"
         />
+
+        <Button
+          @click="createCampaign"
+        >
+          Create Campaign  
+        </Button>
       </div>
     </div>
 
