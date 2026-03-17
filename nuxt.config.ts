@@ -82,6 +82,8 @@ export default defineNuxtConfig({
         'vue-sonner',
         'clsx',
         'tailwind-merge',
+        'class-variance-authority',
+        'reka-ui',
       ]
     }
   }
