@@ -41,6 +41,7 @@ model Campaign {
   folders         Folder[]
   assets          Asset[]
   mechanics       Mechanic[]
+  entities        Entity[]
 
   @@map("campaigns")
 }
@@ -87,6 +88,7 @@ model Asset {
   folder      Folder  @relation(fields: [folderId], references: [id], onDelete: Cascade)
 
   traits      AssetTrait[]
+  entities    Entity[]
   
   @@map("assets")
 }
@@ -102,7 +104,7 @@ model Mechanic {
   campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
 
   assetTraits  AssetTrait[]
-  // entityTraits EntityTrait[]
+  entityTraits EntityTrait[]
 
   @@unique([campaignId, name])
   @@map("mechanics")
@@ -121,4 +123,52 @@ model AssetTrait {
 
   @@unique([assetId, mechanicId])
   @@map("asset_traits")
+}
+
+model Entity {
+  id         String   @id @default(uuid())
+
+  assetId    String   @map("asset_id")
+  asset      Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  campaignId String   @map("campaign_id")
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  entityTraits   EntityTrait[]
+  relationsFrom  EntityRelation[] @relation("RelationSource")
+  relationsTo    EntityRelation[] @relation("RelationTarget")
+
+  @@map("entities")
+}
+
+model EntityTrait {
+  id         String   @id @default(uuid())
+  /// [EntityTraitData]
+  data       Json
+
+  entityId   String   @map("entity_id")
+  entity     Entity   @relation(fields: [entityId], references: [id], onDelete: Cascade)
+
+  mechanicId String   @map("mechanic_id")
+  mechanic   Mechanic @relation(fields: [mechanicId], references: [id], onDelete: Cascade)
+
+  @@unique([entityId, mechanicId])
+  @@map("entity_traits")
+}
+
+model EntityRelation {
+  id       String  @id @default(uuid())
+  key      String
+  /// [EntityRelationData]
+  data     Json?
+
+  sourceId String  @map("source_id")
+  source   Entity  @relation("RelationSource", fields: [sourceId], references: [id], onDelete: Cascade)
+
+  targetId String  @map("target_id")
+  target   Entity  @relation("RelationTarget", fields: [targetId], references: [id], onDelete: Cascade)
+
+  @@index([sourceId, key])
+  @@index([targetId, key])
+  @@map("entity_relations")
 }
