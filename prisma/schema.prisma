@@ -37,10 +37,26 @@ model Campaign {
   masterId        String           @map("master_id")
   master          User             @relation(fields: [masterId], references: [id])
 
+  media           Media[]
   folders         Folder[]
   assets          Asset[]
 
   @@map("campaigns")
+}
+
+model Media {
+  id         String   @id @default(uuid())
+  url        String
+  key        String
+  name       String
+  type       String
+  size       Int
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  campaignId String   @map("campaign_id")
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@map("media")
 }
 
 model Folder {
