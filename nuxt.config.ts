@@ -84,6 +84,22 @@ export default defineNuxtConfig({
         'tailwind-merge',
         'class-variance-authority',
         'reka-ui',
+        '@tiptap/vue-3',
+        '@tiptap/extension-document',
+        '@tiptap/extension-text',
+        '@tiptap/extension-paragraph',
+        '@tiptap/extension-heading',
+        '@tiptap/extension-bullet-list',
+        '@tiptap/extension-ordered-list',
+        '@tiptap/extension-list-item',
+        '@tiptap/extension-bold',
+        '@tiptap/extension-italic',
+        '@tiptap/extension-strike',
+        '@tiptap/extension-blockquote',
+        '@tiptap/extension-hard-break',
+        '@tiptap/extension-horizontal-rule',
+        '@tiptap/extension-dropcursor',
+        '@tiptap/extension-placeholder',
       ]
     }
   }

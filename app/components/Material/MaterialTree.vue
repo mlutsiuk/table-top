@@ -57,7 +57,7 @@ const items = (() => {
         :items="items"
         :get-key="(item) => item.title"
       >
-        <h2 class="px-2 !text-base font-semibold text-gray-700 dark:text-gray-200 ">
+        <h2 class="px-2 text-base! font-semibold text-gray-700 dark:text-gray-200 ">
           Materials
         </h2>
 
@@ -67,7 +67,7 @@ const items = (() => {
           :key="item._id"
           :style="{ 'padding-left': `${item.level - 0.5}rem` }"
           v-bind="item.bind"
-          class="my-0.5 flex items-center rounded px-2 py-1 outline-none focus:ring-1 data-[selected]:bg-[--ui-color-primary-900]"
+          class="my-0.5 flex items-center rounded px-2 py-1 outline-none focus:ring-1 data-selected:bg-[--ui-color-primary-900]"
         >
           <template v-if="item.hasChildren">
             <Icon
@@ -92,12 +92,13 @@ const items = (() => {
         </TreeItem>
       </TreeRoot>
     </ScrollAreaViewport>
+
     <ScrollAreaScrollbar
-      class="flex touch-none select-none bg-gray-700 p-0.5 transition-colors duration-[160ms] ease-out hover:bg-gray-600 data-[orientation=vertical]:w-2.5"
+      class="flex touch-none select-none bg-gray-700 p-0.5 transition-colors duration-160 ease-out hover:bg-gray-600 data-[orientation=vertical]:w-2.5"
       orientation="vertical"
     >
       <ScrollAreaThumb
-        class="relative flex-1 rounded-[10px] bg-gray-400 before:absolute before:left-1/2 before:top-1/2 before:size-full before:min-h-[44px] before:min-w-[44px] before:-translate-x-1/2 before:-translate-y-1/2 before:content-['']"
+        class="relative flex-1 rounded-[10px] bg-gray-400 before:absolute before:left-1/2 before:top-1/2 before:size-full before:min-h-11 before:min-w-11 before:-translate-x-1/2 before:-translate-y-1/2 before:content-['']"
       />
     </ScrollAreaScrollbar>
   </ScrollAreaRoot>

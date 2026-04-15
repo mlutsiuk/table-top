@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Editor, EditorContent } from '@tiptap/vue-3'
+import { useEditor, EditorContent } from '@tiptap/vue-3'
 import Document from '@tiptap/extension-document'
 import Text from '@tiptap/extension-text'
 import Paragraph from '@tiptap/extension-paragraph'
@@ -26,7 +26,7 @@ const Title = Heading.extend({
   parseHTML: () => [{ tag: "h1:first-child" }],
 }).configure({ levels: [1] });
 
-const editor = new Editor({
+const editor = useEditor({
   extensions: [
     DocumentWithTitle,
     Title,

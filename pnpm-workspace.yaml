@@ -1,2 +1,8 @@
+onlyBuiltDependencies:
+  - '@prisma/engines'
+  - esbuild
+  - prisma
+  - vue-demi
+
 publicHoistPattern:
-  - "unplugin-vue-router"
+  - unplugin-vue-router
