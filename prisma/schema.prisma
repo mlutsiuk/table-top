@@ -11,11 +11,18 @@ generator json {
   namespace = "PrismaJson"
 }
 
+enum CampaignStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
 model User {
   id         String     @id @default(uuid())
   email      String     @unique
   name       String
   createdAt  DateTime   @default(now()) @map("created_at")
+
   campaigns  Campaign[]
 
   @@map("users")
@@ -25,8 +32,11 @@ model Campaign {
   id              String           @id @default(uuid())
   title           String
   createdAt       DateTime         @default(now()) @map("created_at")
+  status          CampaignStatus   @default(DRAFT)
+
   masterId        String           @map("master_id")
   master          User             @relation(fields: [masterId], references: [id])
+
   folders         Folder[]
   assets          Asset[]
 
@@ -39,10 +49,12 @@ model Folder {
   
   parentId    String?  @map("parent_id")
   parent      Folder?  @relation("SubFolders", fields: [parentId], references: [id])
-  subFolders  Folder[] @relation("SubFolders")
+
   campaignId  String   @map("campaign_id")
   campaign    Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
   assets      Asset[]
+  subFolders  Folder[] @relation("SubFolders")
 
   @@map("folders")
 }
