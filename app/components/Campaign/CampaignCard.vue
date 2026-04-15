@@ -8,7 +8,7 @@ defineProps<{
 
 <template>
   <NuxtLink
-    class="rounded-lg bg-gray-200 hover:bg-gray-300 p-6 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
+    class="block rounded-lg border border-border bg-card text-card-foreground shadow-xs hover:bg-accent hover:text-accent-foreground p-6 transition-colors"
     :to="{ name: 'campaigns-id', params: { id: campaign.id } }"
   >
     <div class="text-lg font-bold">

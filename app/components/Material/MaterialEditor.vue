@@ -58,13 +58,16 @@ const editor = useEditor({
 </script>
 
 <template>
-  <EditorContent class="prose dark:prose-invert max-w-none" :editor="editor" />
+  <EditorContent
+    class="prose dark:prose-invert max-w-none"
+    :editor="editor"
+  />
 </template>
 
 <style>
 .ProseMirror h1.is-empty:nth-child(1)::before,
 .ProseMirror p.is-empty:nth-child(2):last-child::before {
-  opacity: 0.5;
+  color: var(--muted-foreground);
   content: attr(data-placeholder);
   float: left;
   height: 0;

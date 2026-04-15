@@ -4,5 +4,6 @@
 
 <template>
   <MaterialEditor
-   class="grow bg-gray-800" />
+    class="grow"
+  />
 </template>
