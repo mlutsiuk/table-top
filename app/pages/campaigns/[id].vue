@@ -20,15 +20,13 @@ campaignStore.fetchCampaign(route.params.id as string)
     <SplitterPanel
       :min-size="15"
       :max-size="30"
-      class="flex flex-col items-stretch bg-gray-800"
+      class="flex flex-col items-stretch bg-sidebar border-r border-sidebar-border"
     >
-      <MaterialTree
-        class="grow"
-      />
+      <CampaignSidebar class="grow" />
     </SplitterPanel>
 
     <SplitterResizeHandle
-      class="w-0.5 bg-gray-700"
+      class="w-px bg-sidebar-border hover:bg-sidebar-ring transition-colors"
     />
 
     <SplitterPanel
@@ -39,7 +37,7 @@ campaignStore.fetchCampaign(route.params.id as string)
         <h1 class="text-3xl font-medium">
           {{ campaignStore.campaign?.title }}
         </h1>
-        <div class="text-sm dark:text-gray-400">
+        <div class="text-sm text-muted-foreground">
           {{ campaignStore.campaign?.id }}
         </div>
       </div>
