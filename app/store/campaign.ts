@@ -1,5 +1,5 @@
 import type { Campaign } from '@prisma/client'
-import type { FundScheme } from '~/types/campaign'
+import type { FundScheme } from '#shared/types/campaign'
 
 export const useCampaignStore = defineStore('campaign', () => {
   const campaign = ref<Campaign | null>()
