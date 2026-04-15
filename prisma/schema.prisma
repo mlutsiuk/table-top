@@ -40,6 +40,7 @@ model Campaign {
   media           Media[]
   folders         Folder[]
   assets          Asset[]
+  mechanics       Mechanic[]
 
   @@map("campaigns")
 }
@@ -84,6 +85,40 @@ model Asset {
   
   folderId    String  @map("folder_id")
   folder      Folder  @relation(fields: [folderId], references: [id], onDelete: Cascade)
+
+  traits      AssetTrait[]
   
   @@map("assets")
+}
+
+model Mechanic {
+  id         String   @id @default(uuid())
+  key        String
+  name       String
+  /// [MechanicConfig]
+  config     Json
+
+  campaignId String   @map("campaign_id")
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  assetTraits  AssetTrait[]
+  // entityTraits EntityTrait[]
+
+  @@unique([campaignId, name])
+  @@map("mechanics")
+}
+
+model AssetTrait {
+  id         String   @id @default(uuid())
+  /// [AssetTraitData]
+  data       Json
+
+  assetId    String   @map("asset_id")
+  asset      Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  mechanicId String   @map("mechanic_id")
+  mechanic   Mechanic @relation(fields: [mechanicId], references: [id], onDelete: Cascade)
+
+  @@unique([assetId, mechanicId])
+  @@map("asset_traits")
 }
