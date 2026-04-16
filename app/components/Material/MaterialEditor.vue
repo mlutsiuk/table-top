@@ -16,21 +16,32 @@ import HorizontalRule from '@tiptap/extension-horizontal-rule'
 import Dropcursor from '@tiptap/extension-dropcursor'
 import Placeholder from '@tiptap/extension-placeholder'
 
+const props = defineProps<{
+  modelValue?: Record<string, any> | null
+}>()
+
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: Record<string, any>): void
+}>()
+
 const DocumentWithTitle = Document.extend({
-  content: "title block+",
+  content: 'title block+',
 })
 
 const Title = Heading.extend({
-  name: "title",
-  group: "title",
-  parseHTML: () => [{ tag: "h1:first-child" }],
-}).configure({ levels: [1] });
+  name: 'title',
+  group: 'title',
+  parseHTML: () => [{ tag: 'h1:first-child' }],
+}).configure({ levels: [1] })
+
+let updatingFromProp = false
 
 const editor = useEditor({
+  content: props.modelValue ?? undefined,
   extensions: [
     DocumentWithTitle,
     Title,
-    Heading,
+    Heading.configure({ levels: [2, 3, 4] }),
     Text,
     Paragraph,
     BulletList,
@@ -46,22 +57,47 @@ const editor = useEditor({
     Placeholder.configure({
       showOnlyCurrent: false,
       placeholder: ({ node }) => {
-        if (node.type.name === "title") {
-          return "What's the title?";
-        }
-
-        return "What's the story?";
+        if (node.type.name === 'title') return "What's the title?"
+        return "What's the story?"
       },
     }),
-  ]
+  ],
+  onUpdate: ({ editor }) => {
+    if (!updatingFromProp) {
+      emit('update:modelValue', editor.getJSON())
+    }
+  },
 })
+
+watch(
+  () => props.modelValue,
+  (val) => {
+    if (!val || !editor.value || editor.value.isDestroyed) return
+    const current = JSON.stringify(editor.value.getJSON())
+    const incoming = JSON.stringify(val)
+    if (current !== incoming) {
+      updatingFromProp = true
+      editor.value.commands.setContent(val)
+      updatingFromProp = false
+    }
+  },
+)
+
+onBeforeUnmount(() => editor.value?.destroy())
 </script>
 
 <template>
-  <EditorContent
-    class="prose dark:prose-invert max-w-none"
-    :editor="editor"
-  />
+  <div class="flex flex-col min-h-0">
+    <MaterialEditorToolbar
+      v-if="editor"
+      :editor="editor"
+      class="sticky top-0 z-10 shrink-0"
+    />
+    <EditorContent
+      class="prose dark:prose-invert max-w-none flex-1 overflow-y-auto px-8 py-6"
+      :editor="editor"
+    />
+  </div>
 </template>
 
 <style>

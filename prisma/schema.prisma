@@ -80,7 +80,8 @@ model Folder {
 model Asset {
   id          String   @id @default(uuid())
   title       String
-  
+  content     Json?
+
   campaignId  String   @map("campaign_id")
   campaign    Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   

@@ -3,6 +3,36 @@ import { z } from 'zod'
 import { privateProcedure, router } from '../trpc'
 
 export const assetRouter = router({
+  getById: privateProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .query(async ({ input, ctx }) => {
+      const asset = await ctx.prisma.asset.findFirst({
+        where: { id: input.id, campaign: { masterId: ctx.auth.id } }
+      })
+      if (!asset) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Asset not found' })
+      }
+      return asset
+    }),
+
+  saveContent: privateProcedure
+    .input(z.object({
+      id: z.string().uuid(),
+      content: z.any()
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const asset = await ctx.prisma.asset.findFirst({
+        where: { id: input.id, campaign: { masterId: ctx.auth.id } }
+      })
+      if (!asset) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Asset not found' })
+      }
+      return ctx.prisma.asset.update({
+        where: { id: input.id },
+        data: { content: input.content }
+      })
+    }),
+
   create: privateProcedure
     .input(z.object({
       campaignId: z.string().uuid(),
