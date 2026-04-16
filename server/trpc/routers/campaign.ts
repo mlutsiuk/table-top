@@ -1,3 +1,4 @@
+import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import { privateProcedure, router } from '../trpc'
 
@@ -20,6 +21,28 @@ export const campaignRouter = router({
       }
     })
   }),
+  updateCampaign: privateProcedure
+    .input(z.object({
+      campaignId: z.string().uuid(),
+      title: z.string().min(1).max(100).optional(),
+      status: z.enum(['DRAFT', 'ACTIVE', 'ARCHIVED']).optional(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const campaign = await ctx.prisma.campaign.findFirst({
+        where: { id: input.campaignId, masterId: ctx.auth.id }
+      })
+      if (!campaign) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Campaign not found' })
+      }
+      return ctx.prisma.campaign.update({
+        where: { id: input.campaignId },
+        data: {
+          ...(input.title !== undefined && { title: input.title }),
+          ...(input.status !== undefined && { status: input.status }),
+        }
+      })
+    }),
+
   createCampaign: privateProcedure.input(
     z.object({
       title: z.string().min(1).max(100)

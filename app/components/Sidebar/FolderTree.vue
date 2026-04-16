@@ -50,7 +50,10 @@ async function fetchTree() {
   }
 }
 
+const campaignStore = useCampaignStore()
+
 onMounted(fetchTree)
+watch(() => campaignStore.treeVersion, fetchTree)
 
 const treeItems = computed<TreeNode[]>(() => {
   if (!rawData.value) return []

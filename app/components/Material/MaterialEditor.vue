@@ -22,6 +22,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: Record<string, any>): void
+  (e: 'update:title', value: string): void
 }>()
 
 const DocumentWithTitle = Document.extend({
@@ -63,9 +64,10 @@ const editor = useEditor({
     }),
   ],
   onUpdate: ({ editor }) => {
-    if (!updatingFromProp) {
-      emit('update:modelValue', editor.getJSON())
-    }
+    if (updatingFromProp) return
+    emit('update:modelValue', editor.getJSON())
+    const titleText = editor.state.doc.firstChild?.textContent ?? ''
+    emit('update:title', titleText)
   },
 })
 

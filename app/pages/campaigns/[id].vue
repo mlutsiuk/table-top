@@ -31,17 +31,8 @@ campaignStore.fetchCampaign(route.params.id as string)
 
     <SplitterPanel
       :min-size="20"
-      class="flex flex-col px-2 py-6"
+      class="flex min-h-0 flex-col"
     >
-      <div class="flex flex-col gap-1">
-        <h1 class="text-3xl font-medium">
-          {{ campaignStore.campaign?.title }}
-        </h1>
-        <div class="text-sm text-muted-foreground">
-          {{ campaignStore.campaign?.id }}
-        </div>
-      </div>
-
       <NuxtPage />
     </SplitterPanel>
   </SplitterGroup>

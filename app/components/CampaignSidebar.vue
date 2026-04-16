@@ -1,10 +1,29 @@
 <script setup lang="ts">
 const route = useRoute('campaigns-id')
 const campaignId = computed(() => route.params.id as string)
+const campaignStore = useCampaignStore()
+
+const statusLabel: Record<string, string> = {
+  DRAFT: 'Draft',
+  ACTIVE: 'Active',
+  ARCHIVED: 'Archived',
+}
 </script>
 
 <template>
   <div class="flex h-full flex-col text-sidebar-foreground">
+    <!-- Campaign header -->
+    <div class="px-3 py-3">
+      <div class="truncate text-sm font-semibold leading-tight">
+        {{ campaignStore.campaign?.title ?? '...' }}
+      </div>
+      <div class="mt-0.5 text-xs text-muted-foreground">
+        {{ campaignStore.campaign ? statusLabel[campaignStore.campaign.status] : '' }}
+      </div>
+    </div>
+
+    <div class="mx-2 border-t border-sidebar-border" />
+
     <!-- Nav -->
     <nav class="flex flex-col gap-0.5 p-2">
       <NuxtLink

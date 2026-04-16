@@ -1,49 +1,40 @@
 import type { Campaign } from '@prisma/client'
-import type { FundScheme } from '#shared/types/campaign'
 
 export const useCampaignStore = defineStore('campaign', () => {
-  const campaign = ref<Campaign | null>()
+  const campaign = ref<Campaign | null>(null)
+  const treeVersion = ref(0)
 
   const fetchCampaign = async (campaignId: string) => {
     try {
-      const response = await useTrpc().campaign.getCampaignDetails.query({
-        campaignId
-      })
-
-      if (response)
-        campaign.value = response
-    }
-    catch {
+      const response = await useTrpc().campaign.getCampaignDetails.query({ campaignId })
+      if (response) campaign.value = response
+    } catch {
       // TODO
     }
   }
 
-  const saveCampaign = (newCampaign: Campaign) => {
-    campaign.value = newCampaign
-  }
-
-  const updateFundsScheme = async (newScheme: FundScheme[]) => {
-    if (!campaign.value)
-      return
-
+  const updateCampaign = async (data: { title?: string; status?: Campaign['status'] }) => {
+    if (!campaign.value) return
     try {
-      // const updatedCampaign = await useTrpc().campaign.updateFundScheme.mutate({
-      //   campaignId: campaign.value.id,
-      //   fundScheme: newScheme
-      // })
-
-      // saveCampaign(updatedCampaign)
-    }
-    catch {
+      const updated = await useTrpc().campaign.updateCampaign.mutate({
+        campaignId: campaign.value.id,
+        ...data
+      })
+      campaign.value = updated
+    } catch {
       // TODO
     }
+  }
+
+  const invalidateTree = () => {
+    treeVersion.value++
   }
 
   return {
     campaign,
-
+    treeVersion,
     fetchCampaign,
-    saveCampaign,
-    updateFundsScheme
+    updateCampaign,
+    invalidateTree,
   }
 })
