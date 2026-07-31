@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:18
+    container_name: table-top-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tabletop
+      POSTGRES_PASSWORD: tabletop
+      POSTGRES_DB: tabletop
+    ports:
+      # 5432/5433 are used by other local projects, so table-top sits on 5434
+      - '5434:5432'
+    volumes:
+      # postgres:18+ expects a single mount at /var/lib/postgresql,
+      # data then lives in a version-specific subdirectory
+      - table-top-pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U tabletop -d tabletop']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  table-top-pgdata:
