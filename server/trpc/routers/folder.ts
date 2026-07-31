@@ -93,5 +93,42 @@ export const folderRouter = router({
       }
 
       await deleteFolderRecursive(ctx.prisma, input.id)
+    }),
+
+  move: privateProcedure
+    .input(z.object({
+      id: z.string().uuid(),
+      parentId: z.string().uuid().nullable()
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const folder = await ctx.prisma.folder.findFirst({
+        where: { id: input.id, campaign: { masterId: ctx.auth.id } }
+      })
+      if (!folder) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Folder not found' })
+      }
+
+      if (input.parentId) {
+        // Prevent moving a folder into its own subtree
+        async function isDescendant(ancestorId: string, targetId: string): Promise<boolean> {
+          if (ancestorId === targetId) return true
+          const children = await ctx.prisma.folder.findMany({
+            where: { parentId: ancestorId },
+            select: { id: true }
+          })
+          for (const child of children) {
+            if (await isDescendant(child.id, targetId)) return true
+          }
+          return false
+        }
+        if (await isDescendant(input.id, input.parentId)) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Cannot move a folder into its own subtree' })
+        }
+      }
+
+      return ctx.prisma.folder.update({
+        where: { id: input.id },
+        data: { parentId: input.parentId }
+      })
     })
 })

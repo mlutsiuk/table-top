@@ -1,19 +1,7 @@
 <script setup lang="ts">
-const campaignStore = useCampaignStore()
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-const tabs = [{
-  slot: 'funds',
-  icon: 'i-ri-copper-coin-fill',
-  label: 'Funds'
-}, {
-  slot: 'sheets',
-  icon: 'i-material-symbols-edit-document-rounded',
-  label: 'Player sheets'
-}, {
-  slot: 'players',
-  icon: 'i-mdi-account-multiple',
-  label: 'Players'
-}]
+const campaignStore = useCampaignStore()
 </script>
 
 <template>
@@ -28,33 +16,38 @@ const tabs = [{
     class="flex flex-row gap-8"
   >
     <div class="grow">
-      <UTabs
-        :items="tabs"
-        class="w-full"
-      >
-        <template #funds>
-          <CampaignFund
-            :campaign="campaignStore.campaign"
-          />
-        </template>
+      <Tabs default-value="funds" class="w-full">
+        <TabsList>
+          <TabsTrigger value="funds">
+            <Icon name="material-symbols:paid-rounded" class="size-4 mr-1.5" />
+            Funds
+          </TabsTrigger>
+          <TabsTrigger value="sheets">
+            <Icon name="material-symbols:edit-document-rounded" class="size-4 mr-1.5" />
+            Player sheets
+          </TabsTrigger>
+          <TabsTrigger value="players">
+            <Icon name="lucide:users" class="size-4 mr-1.5" />
+            Players
+          </TabsTrigger>
+        </TabsList>
 
-        <template #players>
+        <TabsContent value="funds">
+          <CampaignFund :campaign="campaignStore.campaign" />
+        </TabsContent>
+        <TabsContent value="players">
           Players list
-        </template>
-
-        <template #sheets>
+        </TabsContent>
+        <TabsContent value="sheets">
           Player sheets schemas view
-        </template>
-      </UTabs>
+        </TabsContent>
+      </Tabs>
     </div>
 
     <div class="hidden min-w-32 flex-col gap-2 rounded-md border p-4 xl:flex">
       <h2 class="text-xl font-bold">
         Details
       </h2>
-
-      <!-- <UDivider /> -->
-
       <pre>{{ campaignStore.campaign }}</pre>
     </div>
   </div>

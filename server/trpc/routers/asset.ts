@@ -86,5 +86,24 @@ export const assetRouter = router({
       }
 
       await ctx.prisma.asset.delete({ where: { id: input.id } })
+    }),
+
+  move: privateProcedure
+    .input(z.object({
+      id: z.string().uuid(),
+      folderId: z.string().uuid()
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const asset = await ctx.prisma.asset.findFirst({
+        where: { id: input.id, campaign: { masterId: ctx.auth.id } }
+      })
+      if (!asset) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Asset not found' })
+      }
+
+      return ctx.prisma.asset.update({
+        where: { id: input.id },
+        data: { folderId: input.folderId }
+      })
     })
 })

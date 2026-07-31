@@ -26,12 +26,25 @@ export type TreeContext = {
   addAsset: (folderId: string) => Promise<void>
   deleteFolder: (id: string) => Promise<void>
   deleteAsset: (id: string) => Promise<void>
+  // Drag-and-drop
+  draggedNode: Ref<TreeNode | null>
+  requestMove: (sourceId: string, sourceType: 'folder' | 'asset', sourceTitle: string, targetFolderId: string, targetFolderTitle: string) => void
 }
 
 export const TREE_CONTEXT_KEY = Symbol('treeContext')
 </script>
 
 <script setup lang="ts">
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+
 const props = defineProps<{ campaignId: string }>()
 
 const trpc = useTrpc()
@@ -145,6 +158,47 @@ async function deleteAsset(id: string) {
   await fetchTree()
 }
 
+// --- Drag-and-drop ---
+
+const draggedNode = ref<TreeNode | null>(null)
+
+type PendingMove = {
+  sourceId: string
+  sourceType: 'folder' | 'asset'
+  sourceTitle: string
+  targetFolderId: string
+  targetFolderTitle: string
+}
+
+const pendingMove = ref<PendingMove | null>(null)
+
+function requestMove(
+  sourceId: string,
+  sourceType: 'folder' | 'asset',
+  sourceTitle: string,
+  targetFolderId: string,
+  targetFolderTitle: string
+) {
+  pendingMove.value = { sourceId, sourceType, sourceTitle, targetFolderId, targetFolderTitle }
+}
+
+async function confirmMove() {
+  if (!pendingMove.value) return
+  const { sourceId, sourceType, targetFolderId } = pendingMove.value
+  pendingMove.value = null
+
+  if (sourceType === 'folder') {
+    await trpc.folder.move.mutate({ id: sourceId, parentId: targetFolderId })
+  } else {
+    await trpc.asset.move.mutate({ id: sourceId, folderId: targetFolderId })
+  }
+  await fetchTree()
+}
+
+function cancelMove() {
+  pendingMove.value = null
+}
+
 provide<TreeContext>(TREE_CONTEXT_KEY, {
   editingId,
   editingTitle,
@@ -154,7 +208,9 @@ provide<TreeContext>(TREE_CONTEXT_KEY, {
   addFolder,
   addAsset,
   deleteFolder,
-  deleteAsset
+  deleteAsset,
+  draggedNode,
+  requestMove,
 })
 </script>
 
@@ -194,4 +250,23 @@ provide<TreeContext>(TREE_CONTEXT_KEY, {
       </template>
     </div>
   </div>
+
+  <!-- Move confirmation dialog -->
+  <Dialog :open="!!pendingMove" @update:open="val => !val && cancelMove()">
+    <DialogContent class="sm:max-w-sm">
+      <DialogHeader>
+        <DialogTitle>Move item</DialogTitle>
+        <DialogDescription>
+          Move
+          <span class="font-medium text-foreground">"{{ pendingMove?.sourceTitle }}"</span>
+          into
+          <span class="font-medium text-foreground">"{{ pendingMove?.targetFolderTitle }}"</span>?
+        </DialogDescription>
+      </DialogHeader>
+      <DialogFooter>
+        <Button variant="outline" @click="cancelMove">Cancel</Button>
+        <Button @click="confirmMove">Move</Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 </template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useDebounceFn } from '@vueuse/core'
 import type { CampaignStatus } from '@prisma/client'
+import { RadioGroupRoot, RadioGroupItem } from 'reka-ui'
 
 const campaignStore = useCampaignStore()
 
@@ -79,20 +80,28 @@ const createdAt = computed(() => {
       <!-- Status -->
       <div class="flex flex-col gap-1.5">
         <span class="text-sm font-medium">Status</span>
-        <div class="flex gap-2">
-          <button
+        <RadioGroupRoot
+          :model-value="campaignStore.campaign?.status"
+          class="flex gap-2"
+          @update:model-value="setStatus($event as CampaignStatus)"
+        >
+          <RadioGroupItem
             v-for="s in statuses"
             :key="s.value"
-            class="flex flex-1 flex-col gap-0.5 rounded-lg border px-3 py-2.5 text-left text-sm transition-colors"
-            :class="campaignStore.campaign?.status === s.value
-              ? 'border-ring bg-accent text-accent-foreground'
-              : 'border-border hover:bg-accent/50'"
-            @click="setStatus(s.value)"
+            :value="s.value"
+            as-child
           >
-            <span class="font-medium">{{ s.label }}</span>
-            <span class="text-xs text-muted-foreground">{{ s.description }}</span>
-          </button>
-        </div>
+            <button
+              class="flex flex-1 flex-col gap-0.5 rounded-lg border px-3 py-2.5 text-left text-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              :class="campaignStore.campaign?.status === s.value
+                ? 'border-ring bg-accent text-accent-foreground'
+                : 'border-border hover:bg-accent/50'"
+            >
+              <span class="font-medium">{{ s.label }}</span>
+              <span class="text-xs text-muted-foreground">{{ s.description }}</span>
+            </button>
+          </RadioGroupItem>
+        </RadioGroupRoot>
       </div>
     </section>
 
