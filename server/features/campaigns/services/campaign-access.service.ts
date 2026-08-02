@@ -1,5 +1,5 @@
-import { TRPCError } from '@trpc/server'
 import type { Campaign, PrismaClient } from '@prisma/client'
+import { ForbiddenError, NotFoundError } from '~~/server/infrastructure/errors'
 import type { CampaignRole } from '#shared/types/campaign'
 
 /**
@@ -19,7 +19,7 @@ export type CampaignAccess = {
   role: CampaignRole
 }
 
-const notFound = (message: string) => new TRPCError({ code: 'NOT_FOUND', message })
+const notFound = (message: string) => new NotFoundError(message)
 
 /**
  * Bound to one caller for the duration of a request, so the rules read as
@@ -50,10 +50,7 @@ export function createCampaignAccessService(prisma: PrismaClient, userId: string
     const { campaign, role } = await requireCampaign(campaignId)
 
     if (role !== 'master') {
-      throw new TRPCError({
-        code: 'FORBIDDEN',
-        message: 'Only the campaign master can do this'
-      })
+      throw new ForbiddenError('Only the campaign master can do this')
     }
 
     return campaign

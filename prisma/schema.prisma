@@ -84,6 +84,9 @@ model Folder {
   id          String   @id @default(uuid())
   title       String
 
+  /// Denormalized folder path, self-inclusive
+  path        String[]
+
   parentId    String?  @map("parent_id")
   parent      Folder?  @relation("SubFolders", fields: [parentId], references: [id], onDelete: Cascade)
 
@@ -95,6 +98,8 @@ model Folder {
 
   @@index([campaignId])
   @@index([parentId])
+  /// Containment (`path @> ARRAY[id]`) is how a whole subtree is selected on move.
+  @@index([path], type: Gin)
   @@map("folders")
 }
 

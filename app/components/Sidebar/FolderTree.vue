@@ -53,7 +53,20 @@ const trpc = useTrpc()
 
 // --- Data ---
 
-const rawData = ref<{ folders: { id: string; title: string; parentId: string | null }[]; assets: { id: string; title: string; folderId: string }[] } | null>(null)
+type TreeResponse = {
+  folders: {
+    id: string
+    title: string
+    parentId: string | null
+  }[]
+  assets: {
+    id: string
+    title: string
+    folderId: string
+  }[]
+}
+
+const rawData = ref<TreeResponse | null>(null)
 const pending = ref(false)
 
 async function fetchTree() {
