@@ -7,10 +7,7 @@ const { data, status } = useFetch('/api/users')
 </script>
 
 <template>
-  <div class="flex flex-col gap-3 rounded border-2 border-gray-200 px-4 py-8">
-    <div class="flex flex-row gap-2">
-      <ColorModeButton />
-    </div>
+  <div class="flex flex-col gap-3 rounded border-2 border-border px-4 py-8">
     <pre>{{ data }}</pre>
 
     {{ status }}

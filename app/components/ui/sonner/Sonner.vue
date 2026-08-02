@@ -4,7 +4,9 @@ import { CircleCheckIcon, InfoIcon, Loader2Icon, OctagonXIcon, TriangleAlertIcon
 import { Toaster as Sonner } from "vue-sonner"
 import { cn } from "@/lib/utils"
 
-const props = defineProps<ToasterProps>()
+const props = withDefaults(defineProps<ToasterProps>(), {
+  theme: "dark",
+})
 </script>
 
 <template>

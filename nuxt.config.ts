@@ -40,6 +40,18 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/tailwind.css'],
 
+  app: {
+    head: {
+      htmlAttrs: {
+        lang: 'en',
+        class: 'dark'
+      },
+      meta: [
+        { name: 'color-scheme', content: 'dark' }
+      ]
+    }
+  },
+
   devtools: { enabled: true },
 
   typescript: {

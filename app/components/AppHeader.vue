@@ -5,7 +5,10 @@ const { user } = storeToRefs(useAuthStore())
 <template>
   <div class="flex flex-row items-center justify-between gap-6 border-b p-6 shadow-sm">
     <div class="flex flex-row items-center gap-4">
-      <Icon name="fa6-solid:dice-d20" class="size-6" />
+      <Icon
+        name="fa6-solid:dice-d20"
+        class="size-6"
+      />
 
       <div class="text-3xl font-medium">
         Table-Top
@@ -15,7 +18,6 @@ const { user } = storeToRefs(useAuthStore())
     <div class="grow">
       <Button
         variant="link"
-        color="neutral"
         :to="{ name: 'campaigns' }"
       >
         Campaigns
@@ -23,12 +25,7 @@ const { user } = storeToRefs(useAuthStore())
     </div>
 
     <div class="flex flex-row items-center gap-2">
-      <ColorModeButton />
-
-      <UserAvatar
-        :user="user!"
-        size="md"
-      />
+      <UserAvatar :user="user!" />
     </div>
   </div>
 </template>

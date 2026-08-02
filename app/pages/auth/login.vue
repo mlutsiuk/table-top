@@ -18,11 +18,7 @@ const login = async () => {
 </script>
 
 <template>
-  <div class="absolute right-6 top-6 flex flex-row gap-2">
-    <ColorModeButton />
-  </div>
-
-  <div class="flex flex-col gap-4 rounded-xl border bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+  <div class="flex flex-col gap-4 rounded-xl border border-border bg-card p-6 text-card-foreground">
     <h1 class="text-3xl font-bold">
       Log in
     </h1>

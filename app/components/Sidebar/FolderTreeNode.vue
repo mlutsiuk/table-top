@@ -18,6 +18,8 @@ const props = defineProps<{
 const route = useRoute()
 const ctx = inject<TreeContext>(TREE_CONTEXT_KEY)!
 
+const params = computed(() => route.params as { id: string, assetid?: string })
+
 const isExpanded = ref(true)
 
 const paddingLeft = computed(() => `${props.level * 0.875 + 0.5}rem`)
@@ -29,7 +31,7 @@ const isEditing = computed(() => ctx.editingId.value === props.node.id)
 
 const isActiveAsset = computed(() => {
   if (!isAsset.value) return false
-  return route.params.assetid === props.node.id
+  return params.value.assetid === props.node.id
 })
 
 function onRenameKeydown(e: KeyboardEvent) {
@@ -147,7 +149,13 @@ function onDrop(e: DragEvent) {
           />
           <NuxtLink
             v-else-if="isAsset"
-            :to="{ name: 'campaigns-id-assets-assetid', params: { id: route.params.id, assetid: node.id } }"
+            :to="{
+              name: 'campaigns-id-assets-assetid',
+              params: {
+                id: params.id,
+                assetid: node.id
+              }
+            }"
             class="min-w-0 flex-1 truncate"
             @click.stop
           >

@@ -61,11 +61,11 @@ const createdAt = computed(() => {
       <div class="flex flex-col gap-1.5">
         <label class="text-sm font-medium" for="campaign-title">Name</label>
         <div class="relative">
-          <input
+          <Input
             id="campaign-title"
-            :value="title"
+            :model-value="title"
             type="text"
-            class="file:text-foreground placeholder:text-muted-foreground dark:bg-input/30 border-input h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-xs outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
+            class="pr-16"
             @input="onTitleInput"
           />
           <span
