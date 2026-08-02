@@ -13,7 +13,7 @@
     "start": "node .output/server/index.mjs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "test:typecheck": "vue-tsc --noEmit"
+    "test:typecheck": "nuxt typecheck"
   },
   "dependencies": {
     "@nuxtjs/tailwindcss": "7.0.0-beta.1",
