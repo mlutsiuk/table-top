@@ -6,33 +6,42 @@ definePageMeta({
 })
 
 const route = useRoute('auth-google-callback')
+const router = useRouter()
+const authStore = useAuthStore()
 
-if (!route.query.code) {
-  toast.error(`Failed to login, try again`)
+async function handleCallback() {
+  const code = route.query.code
 
-  useRouter().push('/auth/login')
+  if (typeof code !== 'string' || !code) {
+    toast.error('Failed to log in, try again')
+    await router.push({ name: 'auth-login' })
+    return
+  }
+
+  try {
+    const {
+      token,
+      user
+    } = await useTrpc().auth.handleGoogleCallback.query({ code })
+
+    authStore.saveToken(token)
+    await authStore.fetchUser()
+
+    toast.success(`Hello, ${user.name}`, {
+      description: 'You have successfully logged in'
+    })
+
+    await router.push({ name: 'index' })
+  }
+  catch {
+    toast.error('Failed to log in, try again')
+    await router.push({ name: 'auth-login' })
+  }
 }
 
-const response = await useTrpc().auth.handleGoogleCallback.query({
-  code: route.query.code as string
-})
-if (response) {
-  useAuthStore().saveToken(response.token)
-  await useAuthStore().fetchUser()
-
-  toast({
-    title: `Hello, ${response.user.name}`,
-    description: 'You have successfully logged in'
-  })
-
-  useRouter().push({ name: 'index' })
-}
+onMounted(handleCallback)
 </script>
 
 <template>
-  <Icon
-    name="i-svg-spinners-180-ring"
-    class="text-primary size-10"
-    dynamic
-  />
+  <Loader class="size-10 text-primary" />
 </template>
