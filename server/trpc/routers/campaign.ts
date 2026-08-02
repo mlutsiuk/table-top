@@ -19,7 +19,7 @@ export const campaignRouter = router({
 
   getCampaignDetails: privateProcedure.input(
     z.object({
-      campaignId: z.string().uuid()
+      campaignId: z.uuid()
     })
   ).query(async ({ input, ctx }) => {
     const { campaign, role } = await ctx.campaignAccess.requireCampaign(input.campaignId)
@@ -32,7 +32,7 @@ export const campaignRouter = router({
 
   updateCampaign: privateProcedure
     .input(z.object({
-      campaignId: z.string().uuid(),
+      campaignId: z.uuid(),
       title: z.string().min(1).max(100).optional(),
       status: z.enum(CAMPAIGN_STATUSES).optional()
     }))
@@ -62,7 +62,7 @@ export const campaignRouter = router({
   }),
 
   getMembers: privateProcedure
-    .input(z.object({ campaignId: z.string().uuid() }))
+    .input(z.object({ campaignId: z.uuid() }))
     .query(async ({ input, ctx }): Promise<CampaignMemberDto[]> => {
       const { campaign } = await ctx.campaignAccess.requireCampaign(input.campaignId)
 
@@ -85,8 +85,8 @@ export const campaignRouter = router({
 
   addPlayer: privateProcedure
     .input(z.object({
-      campaignId: z.string().uuid(),
-      email: z.string().email()
+      campaignId: z.uuid(),
+      email: z.email()
     }))
     .mutation(async ({ input, ctx }) => {
       const campaign = await ctx.campaignAccess.requireMaster(input.campaignId)
@@ -122,8 +122,8 @@ export const campaignRouter = router({
 
   removePlayer: privateProcedure
     .input(z.object({
-      campaignId: z.string().uuid(),
-      userId: z.string().uuid()
+      campaignId: z.uuid(),
+      userId: z.uuid()
     }))
     .mutation(async ({ input, ctx }) => {
       await ctx.campaignAccess.requireMaster(input.campaignId)

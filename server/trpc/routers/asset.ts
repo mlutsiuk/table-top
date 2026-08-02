@@ -4,7 +4,7 @@ import { privateProcedure, router } from '../trpc'
 
 export const assetRouter = router({
   getById: privateProcedure
-    .input(z.object({ id: z.string().uuid() }))
+    .input(z.object({ id: z.uuid() }))
     .query(async ({ input, ctx }) => {
       const asset = await ctx.prisma.asset.findUnique({ where: { id: input.id } })
       if (!asset) {
@@ -18,7 +18,7 @@ export const assetRouter = router({
 
   saveContent: privateProcedure
     .input(z.object({
-      id: z.string().uuid(),
+      id: z.uuid(),
       content: z.any()
     }))
     .mutation(async ({ input, ctx }) => {
@@ -32,7 +32,7 @@ export const assetRouter = router({
 
   create: privateProcedure
     .input(z.object({
-      folderId: z.string().uuid(),
+      folderId: z.uuid(),
       title: z.string().min(1).max(100)
     }))
     .mutation(async ({ input, ctx }) => {
@@ -49,7 +49,7 @@ export const assetRouter = router({
 
   rename: privateProcedure
     .input(z.object({
-      id: z.string().uuid(),
+      id: z.uuid(),
       title: z.string().min(1).max(100)
     }))
     .mutation(async ({ input, ctx }) => {
@@ -62,7 +62,7 @@ export const assetRouter = router({
     }),
 
   delete: privateProcedure
-    .input(z.object({ id: z.string().uuid() }))
+    .input(z.object({ id: z.uuid() }))
     .mutation(async ({ input, ctx }) => {
       const asset = await ctx.campaignAccess.requireWritableAsset(input.id)
 
@@ -71,8 +71,8 @@ export const assetRouter = router({
 
   move: privateProcedure
     .input(z.object({
-      id: z.string().uuid(),
-      folderId: z.string().uuid()
+      id: z.uuid(),
+      folderId: z.uuid()
     }))
     .mutation(async ({ input, ctx }) => {
       const asset = await ctx.campaignAccess.requireWritableAsset(input.id)

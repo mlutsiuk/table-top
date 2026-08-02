@@ -26,7 +26,7 @@ async function isDescendant(prisma: PrismaClient, ancestorId: string, candidateI
 
 export const folderRouter = router({
   getTree: privateProcedure
-    .input(z.object({ campaignId: z.string().uuid() }))
+    .input(z.object({ campaignId: z.uuid() }))
     .query(async ({ input, ctx }) => {
       await ctx.campaignAccess.requireCampaign(input.campaignId)
 
@@ -46,8 +46,8 @@ export const folderRouter = router({
 
   create: privateProcedure
     .input(z.object({
-      campaignId: z.string().uuid(),
-      parentId: z.string().uuid().optional(),
+      campaignId: z.uuid(),
+      parentId: z.uuid().optional(),
       title: z.string().min(1).max(100)
     }))
     .mutation(async ({ input, ctx }) => {
@@ -73,7 +73,7 @@ export const folderRouter = router({
 
   rename: privateProcedure
     .input(z.object({
-      id: z.string().uuid(),
+      id: z.uuid(),
       title: z.string().min(1).max(100)
     }))
     .mutation(async ({ input, ctx }) => {
@@ -86,7 +86,7 @@ export const folderRouter = router({
     }),
 
   delete: privateProcedure
-    .input(z.object({ id: z.string().uuid() }))
+    .input(z.object({ id: z.uuid() }))
     .mutation(async ({ input, ctx }) => {
       const folder = await ctx.campaignAccess.requireWritableFolder(input.id)
 
@@ -95,8 +95,8 @@ export const folderRouter = router({
 
   move: privateProcedure
     .input(z.object({
-      id: z.string().uuid(),
-      parentId: z.string().uuid().nullable()
+      id: z.uuid(),
+      parentId: z.uuid().nullable()
     }))
     .mutation(async ({ input, ctx }) => {
       const folder = await ctx.campaignAccess.requireWritableFolder(input.id)
