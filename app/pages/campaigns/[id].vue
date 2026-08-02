@@ -8,7 +8,7 @@ definePageMeta({
 const route = useRoute('campaigns-id')
 const campaignStore = useCampaignStore()
 
-campaignStore.fetchCampaign(route.params.id as string)
+campaignStore.ensureCampaign(route.params.id as string)
 </script>
 
 <template>

@@ -6,12 +6,13 @@ export const assetRouter = router({
   getById: privateProcedure
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ input, ctx }) => {
-      const asset = await ctx.prisma.asset.findFirst({
-        where: { id: input.id, campaign: { masterId: ctx.auth.id } }
-      })
+      const asset = await ctx.prisma.asset.findUnique({ where: { id: input.id } })
       if (!asset) {
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Asset not found' })
       }
+
+      await ctx.campaignAccess.requireCampaign(asset.campaignId)
+
       return asset
     }),
 
@@ -21,37 +22,27 @@ export const assetRouter = router({
       content: z.any()
     }))
     .mutation(async ({ input, ctx }) => {
-      const asset = await ctx.prisma.asset.findFirst({
-        where: { id: input.id, campaign: { masterId: ctx.auth.id } }
-      })
-      if (!asset) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'Asset not found' })
-      }
+      const asset = await ctx.campaignAccess.requireWritableAsset(input.id)
+
       return ctx.prisma.asset.update({
-        where: { id: input.id },
+        where: { id: asset.id },
         data: { content: input.content }
       })
     }),
 
   create: privateProcedure
     .input(z.object({
-      campaignId: z.string().uuid(),
       folderId: z.string().uuid(),
       title: z.string().min(1).max(100)
     }))
     .mutation(async ({ input, ctx }) => {
-      const folder = await ctx.prisma.folder.findFirst({
-        where: { id: input.folderId, campaign: { masterId: ctx.auth.id } }
-      })
-      if (!folder) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'Folder not found' })
-      }
+      const folder = await ctx.campaignAccess.requireWritableFolder(input.folderId)
 
       return ctx.prisma.asset.create({
         data: {
           title: input.title,
-          campaignId: input.campaignId,
-          folderId: input.folderId
+          campaignId: folder.campaignId,
+          folderId: folder.id
         }
       })
     }),
@@ -62,15 +53,10 @@ export const assetRouter = router({
       title: z.string().min(1).max(100)
     }))
     .mutation(async ({ input, ctx }) => {
-      const asset = await ctx.prisma.asset.findFirst({
-        where: { id: input.id, campaign: { masterId: ctx.auth.id } }
-      })
-      if (!asset) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'Asset not found' })
-      }
+      const asset = await ctx.campaignAccess.requireWritableAsset(input.id)
 
       return ctx.prisma.asset.update({
-        where: { id: input.id },
+        where: { id: asset.id },
         data: { title: input.title }
       })
     }),
@@ -78,14 +64,9 @@ export const assetRouter = router({
   delete: privateProcedure
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ input, ctx }) => {
-      const asset = await ctx.prisma.asset.findFirst({
-        where: { id: input.id, campaign: { masterId: ctx.auth.id } }
-      })
-      if (!asset) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'Asset not found' })
-      }
+      const asset = await ctx.campaignAccess.requireWritableAsset(input.id)
 
-      await ctx.prisma.asset.delete({ where: { id: input.id } })
+      await ctx.prisma.asset.delete({ where: { id: asset.id } })
     }),
 
   move: privateProcedure
@@ -94,16 +75,18 @@ export const assetRouter = router({
       folderId: z.string().uuid()
     }))
     .mutation(async ({ input, ctx }) => {
-      const asset = await ctx.prisma.asset.findFirst({
-        where: { id: input.id, campaign: { masterId: ctx.auth.id } }
+      const asset = await ctx.campaignAccess.requireWritableAsset(input.id)
+
+      const target = await ctx.prisma.folder.findFirst({
+        where: { id: input.folderId, campaignId: asset.campaignId }
       })
-      if (!asset) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'Asset not found' })
+      if (!target) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Target folder not found' })
       }
 
       return ctx.prisma.asset.update({
-        where: { id: input.id },
-        data: { folderId: input.folderId }
+        where: { id: asset.id },
+        data: { folderId: target.id }
       })
     })
 })

@@ -10,6 +10,7 @@
 import { TRPCError, initTRPC } from '@trpc/server'
 import superjson from 'superjson'
 import type { Context } from '~~/server/trpc/context'
+import { createCampaignAccessService } from '~~/server/features/campaigns/services/campaign-access.service'
 
 const t = initTRPC.context<Context>().create({
   transformer: superjson
@@ -29,7 +30,8 @@ export const privateProcedure = t.procedure.use((opts) => {
 
   return opts.next({
     ctx: {
-      auth: opts.ctx.auth
+      auth: opts.ctx.auth,
+      campaignAccess: createCampaignAccessService(opts.ctx.prisma, opts.ctx.auth.id)
     }
   })
 })

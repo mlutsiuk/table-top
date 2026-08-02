@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useDebounceFn } from '@vueuse/core'
-import type { CampaignStatus } from '@prisma/client'
+import type { CampaignStatus } from '#shared/types/campaign'
 import { RadioGroupRoot, RadioGroupItem } from 'reka-ui'
 
 definePageMeta({
@@ -53,11 +53,11 @@ async function setStatus(status: CampaignStatus) {
   await campaignStore.updateCampaign({ status })
 }
 
-const statuses: { value: CampaignStatus; label: string; description: string }[] = [
-  { value: 'DRAFT', label: 'Draft', description: 'Work in progress' },
-  { value: 'ACTIVE', label: 'Active', description: 'Campaign is running' },
-  { value: 'ARCHIVED', label: 'Archived', description: 'No longer active' },
-]
+const statuses = [
+  { value: 'draft', label: 'Draft', description: 'Work in progress' },
+  { value: 'active', label: 'Active', description: 'Campaign is running' },
+  { value: 'archived', label: 'Archived', description: 'No longer active' },
+] satisfies { value: CampaignStatus, label: string, description: string }[]
 
 const createdAt = computed(() => {
   if (!campaignStore.campaign) return ''

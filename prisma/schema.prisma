@@ -12,9 +12,9 @@ generator json {
 }
 
 enum CampaignStatus {
-  DRAFT
-  ACTIVE
-  ARCHIVED
+  draft
+  active
+  archived
 }
 
 model User {
@@ -33,7 +33,7 @@ model Campaign {
   id              String           @id @default(uuid())
   title           String
   createdAt       DateTime         @default(now()) @map("created_at")
-  status          CampaignStatus   @default(DRAFT)
+  status          CampaignStatus   @default(draft)
 
   masterId        String           @map("master_id")
   master          User             @relation(fields: [masterId], references: [id])

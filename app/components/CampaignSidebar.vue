@@ -1,12 +1,14 @@
 <script setup lang="ts">
+import type { CampaignStatus } from '#shared/types/campaign'
+
 const route = useRoute('campaigns-id')
 const campaignId = computed(() => route.params.id as string)
 const campaignStore = useCampaignStore()
 
-const statusLabel: Record<string, string> = {
-  DRAFT: 'Draft',
-  ACTIVE: 'Active',
-  ARCHIVED: 'Archived',
+const statusLabel: Record<CampaignStatus, string> = {
+  draft: 'Draft',
+  active: 'Active',
+  archived: 'Archived'
 }
 </script>
 
