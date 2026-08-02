@@ -3,7 +3,6 @@ import type { CampaignRole } from '#shared/types/campaign'
 
 const props = defineProps<{
   campaignId: string
-  canManage: boolean
 }>()
 
 const trpc = useTrpc()
@@ -62,7 +61,7 @@ onMounted(fetchMembers)
 <template>
   <div class="flex max-w-lg flex-col gap-5 py-2">
     <form
-      v-if="canManage"
+      v-if="can('members:manage')"
       class="flex flex-row gap-2"
       @submit.prevent="invite"
     >
@@ -111,7 +110,7 @@ onMounted(fetchMembers)
         </span>
 
         <Button
-          v-if="canManage && member.role !== 'master'"
+          v-if="can('members:manage') && member.role !== 'master'"
           variant="ghost"
           size="icon-sm"
           title="Remove from campaign"

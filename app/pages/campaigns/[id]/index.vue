@@ -29,10 +29,7 @@ const campaignStore = useCampaignStore()
         </TabsList>
 
         <TabsContent value="players">
-          <CampaignPlayers
-            :campaign-id="campaignStore.campaign.id"
-            :can-manage="campaignStore.isMaster"
-          />
+          <CampaignPlayers :campaign-id="campaignStore.campaign.id" />
         </TabsContent>
         <TabsContent value="sheets">
           Player sheets schemas view

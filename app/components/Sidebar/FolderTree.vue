@@ -1,9 +1,14 @@
 <script lang="ts">
+import type { MaterialAbility, MaterialVisibilityValue } from '#shared/permissions/material'
+
 export type AssetNode = {
   id: string
   title: string
   type: 'asset'
   folderId: string
+  visibility: MaterialVisibilityValue
+  /** Resolved by the server for this node — what `canOn` reads. */
+  abilities: MaterialAbility[]
 }
 
 export type FolderNode = {
@@ -11,14 +16,17 @@ export type FolderNode = {
   title: string
   type: 'folder'
   parentId: string | null
+  visibility: MaterialVisibilityValue
+  abilities: MaterialAbility[]
   children: TreeNode[]
 }
 
 export type TreeNode = FolderNode | AssetNode
 
 export type TreeContext = {
-  /** False for players — every edit affordance is hidden and the server rejects it anyway. */
+  /** Campaign-level: may this caller create material here at all. */
   canEdit: Ref<boolean>
+  setVisibility: (type: 'folder' | 'asset', id: string, visibility: MaterialVisibilityValue) => Promise<void>
   editingId: Ref<string | null>
   editingTitle: Ref<string>
   startRename: (type: 'folder' | 'asset', id: string, currentTitle: string) => void
@@ -58,11 +66,15 @@ type TreeResponse = {
     id: string
     title: string
     parentId: string | null
+    visibility: MaterialVisibilityValue
+    abilities: MaterialAbility[]
   }[]
   assets: {
     id: string
     title: string
     folderId: string
+    visibility: MaterialVisibilityValue
+    abilities: MaterialAbility[]
   }[]
 }
 
@@ -172,6 +184,19 @@ async function deleteAsset(id: string) {
   await fetchTree()
 }
 
+async function setVisibility(
+  type: 'folder' | 'asset',
+  id: string,
+  visibility: MaterialVisibilityValue
+) {
+  if (type === 'folder') {
+    await trpc.folder.setVisibility.mutate({ id, visibility })
+  } else {
+    await trpc.asset.setVisibility.mutate({ id, visibility })
+  }
+  await fetchTree()
+}
+
 // --- Drag-and-drop ---
 
 const draggedNode = ref<TreeNode | null>(null)
@@ -213,10 +238,11 @@ function cancelMove() {
   pendingMove.value = null
 }
 
-const canEdit = computed(() => campaignStore.isMaster)
+const canEdit = computed(() => can('materials:write'))
 
 provide<TreeContext>(TREE_CONTEXT_KEY, {
   canEdit,
+  setVisibility,
   editingId,
   editingTitle,
   startRename,
@@ -251,10 +277,16 @@ provide<TreeContext>(TREE_CONTEXT_KEY, {
     <!-- Tree -->
     <div class="flex-1 overflow-y-auto px-1 pb-2">
       <div v-if="pending" class="flex justify-center py-4">
-        <Icon name="lucide:loader" class="size-4 animate-spin text-muted-foreground" />
+        <Icon
+          name="lucide:loader"
+          class="size-4 animate-spin text-muted-foreground"
+        />
       </div>
 
-      <div v-else-if="treeItems.length === 0" class="px-2 py-3 text-xs text-muted-foreground">
+      <div
+        v-else-if="treeItems.length === 0"
+        class="px-2 py-3 text-xs text-muted-foreground"
+      >
         No folders yet
       </div>
 
@@ -270,7 +302,10 @@ provide<TreeContext>(TREE_CONTEXT_KEY, {
   </div>
 
   <!-- Move confirmation dialog -->
-  <Dialog :open="!!pendingMove" @update:open="val => !val && cancelMove()">
+  <Dialog
+    :open="!!pendingMove"
+    @update:open="val => !val && cancelMove()"
+  >
     <DialogContent class="sm:max-w-sm">
       <DialogHeader>
         <DialogTitle>Move item</DialogTitle>

@@ -1,12 +1,13 @@
-import type { Campaign } from '@prisma/client'
-import type { CampaignRole, CampaignStatus } from '#shared/types/campaign'
-
-type CampaignWithRole = Campaign & { role: CampaignRole }
+import type { CampaignDto, CampaignStatus } from '#shared/types/campaign'
 
 export const useCampaignStore = defineStore('campaign', () => {
-  const campaign = ref<CampaignWithRole | null>(null)
+  const campaign = ref<CampaignDto | null>(null)
   const treeVersion = ref(0)
 
+  /**
+   * For showing the role, not for gating actions — use the global `can()`
+   * for that, so the client and the server check the same rule.
+   */
   const isMaster = computed(() => campaign.value?.role === 'master')
 
   const fetchCampaign = async (campaignId: string) => {
@@ -46,11 +47,11 @@ export const useCampaignStore = defineStore('campaign', () => {
 
     const previous = campaign.value
     try {
-      const updated = await useTrpc().campaign.updateCampaign.mutate({
+      // The response is a full DTO, role included — no need to carry it over.
+      campaign.value = await useTrpc().campaign.updateCampaign.mutate({
         campaignId: campaign.value.id,
         ...data
       })
-      campaign.value = { ...updated, role: previous.role }
     } catch (e) {
       campaign.value = previous
       notifyError(e, 'Could not save the campaign')

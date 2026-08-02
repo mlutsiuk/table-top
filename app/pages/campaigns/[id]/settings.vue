@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useDebounceFn } from '@vueuse/core'
 import type { CampaignStatus } from '#shared/types/campaign'
+import { hasAbility } from '#shared/permissions/campaign'
 import { RadioGroupRoot, RadioGroupItem } from 'reka-ui'
 
 definePageMeta({
@@ -16,7 +17,7 @@ definePageMeta({
       return navigateTo({ name: 'campaigns' })
     }
 
-    if (!campaignStore.isMaster) {
+    if (!hasAbility(campaignStore.campaign.abilities, 'campaign:update')) {
       return navigateTo({ name: 'campaigns-id', params: { id: campaignId } })
     }
   }

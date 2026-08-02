@@ -40,7 +40,7 @@ const statusLabel: Record<CampaignStatus, string> = {
         Overview
       </NuxtLink>
       <NuxtLink
-        v-if="campaignStore.isMaster"
+        v-if="can('campaign:update')"
         :to="{ name: 'campaigns-id-settings', params: { id: campaignId } }"
         active-class="bg-sidebar-accent text-sidebar-accent-foreground"
         class="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"

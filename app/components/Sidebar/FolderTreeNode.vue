@@ -29,6 +29,12 @@ const isFolder = computed(() => props.node.type === 'folder')
 
 const isEditing = computed(() => ctx.editingId.value === props.node.id)
 
+// Per-node, not per-role: the server resolved what this caller may do to this
+// exact node, so a folder the master hid answers differently from its siblings.
+const canWrite = computed(() => canOn(props.node, 'material:write'))
+
+const isHidden = computed(() => props.node.visibility === 'master_only')
+
 const isActiveAsset = computed(() => {
   if (!isAsset.value) return false
   return params.value.assetid === props.node.id
@@ -105,7 +111,7 @@ function onDrop(e: DragEvent) {
             'ring-1 ring-inset ring-primary/50 bg-primary/5': isDragOver,
           }"
           :style="{ paddingLeft }"
-          :draggable="ctx.canEdit.value"
+          :draggable="canWrite"
           @dragstart="onDragStart"
           @dragend="onDragEnd"
           @dragenter="onDragEnter"
@@ -163,9 +169,16 @@ function onDrop(e: DragEvent) {
           </NuxtLink>
           <span v-else class="min-w-0 flex-1 truncate">{{ node.title }}</span>
 
+          <Icon
+            v-if="isHidden"
+            name="lucide:eye-off"
+            class="size-3 shrink-0 text-muted-foreground"
+            title="Hidden from players"
+          />
+
           <!-- Hover action buttons -->
           <div
-            v-if="ctx.canEdit.value && !isEditing"
+            v-if="canWrite && !isEditing"
             class="ml-auto hidden shrink-0 items-center gap-0.5 group-hover/row:flex"
           >
             <template v-if="isFolder">
@@ -203,7 +216,7 @@ function onDrop(e: DragEvent) {
       </ContextMenuTrigger>
 
       <ContextMenuContent
-        v-if="ctx.canEdit.value"
+        v-if="canWrite"
         class="w-48"
       >
         <template v-if="isFolder">
@@ -221,6 +234,16 @@ function onDrop(e: DragEvent) {
           <Icon name="lucide:pencil" class="size-3.5 mr-2" />
           Rename
         </ContextMenuItem>
+        <ContextMenuItem
+          @click="ctx.setVisibility(node.type, node.id, isHidden ? 'public' : 'master_only')"
+        >
+          <Icon
+            :name="isHidden ? 'lucide:eye' : 'lucide:eye-off'"
+            class="size-3.5 mr-2"
+          />
+          {{ isHidden ? 'Make visible to players' : 'Hide from players' }}
+        </ContextMenuItem>
+        <ContextMenuSeparator />
         <ContextMenuItem
           class="text-destructive focus:text-destructive"
           @click="isFolder ? ctx.deleteFolder(node.id) : ctx.deleteAsset(node.id)"

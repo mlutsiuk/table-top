@@ -11,6 +11,13 @@ generator json {
   namespace = "PrismaJson"
 }
 
+/// Who may see a folder or asset. `master_only` hides the node and, for folders,
+/// everything beneath it — inheritance is resolved from `Folder.path`.
+enum MaterialVisibility {
+  public
+  master_only
+}
+
 enum CampaignStatus {
   draft
   active
@@ -83,6 +90,7 @@ model Media {
 model Folder {
   id          String   @id @default(uuid())
   title       String
+  visibility  MaterialVisibility @default(public)
 
   /// Denormalized folder path, self-inclusive
   path        String[]
@@ -107,6 +115,7 @@ model Asset {
   id          String   @id @default(uuid())
   title       String
   content     Json?
+  visibility  MaterialVisibility @default(public)
 
   campaignId  String   @map("campaign_id")
   campaign    Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)

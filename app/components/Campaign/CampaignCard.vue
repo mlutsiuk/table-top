@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Campaign } from '@prisma/client'
+import type { CampaignDto } from '#shared/types/campaign'
 
 defineProps<{
-  campaign: Campaign
+  campaign: CampaignDto
 }>()
 </script>
 

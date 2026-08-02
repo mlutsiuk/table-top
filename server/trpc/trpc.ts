@@ -11,7 +11,10 @@ import { TRPCError, initTRPC } from '@trpc/server'
 import superjson from 'superjson'
 import type { Context } from '~~/server/trpc/context'
 import { createCampaignAccessService } from '~~/server/features/campaigns/services/campaign-access.service'
+import { createCampaignMembersService } from '~~/server/features/campaigns/services/campaign-members.service'
+import { createCampaignsService } from '~~/server/features/campaigns/services/campaigns.service'
 import { createFoldersService } from '~~/server/features/folders/services/folders.service'
+import { createAssetsService } from '~~/server/features/assets/services/assets.service'
 import { BadRequestError, ForbiddenError, NotFoundError } from '~~/server/infrastructure/errors'
 
 const t = initTRPC.context<Context>().create({
@@ -55,13 +58,17 @@ export const privateProcedure = publicProcedure.use((opts) => {
 
   // Composition root: services are built here, once per request, bound to the
   // caller. Routers receive them rather than reaching for auto-imports.
-  const campaignAccess = createCampaignAccessService(opts.ctx.prisma, opts.ctx.auth.id)
+  const { prisma, auth } = opts.ctx
+  const campaignAccess = createCampaignAccessService(prisma, auth.id)
 
   return opts.next({
     ctx: {
-      auth: opts.ctx.auth,
+      auth,
       campaignAccess,
-      folders: createFoldersService(opts.ctx.prisma, campaignAccess)
+      campaigns: createCampaignsService(prisma, campaignAccess, auth.id),
+      campaignMembers: createCampaignMembersService(prisma, campaignAccess),
+      folders: createFoldersService(prisma, campaignAccess),
+      assets: createAssetsService(prisma, campaignAccess)
     }
   })
 })

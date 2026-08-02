@@ -1,92 +1,48 @@
-import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
+import { MATERIAL_VISIBILITIES } from '#shared/permissions/material'
 import { privateProcedure, router } from '../trpc'
 
 export const assetRouter = router({
   getById: privateProcedure
     .input(z.object({ id: z.uuid() }))
-    .query(async ({ input, ctx }) => {
-      const asset = await ctx.prisma.asset.findUnique({ where: { id: input.id } })
-      if (!asset) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'Asset not found' })
-      }
-
-      await ctx.campaignAccess.requireCampaign(asset.campaignId)
-
-      return asset
-    }),
-
-  saveContent: privateProcedure
-    .input(z.object({
-      id: z.uuid(),
-      content: z.any()
-    }))
-    .mutation(async ({ input, ctx }) => {
-      const asset = await ctx.campaignAccess.requireWritableAsset(input.id)
-
-      return ctx.prisma.asset.update({
-        where: { id: asset.id },
-        data: { content: input.content }
-      })
-    }),
+    .query(({ input, ctx }) => ctx.assets.getById(input.id)),
 
   create: privateProcedure
     .input(z.object({
       folderId: z.uuid(),
       title: z.string().min(1).max(100)
     }))
-    .mutation(async ({ input, ctx }) => {
-      const folder = await ctx.campaignAccess.requireWritableFolder(input.folderId)
-
-      return ctx.prisma.asset.create({
-        data: {
-          title: input.title,
-          campaignId: folder.campaignId,
-          folderId: folder.id
-        }
-      })
-    }),
+    .mutation(({ input, ctx }) => ctx.assets.create(input.folderId, input.title)),
 
   rename: privateProcedure
     .input(z.object({
       id: z.uuid(),
       title: z.string().min(1).max(100)
     }))
-    .mutation(async ({ input, ctx }) => {
-      const asset = await ctx.campaignAccess.requireWritableAsset(input.id)
+    .mutation(({ input, ctx }) => ctx.assets.rename(input.id, input.title)),
 
-      return ctx.prisma.asset.update({
-        where: { id: asset.id },
-        data: { title: input.title }
-      })
-    }),
+  saveContent: privateProcedure
+    .input(z.object({
+      id: z.uuid(),
+      content: z.any()
+    }))
+    .mutation(({ input, ctx }) => ctx.assets.saveContent(input.id, input.content)),
 
   delete: privateProcedure
     .input(z.object({ id: z.uuid() }))
-    .mutation(async ({ input, ctx }) => {
-      const asset = await ctx.campaignAccess.requireWritableAsset(input.id)
+    .mutation(({ input, ctx }) => ctx.assets.remove(input.id)),
 
-      await ctx.prisma.asset.delete({ where: { id: asset.id } })
-    }),
+  setVisibility: privateProcedure
+    .input(z.object({
+      id: z.uuid(),
+      visibility: z.enum(MATERIAL_VISIBILITIES)
+    }))
+    .mutation(({ input, ctx }) => ctx.assets.setVisibility(input.id, input.visibility)),
 
   move: privateProcedure
     .input(z.object({
       id: z.uuid(),
       folderId: z.uuid()
     }))
-    .mutation(async ({ input, ctx }) => {
-      const asset = await ctx.campaignAccess.requireWritableAsset(input.id)
-
-      const target = await ctx.prisma.folder.findFirst({
-        where: { id: input.folderId, campaignId: asset.campaignId }
-      })
-      if (!target) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'Target folder not found' })
-      }
-
-      return ctx.prisma.asset.update({
-        where: { id: asset.id },
-        data: { folderId: target.id }
-      })
-    })
+    .mutation(({ input, ctx }) => ctx.assets.move(input.id, input.folderId))
 })

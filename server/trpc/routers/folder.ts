@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { MATERIAL_VISIBILITIES } from '#shared/permissions/material'
 import { privateProcedure, router } from '../trpc'
 
 export const folderRouter = router({
@@ -24,6 +25,13 @@ export const folderRouter = router({
   delete: privateProcedure
     .input(z.object({ id: z.uuid() }))
     .mutation(({ input, ctx }) => ctx.folders.remove(input.id)),
+
+  setVisibility: privateProcedure
+    .input(z.object({
+      id: z.uuid(),
+      visibility: z.enum(MATERIAL_VISIBILITIES)
+    }))
+    .mutation(({ input, ctx }) => ctx.folders.setFolderVisibility(input.id, input.visibility)),
 
   move: privateProcedure
     .input(z.object({

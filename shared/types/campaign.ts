@@ -1,3 +1,5 @@
+import type { CampaignAbility } from '#shared/permissions/campaign'
+
 /**
  * The caller's standing in a campaign.
  *
@@ -21,4 +23,24 @@ export type CampaignMemberDto = {
   name: string
   email: string
   role: CampaignRole
+}
+
+/**
+ * A campaign as the API exposes it — never the raw `Campaign` row.
+ *
+ * `masterId` deliberately stays server-side: the client only ever needs to know
+ * its own standing, which travels as `role`.
+ */
+export type CampaignDto = {
+  id: string
+  title: string
+  status: CampaignStatus
+  createdAt: Date
+  role: CampaignRole
+  /**
+   * Resolved server-side and shipped ready-made, rather than derived from `role`
+   * on the client. Keeps a single evaluator for the day rules stop depending on
+   * the role alone — two evaluators would inevitably drift apart.
+   */
+  abilities: CampaignAbility[]
 }
