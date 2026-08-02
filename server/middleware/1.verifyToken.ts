@@ -6,18 +6,21 @@ declare module 'h3' {
 
 export default eventHandler(async (event) => {
   const authorizationHeader = event.headers.get('authorization')
+  if (!authorizationHeader) return
 
-  if (authorizationHeader) {
-    const token = authorizationHeader.split(' ')[1]
-    try {
-      const decoded = await verifyUserJwt(token)  // FIXME
+  const [scheme, token] = authorizationHeader.split(' ')
+  if (scheme?.toLowerCase() !== 'bearer' || !token) return
 
-      event.context.auth = {
-        id: decoded.payload.userId
-      }
+  try {
+    const decoded = await verifyUserJwt(token)
+
+    event.context.auth = {
+      id: decoded.payload.userId
     }
-    catch (e) {
-      // TODO: log error
+  }
+  catch (e) {
+    if (import.meta.dev) {
+      console.warn('[auth] rejected token:', e instanceof Error ? e.message : e)
     }
   }
 })
