@@ -16,12 +16,8 @@ const campaignStore = useCampaignStore()
     class="flex flex-row gap-8"
   >
     <div class="grow">
-      <Tabs default-value="funds" class="w-full">
+      <Tabs default-value="players" class="w-full">
         <TabsList>
-          <TabsTrigger value="funds">
-            <Icon name="material-symbols:paid-rounded" class="size-4 mr-1.5" />
-            Funds
-          </TabsTrigger>
           <TabsTrigger value="sheets">
             <Icon name="material-symbols:edit-document-rounded" class="size-4 mr-1.5" />
             Player sheets
@@ -32,11 +28,11 @@ const campaignStore = useCampaignStore()
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="funds">
-          <CampaignFund :campaign="campaignStore.campaign" />
-        </TabsContent>
         <TabsContent value="players">
-          Players list
+          <CampaignPlayers
+            :campaign-id="campaignStore.campaign.id"
+            :can-manage="campaignStore.isMaster"
+          />
         </TabsContent>
         <TabsContent value="sheets">
           Player sheets schemas view
