@@ -19,6 +19,9 @@ const statusLabel: Record<string, string> = {
       </div>
       <div class="mt-0.5 text-xs text-muted-foreground">
         {{ campaignStore.campaign ? statusLabel[campaignStore.campaign.status] : '' }}
+        <template v-if="campaignStore.campaign && !campaignStore.isMaster">
+          · Player
+        </template>
       </div>
     </div>
 
@@ -35,6 +38,7 @@ const statusLabel: Record<string, string> = {
         Overview
       </NuxtLink>
       <NuxtLink
+        v-if="campaignStore.isMaster"
         :to="{ name: 'campaigns-id-settings', params: { id: campaignId } }"
         active-class="bg-sidebar-accent text-sidebar-accent-foreground"
         class="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
