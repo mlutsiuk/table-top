@@ -17,6 +17,8 @@ export type FolderNode = {
 export type TreeNode = FolderNode | AssetNode
 
 export type TreeContext = {
+  /** False for players — every edit affordance is hidden and the server rejects it anyway. */
+  canEdit: Ref<boolean>
   editingId: Ref<string | null>
   editingTitle: Ref<string>
   startRename: (type: 'folder' | 'asset', id: string, currentTitle: string) => void
@@ -138,7 +140,6 @@ async function addFolder(parentId: string | null) {
 
 async function addAsset(folderId: string) {
   const asset = await trpc.asset.create.mutate({
-    campaignId: props.campaignId,
     folderId,
     title: 'New Asset'
   })
@@ -199,7 +200,10 @@ function cancelMove() {
   pendingMove.value = null
 }
 
+const canEdit = computed(() => campaignStore.isMaster)
+
 provide<TreeContext>(TREE_CONTEXT_KEY, {
+  canEdit,
   editingId,
   editingTitle,
   startRename,
@@ -222,6 +226,7 @@ provide<TreeContext>(TREE_CONTEXT_KEY, {
         Materials
       </span>
       <button
+        v-if="canEdit"
         class="rounded p-0.5 text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
         title="New folder"
         @click="addFolder(null)"

@@ -105,7 +105,7 @@ function onDrop(e: DragEvent) {
             'ring-1 ring-inset ring-primary/50 bg-primary/5': isDragOver,
           }"
           :style="{ paddingLeft }"
-          draggable="true"
+          :draggable="ctx.canEdit.value"
           @dragstart="onDragStart"
           @dragend="onDragEnd"
           @dragenter="onDragEnter"
@@ -165,7 +165,7 @@ function onDrop(e: DragEvent) {
 
           <!-- Hover action buttons -->
           <div
-            v-if="!isEditing"
+            v-if="ctx.canEdit.value && !isEditing"
             class="ml-auto hidden shrink-0 items-center gap-0.5 group-hover/row:flex"
           >
             <template v-if="isFolder">
@@ -202,7 +202,10 @@ function onDrop(e: DragEvent) {
         </div>
       </ContextMenuTrigger>
 
-      <ContextMenuContent class="w-48">
+      <ContextMenuContent
+        v-if="ctx.canEdit.value"
+        class="w-48"
+      >
         <template v-if="isFolder">
           <ContextMenuItem @click="ctx.addAsset(node.id)">
             <Icon name="lucide:file-plus" class="size-3.5 mr-2" />
