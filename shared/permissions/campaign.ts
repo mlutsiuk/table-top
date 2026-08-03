@@ -14,7 +14,9 @@ export const CAMPAIGN_ABILITIES = [
   'members:read',
   'members:manage',
   'materials:read',
-  'materials:write'
+  'materials:write',
+  'mechanics:read',
+  'mechanics:manage'
 ] as const
 
 export type CampaignAbility = typeof CAMPAIGN_ABILITIES[number]
@@ -33,7 +35,11 @@ const ABILITY_ROLES: Record<CampaignAbility, readonly CampaignRole[]> = {
   'members:read': ['master', 'player'],
   'members:manage': ['master'],
   'materials:read': ['master', 'player'],
-  'materials:write': ['master']
+  'materials:write': ['master'],
+  // Players read mechanics because rendering a trait on an asset needs the
+  // config that describes its fields.
+  'mechanics:read': ['master', 'player'],
+  'mechanics:manage': ['master']
 }
 
 /** Everything a role may do, in a stable order. */

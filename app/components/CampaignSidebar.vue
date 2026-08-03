@@ -40,6 +40,20 @@ const statusLabel: Record<CampaignStatus, string> = {
         Overview
       </NuxtLink>
       <NuxtLink
+        v-if="can('mechanics:manage')"
+        :to="{
+          name: 'campaigns-id-mechanics',
+          params: {
+            id: campaignId
+          }
+        }"
+        active-class="bg-sidebar-accent text-sidebar-accent-foreground"
+        class="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+      >
+        <Icon name="lucide:sliders-horizontal" class="size-4 shrink-0" />
+        Mechanics
+      </NuxtLink>
+      <NuxtLink
         v-if="can('campaign:update')"
         :to="{ name: 'campaigns-id-settings', params: { id: campaignId } }"
         active-class="bg-sidebar-accent text-sidebar-accent-foreground"
