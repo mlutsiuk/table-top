@@ -2,6 +2,10 @@
   // `engine/` sits outside app/ server/ shared/, so no generated Nuxt project
   // covers it. Without this the compile-time guarantees in the registries —
   // Record<MechanicKey, …> and Record<FieldType, …> — would never be checked.
-  "extends": "../.nuxt/tsconfig.shared.json",
-  "include": ["**/*.ts", "**/*.vue"]
+  //
+  // Extends the app project because a mechanic's `ui/` half imports design-system
+  // components, which rely on Nuxt's auto-import declarations. Overriding
+  // `include` drops those, so `nuxt.d.ts` is listed back explicitly.
+  "extends": "../.nuxt/tsconfig.app.json",
+  "include": ["**/*.ts", "**/*.vue", "../.nuxt/nuxt.d.ts"]
 }

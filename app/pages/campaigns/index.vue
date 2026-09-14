@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePageMeta({
+  middleware: 'auth'
+})
+
 const { data, status, refresh } = useTrpc().campaign.getUserCampaigns.useQuery(undefined, {
   // immediate: false
 })

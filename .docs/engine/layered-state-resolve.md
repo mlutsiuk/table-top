@@ -2,20 +2,32 @@
 
 ## Концепція
 
-При запиті будь-якого значення параметра Entity — система проходить рівні від найвищого пріоритету до найнижчого і повертає перше знайдене (або агрегує, для ефектів).
+Не пошаровий прохід, а **рекурсія**: кожен вхід формули резолвиться тією самою процедурою
+(ADR-015). Через це модель описується трьома кроками й не потребує окремих проходів.
 
 ```
-Пріоритет (від найвищого):
+resolve(поле):
 
-1. Active Effects    ← EntityRelation з key: 'active_effect'
-                       модифікації з AssetTrait ефект-Entity
+  1. База
+     formula → обчислити з входів, кожен через resolve()
+     static  → EntityTrait → AssetTrait → default поля
+     dynamic → EntityTrait → default поля        (шару асета немає)
 
-2. Entity Override   ← EntityTrait (ручний перезапис майстром)
+  2. Ефекти поверх бази, у фіксованому порядку:
+     multiply → add → upgrade/downgrade → override
 
-3. Asset Static      ← AssetTrait (значення шаблону)
-
-4. Mechanic Default  ← конфіг MechanicInstance (default поля)
+  3. Значення. Назад нічого не записується.
 ```
+
+**Чому dynamic не має шару асета:** асет динамічних полів не носить, вони існують лише на
+сутності (ADR-017). Дефолт при цьому може бути виразом: `hp` стартує з `@health.max_hp`.
+
+**Формульне поле можна брати ціллю ефекту**, включно з `override`. Конвеєр працює на читання, тож
+коли ефект спадає, обчислене значення повертається саме. Але ефекти застосовуються **до** формул:
+формула читає вже зрезолвлені входи.
+
+**Значення ефекту заморожується в момент застосування**, а не рахується при кожному читанні —
+інакше resolve перестав би бути локальним для однієї сутності.
 
 ---
 
@@ -36,6 +48,9 @@ Asset "Fighter" має AC=15 в AssetTrait [combat instance]
 
 ## Операції ефектів
 
+Порядок застосування закритий і однаковий завжди, інакше два ефекти на одному полі дадуть різний
+результат залежно від вибірки з бази: **multiply → add → upgrade/downgrade → override**.
+
 | Операція | Поведінка при агрегації |
 |---|---|
 | `add` | Всі ефекти додаються: +2 + +3 = +5 |
@@ -54,25 +69,32 @@ Asset "Fighter" має AC=15 в AssetTrait [combat instance]
 EntityTrait зберігає тільки відхилення від дефолту. Тому при resolve:
 
 ```typescript
-function resolveField(instanceName: string, fieldKey: string, entity: Entity): unknown {
-  // 1. Перевіряємо Active Effects
-  const effects = getActiveEffects(entity)
-  const effectMods = effects.flatMap(e => e.modifications.filter(m => m.field === `${instanceName}.${fieldKey}`))
+function resolve(traitKey: string, fieldKey: string, entity: Entity): unknown {
+  const config = getTraitConfig(traitKey)
+  const field = config.fields.find(f => f.key === fieldKey)
 
-  // 2. Базове значення
-  const entityTrait = entity.entityTraits.find(t => t.mechanicInstance.name === instanceName)
-  const assetTrait = entity.asset.assetTraits.find(t => t.mechanicInstance.name === instanceName)
-  const instanceConfig = getInstanceConfig(instanceName)
-  const field = instanceConfig.fields.find(f => f.key === fieldKey)
+  // 1. База
+  let base
+  if (field.type === 'formula') {
+    // кожен вхід проходить через цей самий resolve()
+    base = evaluate(field.formula, entity)
+  }
+  else {
+    const entityTrait = entity.entityTraits.find(t => t.traitDef.key === traitKey)
+    const assetTrait = entity.asset.assetTraits.find(t => t.traitDef.key === traitKey)
 
-  let baseValue =
-    entityTrait?.data[fieldKey] ??     // Entity Override (якщо є)
-    assetTrait?.data[fieldKey] ??      // Asset Static (якщо є)
-    field?.default                     // Mechanic Default
+    base = field.kind === 'dynamic'
+      ? entityTrait?.data[fieldKey] ?? defaultOf(field, entity)
+      : entityTrait?.data[fieldKey] ?? assetTrait?.data[fieldKey] ?? defaultOf(field, entity)
+  }
 
-  // 3. Застосовуємо ефекти
-  return applyModifications(baseValue, effectMods)
+  // 2. Ефекти поверх бази, у фіксованому порядку
+  const mods = activeEffectsOn(entity)
+    .flatMap(e => e.modifications.filter(m => m.field === `${traitKey}.${fieldKey}`))
+
+  return applyModifications(base, mods)   // multiply → add → upgrade/downgrade → override
 }
+
 ```
 
 ---

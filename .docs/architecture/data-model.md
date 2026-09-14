@@ -1,16 +1,20 @@
 # Модель даних
 
+> **Стан:** нижче описана цільова модель після [ADR-013](./decisions.md). У поточній базі
+> модель усе ще зветься `Mechanic` і несе колонку `key` з видом механіки. Перейменування на
+> `TraitDef` і зняття `key` — окрема міграція, ще не виконана.
+
 ## Ієрархія сутностей
 
 ```
 Campaign
-  ├── MechanicInstance[] (values-v1, sheet-v1, effects-v1)
+  ├── TraitDef[] (health, core_stats, combat — набори полів від майстра)
   ├── Media[] (файли кампанії)
   ├── Entity[] (всі живі об'єкти)
   └── Folder (рекурсивна структура)
         └── Folder
               └── Asset
-                    ├── AssetTrait[] (× кількість MechanicInstances)
+                    ├── AssetTrait[] (× кількість TraitDef)
                     ├── Action[]
                     └── Entity[] (екземпляри цього Asset)
                           ├── EntityTrait[]
@@ -36,11 +40,11 @@ Campaign
 AssetTrait [health-instance]:
   max_hp: 10        ← статичне, спільне для всіх екземплярів
 
-EntityTrait [health-instance]:
+EntityTrait [health]:
   hp: 3             ← динамічне, унікальне для кожного Entity
 ```
 
-EntityTrait зберігає **тільки те що відрізняється від дефолту** (Lazy Init). Якщо поле не знайдено в EntityTrait — береться `default` з конфігу MechanicInstance. Це вирішує проблему розсинхрону коли майстер додає нове поле після створення Entity.
+EntityTrait зберігає **тільки те що відрізняється від дефолту** (Lazy Init). Якщо поле не знайдено в EntityTrait — береться `default` з конфігу TraitDef. Це вирішує проблему розсинхрону коли майстер додає нове поле після створення Entity.
 
 ---
 
@@ -85,7 +89,7 @@ model Campaign {
   master            User               @relation(fields: [masterId], references: [id])
   folders           Folder[]
   assets            Asset[]
-  mechanicInstances MechanicInstance[]
+  traitDefs         TraitDef[]
   entities          Entity[]
   media             Media[]
 
@@ -135,11 +139,11 @@ model Asset {
   @@map("assets")
 }
 
-model MechanicInstance {
+model TraitDef {
   id           String        @id @default(uuid())
-  key          String        // 'values-v1' | 'sheet-v1' | 'effects-v1'
-  name         String        // назва від майстра: 'core-stats', 'health', 'combat'
-  /// [MechanicInstanceConfig]
+  key          String        // ідентифікатор для формул: 'core_stats'
+  name         String        // підпис для майстра: 'Core Stats'
+  /// [TraitConfig]
   config       Json
   campaignId   String        @map("campaign_id")
   campaign     Campaign      @relation(fields: [campaignId], references: [id], onDelete: Cascade)
@@ -154,12 +158,12 @@ model AssetTrait {
   id                 String           @id @default(uuid())
   assetId            String           @map("asset_id")
   asset              Asset            @relation(fields: [assetId], references: [id], onDelete: Cascade)
-  mechanicInstanceId String           @map("mechanic_instance_id")
-  mechanicInstance   MechanicInstance @relation(fields: [mechanicInstanceId], references: [id], onDelete: Cascade)
+  traitDefId         String           @map("trait_def_id")
+  traitDef           TraitDef         @relation(fields: [traitDefId], references: [id], onDelete: Cascade)
   /// [AssetTraitData]
   data               Json
 
-  @@unique([assetId, mechanicInstanceId])
+  @@unique([assetId, traitDefId])
   @@map("asset_traits")
 }
 
@@ -180,12 +184,12 @@ model EntityTrait {
   id                 String           @id @default(uuid())
   entityId           String           @map("entity_id")
   entity             Entity           @relation(fields: [entityId], references: [id], onDelete: Cascade)
-  mechanicInstanceId String           @map("mechanic_instance_id")
-  mechanicInstance   MechanicInstance @relation(fields: [mechanicInstanceId], references: [id], onDelete: Cascade)
+  traitDefId         String           @map("trait_def_id")
+  traitDef           TraitDef         @relation(fields: [traitDefId], references: [id], onDelete: Cascade)
   /// [EntityTraitData]
   data               Json             // зберігає ТІЛЬКИ відхилення від дефолту (Lazy Init)
 
-  @@unique([entityId, mechanicInstanceId])
+  @@unique([entityId, traitDefId])
   @@map("entity_traits")
 }
 
@@ -224,7 +228,7 @@ model Action {
 # Вже існує: User, Campaign, Folder, Asset (базові)
 prisma migrate dev --name add_campaign_status    # + enum CampaignStatus + поле status
 prisma migrate dev --name add_media              # + Media модель
-prisma migrate dev --name add_mechanic_engine    # + MechanicInstance + AssetTrait
+prisma migrate dev --name add_mechanic_engine    # + TraitDef + AssetTrait
 prisma migrate dev --name add_entity_system      # + Entity + EntityTrait + EntityRelation
 prisma migrate dev --name add_actions            # + Action
 ```

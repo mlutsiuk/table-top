@@ -1,26 +1,10 @@
 <script setup lang="ts">
 import { useDebounceFn } from '@vueuse/core'
 import type { CampaignStatus } from '#shared/types/campaign'
-import { hasAbility } from '#shared/permissions/campaign'
 import { RadioGroupRoot, RadioGroupItem } from 'reka-ui'
 
 definePageMeta({
-  // Players never get here, by link or by typing the URL. The server rejects
-  // their writes anyway; this keeps them out of a page they cannot use.
-  middleware: async (to) => {
-    const campaignStore = useCampaignStore()
-    const campaignId = to.params.id as string
-
-    await campaignStore.ensureCampaign(campaignId)
-
-    if (!campaignStore.campaign) {
-      return navigateTo({ name: 'campaigns' })
-    }
-
-    if (!hasAbility(campaignStore.campaign.abilities, 'campaign:update')) {
-      return navigateTo({ name: 'campaigns-id', params: { id: campaignId } })
-    }
-  }
+  middleware: requireCampaignAbility('campaign:update')
 })
 
 const campaignStore = useCampaignStore()

@@ -1,4 +1,7 @@
-# effects-v1 — Механіка активних ефектів
+# Effect — активні ефекти
+
+> `Effect` — нативна сутність двигуна, а не механіка ([ADR-014](../architecture/decisions.md)).
+> Порядок застосування операцій закритий: multiply → add → upgrade/downgrade → override ([ADR-015](../architecture/decisions.md)).
 
 ## Призначення
 
@@ -33,7 +36,7 @@ type Modification =
   | { operation: 'resistance',   damageType: string }
 ```
 
-`field` — у форматі `'instanceName.fieldKey'`, наприклад `'combat.ac'`, `'health.max_hp'`.
+`field` — у форматі `'trait_key.field_key'`, наприклад `'combat.ac'`, `'health.max_hp'`.
 
 ### Тривалість
 

@@ -2,13 +2,14 @@
 import { SplitterGroup, SplitterPanel, SplitterResizeHandle } from 'reka-ui'
 
 definePageMeta({
-  layout: 'clear'
+  layout: 'clear',
+  middleware: 'auth'
 })
 
 const route = useRoute('campaigns-id')
 const campaignStore = useCampaignStore()
 
-campaignStore.ensureCampaign(route.params.id as string)
+campaignStore.ensureCampaign(route.params.id)
 </script>
 
 <template>

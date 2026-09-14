@@ -4,5 +4,8 @@ onlyBuiltDependencies:
   - prisma
   - vue-demi
 
-publicHoistPattern:
-  - unplugin-vue-router
+# One vue-router for the whole tree. Nuxt depends on v5, but @vercel/analytics and
+# @vercel/speed-insights carry an optional `^4` that pnpm hoisted to the root, so
+# the app typechecked against v4 and typed routes silently stopped working.
+overrides:
+  vue-router: ^5.2.0

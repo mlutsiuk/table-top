@@ -4,7 +4,7 @@ import type { HTMLAttributes } from "vue"
 import type { ButtonVariants } from "."
 import { Primitive } from "reka-ui"
 import { cn } from "@/lib/utils"
-import Loader from "@/components/ui/Loader.vue"
+import { Loader } from "@/components/ui/loader"
 import { buttonVariants } from "."
 import type { RouteLocationRaw } from '#vue-router'
 

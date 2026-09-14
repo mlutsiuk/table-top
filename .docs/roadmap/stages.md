@@ -35,7 +35,7 @@
 **Мета:** Статичні характеристики (Сила=16, MaxHP=45, AC=18).
 
 ```
-○ MechanicInstance CRUD (values-v1, тільки number/text/boolean поля)
+○ TraitDef CRUD (values-v1, тільки number/text/boolean поля)
 ○ AssetTrait CRUD (підключення інстансу до Asset, заповнення значень)
 ○ Перегляд трейтів на Asset (auto-generated UI)
 ○ Без formula полів, без Entity
@@ -124,7 +124,7 @@
 3. Media система + Uploadthing
 4. Folder + Asset дерево (сайдбар)
 5. Asset редактор (TipTap + головна картинка)
-6. MechanicInstance CRUD (values-v1, тільки static)
+6. TraitDef CRUD (values-v1, тільки static)
 7. AssetTrait CRUD
 8. Entity + EntityTrait
 9. Формули (Formula Parser, DFS)

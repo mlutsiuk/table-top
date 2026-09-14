@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { hasAbility } from '#shared/permissions/campaign'
-import type { MechanicDto } from '#shared/types/mechanic'
+import type { MechanicDto } from '~~/engine/mechanics/dto'
 import {
   Dialog,
   DialogContent,
@@ -9,44 +8,22 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
-import { RadioGroupItem, RadioGroupRoot } from 'reka-ui'
 
 definePageMeta({
-  // Same shape as the settings guard: players have no business here, and the
-  // server refuses their writes regardless.
-  middleware: async (to) => {
-    const campaignStore = useCampaignStore()
-    const campaignId = to.params.id as string
-
-    await campaignStore.ensureCampaign(campaignId)
-
-    if (!campaignStore.campaign) {
-      return navigateTo({ name: 'campaigns' })
-    }
-
-    if (!hasAbility(campaignStore.campaign.abilities, 'mechanics:manage')) {
-      return navigateTo({ name: 'campaigns-id', params: { id: campaignId } })
-    }
-  }
+  middleware: requireCampaignAbility('mechanics:manage')
 })
 
 const route = useRoute('campaigns-id-mechanics')
-const campaignId = computed(() => route.params.id as string)
+const campaignId = computed(() => route.params.id)
 const trpc = useTrpc()
 
-type Available = { key: string, label: string, description: string }
-
 const mechanics = ref<MechanicDto[]>([])
-const available = ref<Available[]>([])
 const pending = ref(false)
 
 async function fetchAll() {
   pending.value = true
   try {
-    ;[mechanics.value, available.value] = await Promise.all([
-      trpc.mechanic.list.query({ campaignId: campaignId.value }),
-      trpc.mechanic.available.query()
-    ])
+    mechanics.value = await trpc.mechanic.list.query({ campaignId: campaignId.value })
   }
   catch (e) {
     notifyError(e, 'Could not load mechanics')
@@ -61,25 +38,22 @@ onMounted(fetchAll)
 // --- Add ---
 
 const addOpen = ref(false)
-const addKey = ref('')
 const addName = ref('')
 const adding = ref(false)
 
 function openAdd() {
-  addKey.value = available.value[0]?.key ?? ''
   addName.value = ''
   addOpen.value = true
 }
 
 async function add() {
   const name = addName.value.trim()
-  if (!name || !addKey.value) return
+  if (!name) return
 
   adding.value = true
   try {
     await trpc.mechanic.create.mutate({
       campaignId: campaignId.value,
-      key: addKey.value,
       name
     })
     addOpen.value = false
@@ -180,14 +154,14 @@ async function remove() {
         :key="mechanic.id"
         class="flex flex-row items-center gap-3 rounded-lg border border-border px-4 py-3"
       >
-        <div class="min-w-0 grow">
-          <div class="truncate text-sm font-medium">
+        <NuxtLink
+          class="min-w-0 grow"
+          :to="{ name: 'campaigns-id-mechanics-mechanicId', params: { id: campaignId, mechanicId: mechanic.id } }"
+        >
+          <div class="truncate text-sm font-medium hover:underline">
             {{ mechanic.name }}
           </div>
-          <div class="truncate text-xs text-muted-foreground">
-            {{ mechanic.key }}
-          </div>
-        </div>
+        </NuxtLink>
 
         <Button
           variant="ghost"
@@ -215,30 +189,12 @@ async function remove() {
       <DialogHeader>
         <DialogTitle>Add a mechanic</DialogTitle>
         <DialogDescription>
-          Pick what kind it is, then give it a name you will recognise — "health",
-          "core stats".
+          Give it a name you will recognise — "health", "core stats". Fields are added
+          on the next screen.
         </DialogDescription>
       </DialogHeader>
 
       <form class="flex flex-col gap-4" @submit.prevent="add">
-        <RadioGroupRoot v-model="addKey" class="flex flex-col gap-2">
-          <RadioGroupItem
-            v-for="option in available"
-            :key="option.key"
-            :value="option.key"
-            as-child
-          >
-            <button
-              type="button"
-              class="flex flex-col gap-0.5 rounded-lg border px-3 py-2.5 text-left transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              :class="addKey === option.key ? 'border-ring bg-accent' : 'border-border hover:bg-accent/50'"
-            >
-              <span class="text-sm font-medium">{{ option.label }}</span>
-              <span class="text-xs text-muted-foreground">{{ option.description }}</span>
-            </button>
-          </RadioGroupItem>
-        </RadioGroupRoot>
-
         <Input
           v-model="addName"
           placeholder="health"
@@ -256,7 +212,7 @@ async function remove() {
           <Button
             type="submit"
             :loading="adding"
-            :disabled="!addName.trim() || !addKey"
+            :disabled="!addName.trim()"
           >
             Add
           </Button>

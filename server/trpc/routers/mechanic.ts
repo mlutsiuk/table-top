@@ -4,10 +4,6 @@ import { privateProcedure, router } from '../trpc'
 const mechanicName = z.string().min(1).max(60)
 
 export const mechanicRouter = router({
-  /** Definitions a master can add. Not campaign-scoped — the same in every one. */
-  available: privateProcedure
-    .query(({ ctx }) => ctx.mechanics.available()),
-
   list: privateProcedure
     .input(z.object({ campaignId: z.uuid() }))
     .query(({ input, ctx }) => ctx.mechanics.list(input.campaignId)),
@@ -15,7 +11,6 @@ export const mechanicRouter = router({
   create: privateProcedure
     .input(z.object({
       campaignId: z.uuid(),
-      key: z.string().min(1).max(40),
       name: mechanicName
     }))
     .mutation(({ input, ctx }) => ctx.mechanics.create(input)),

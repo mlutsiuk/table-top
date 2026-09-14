@@ -2,6 +2,8 @@
 import { SpeedInsights } from '@vercel/speed-insights/vue'
 import 'vue-sonner/style.css'
 import { Toaster } from '@/components/ui/sonner'
+
+const speedInsights = !import.meta.dev
 </script>
 
 <template>
@@ -12,7 +14,7 @@ import { Toaster } from '@/components/ui/sonner'
       <NuxtPage />
     </NuxtLayout>
 
-    <SpeedInsights />
+    <SpeedInsights v-if="speedInsights" />
 
     <Toaster />
   </div>

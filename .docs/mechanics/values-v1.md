@@ -1,10 +1,12 @@
-# values-v1 — Головна механіка
+# Типи полів трейта
+
+> Файл описує типи полів і приклади конфігів. Назви `values-v1` як механіки більше немає:
+> зберігання даних — властивість ядра, а не плагін ([ADR-013](../architecture/decisions.md)).
 
 ## Призначення
 
-`values-v1` — єдина механіка для зберігання будь-яких значень. Покриває ~80% потреб RPG через три типи полів.
-
-**Немає окремих механік Stats, Health, Combat** — всі вони реалізуються як різні MechanicInstance з `values-v1`.
+Три типи полів покривають ~80% потреб RPG. **Немає окремих Stats, Health, Combat** — усе це
+різні `TraitDef` з різними наборами полів.
 
 ---
 
@@ -22,7 +24,7 @@
 
 ---
 
-## Приклади конфігів MechanicInstance для DnD 5e
+## Приклади конфігів TraitDef для DnD 5e
 
 ### Інстанс `core-stats`
 ```json
@@ -34,8 +36,8 @@
     { "key": "int", "label": "Intelligence", "type": "number", "kind": "static", "default": 10 },
     { "key": "wis", "label": "Wisdom", "type": "number", "kind": "static", "default": 10 },
     { "key": "cha", "label": "Charisma", "type": "number", "kind": "static", "default": 10 },
-    { "key": "str_mod", "label": "STR Modifier", "type": "formula", "formula": "FLOOR((@self.trait['core-stats'].str - 10) / 2)" },
-    { "key": "dex_mod", "label": "DEX Modifier", "type": "formula", "formula": "FLOOR((@self.trait['core-stats'].dex - 10) / 2)" }
+    { "key": "str_mod", "label": "STR Modifier", "type": "formula", "formula": "FLOOR((@core_stats.str - 10) / 2)" },
+    { "key": "dex_mod", "label": "DEX Modifier", "type": "formula", "formula": "FLOOR((@core_stats.dex - 10) / 2)" }
   ]
 }
 ```
@@ -56,7 +58,7 @@
   "fields": [
     { "key": "ac",        "label": "Armor Class", "type": "number", "kind": "static", "default": 10 },
     { "key": "speed",     "label": "Speed", "type": "number", "kind": "static", "default": 30 },
-    { "key": "initiative","label": "Initiative", "type": "formula", "formula": "@self.trait['core-stats'].dex_mod" }
+    { "key": "initiative","label": "Initiative", "type": "formula", "formula": "@core_stats.dex_mod" }
   ]
 }
 ```
@@ -88,12 +90,12 @@
   "fields": [
     { "key": "athletics_prof", "label": "Athletics Proficiency", "type": "boolean", "kind": "static", "default": false },
     { "key": "athletics_mod",  "label": "Athletics", "type": "formula",
-      "formula": "@self.trait['core-stats'].str_mod + IF(@self.trait['skills'].athletics_prof, @self.trait['proficiency'].bonus, 0)" },
+      "formula": "@core_stats.str_mod + IF(@skills.athletics_prof, @proficiency.bonus, 0)" },
     { "key": "perception_prof", "label": "Perception Proficiency", "type": "boolean", "kind": "static", "default": false },
     { "key": "perception_mod",  "label": "Perception", "type": "formula",
-      "formula": "@self.trait['core-stats'].wis_mod + IF(@self.trait['skills'].perception_prof, @self.trait['proficiency'].bonus, 0)" },
+      "formula": "@core_stats.wis_mod + IF(@skills.perception_prof, @proficiency.bonus, 0)" },
     { "key": "passive_perception", "label": "Passive Perception", "type": "formula",
-      "formula": "10 + @self.trait['skills'].perception_mod" }
+      "formula": "10 + @skills.perception_mod" }
   ]
 }
 ```

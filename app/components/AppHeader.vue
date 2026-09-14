@@ -25,7 +25,10 @@ const { user } = storeToRefs(useAuthStore())
     </div>
 
     <div class="flex flex-row items-center gap-2">
-      <UserAvatar :user="user!" />
+      <UserAvatar
+        v-if="user"
+        :user="user"
+      />
     </div>
   </div>
 </template>

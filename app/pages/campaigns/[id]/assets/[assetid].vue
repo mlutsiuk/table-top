@@ -2,7 +2,8 @@
 import { useDebounceFn } from '@vueuse/core'
 
 const route = useRoute('campaigns-id-assets-assetid')
-const assetId = computed(() => route.params.assetid as string)
+const assetId = computed(() => route.params.assetid)
+const campaignId = computed(() => route.params.id)
 const trpc = useTrpc()
 const campaignStore = useCampaignStore()
 
@@ -54,27 +55,35 @@ function onTitleUpdate(newTitle: string) {
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col min-h-0">
-    <div class="flex justify-end px-8 pb-1 pt-2 shrink-0">
-      <span
-        class="text-xs text-muted-foreground transition-opacity"
-        :class="saveStatus === 'saved' ? 'opacity-0' : 'opacity-100'"
-      >
-        {{ saveStatus === 'saving' ? 'Saving...' : 'Unsaved changes' }}
-      </span>
+  <div class="flex flex-1 flex-row min-h-0">
+    <div class="flex flex-1 flex-col min-h-0">
+      <div class="flex justify-end px-8 pb-1 pt-2 shrink-0">
+        <span
+          class="text-xs text-muted-foreground transition-opacity"
+          :class="saveStatus === 'saved' ? 'opacity-0' : 'opacity-100'"
+        >
+          {{ saveStatus === 'saving' ? 'Saving...' : 'Unsaved changes' }}
+        </span>
+      </div>
+
+      <div v-if="pending" class="flex flex-1 items-center justify-center">
+        <Icon name="lucide:loader" class="size-5 animate-spin text-muted-foreground" />
+      </div>
+
+      <MaterialEditor
+        v-else
+        :key="assetId"
+        :model-value="content"
+        class="flex-1 min-h-0"
+        @update:model-value="onContentUpdate"
+        @update:title="onTitleUpdate"
+      />
     </div>
 
-    <div v-if="pending" class="flex flex-1 items-center justify-center">
-      <Icon name="lucide:loader" class="size-5 animate-spin text-muted-foreground" />
-    </div>
-
-    <MaterialEditor
-      v-else
-      :key="assetId"
-      :model-value="content"
-      class="flex-1 min-h-0"
-      @update:model-value="onContentUpdate"
-      @update:title="onTitleUpdate"
+    <MaterialTraits
+      :asset-id="assetId"
+      :campaign-id="campaignId"
+      class="w-80 shrink-0 overflow-y-auto border-l border-border"
     />
   </div>
 </template>

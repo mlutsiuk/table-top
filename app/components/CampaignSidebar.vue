@@ -2,7 +2,7 @@
 import type { CampaignStatus } from '#shared/types/campaign'
 
 const route = useRoute('campaigns-id')
-const campaignId = computed(() => route.params.id as string)
+const campaignId = computed(() => route.params.id)
 const campaignStore = useCampaignStore()
 
 const statusLabel: Record<CampaignStatus, string> = {

@@ -23,16 +23,6 @@ export type EntityTraitData = Record<string, unknown>
 /** `EntityRelation.data` — details of a link; shape depends on the relation key. */
 export type EntityRelationData = Record<string, unknown>
 
-/** A mechanic instance as the API exposes it. */
-export type MechanicDto = {
-  id: string
-  /** Which MechanicDef this is built from, e.g. `values-v1`. */
-  key: string
-  /** The master's own name for this instance, e.g. `health`. */
-  name: string
-  config: MechanicConfig
-}
-
 /** What a config change would destroy, shown to the master before it happens. */
 export type MechanicConfigImpact = {
   /** Field keys that would stop being declared. */

@@ -25,13 +25,22 @@ export const FIELD_KINDS_LIST = ['static'] as const
 export type FieldKind = typeof FIELD_KINDS_LIST[number]
 
 /**
+ * Everything a field can hold as a value.
+ *
+ * Named once because three places need the same union: the schema a field type
+ * validates with, the blank value a newly added field starts from, and the data a
+ * trait stores. `formula` will not widen it — a computed field stores nothing.
+ */
+export type FieldValue = number | string | boolean
+
+/**
  * What varies between number, text and boolean, described once per type.
  *
  * Config validation lives in each type's own schema and is assembled into a
  * discriminated union; this covers what a *stored value* may be, which is what
  * trait validation needs at runtime after the field type is known.
  */
-export type FieldTypeDef<TValue = unknown> = {
+export type FieldTypeDef<TValue extends FieldValue = FieldValue> = {
   type: FieldType
 
   /** Shown to the master when adding a field. */

@@ -8,7 +8,7 @@
 - `.docs/architecture/decisions.md` — прийняті рішення, не пропонуй альтернатив без причини
 
 При роботі з конкретною підсистемою читай відповідний файл:
-- Механіки → `.docs/engine/mechanic-system.md`
+- Трейти → `.docs/engine/trait-system.md`
 - Формули → `.docs/engine/formula-parser.md`
 - Інвентар/зв'язки → `.docs/engine/entity-relations.md`
 - БД схема → `.docs/architecture/data-model.md`

@@ -1,5 +1,9 @@
 # Actions (Дії)
 
+> **Синтаксис звернень** підпорядковується ADR-016: `@` читає поле поточної сутності,
+> `#` читає параметр виконання дії. Окремі приклади нижче писалися до цього рішення
+> і будуть приведені до нього разом з реалізацією Етапу 5.
+
 ## Концепція
 
 - Action завжди прив'язаний до **Asset**. Entity наслідує Actions через `assetId`.
@@ -24,13 +28,13 @@ type Step = {
 }
 
 type Condition = {
-  formula: string      // '@owner.trait["mana"].current >= 15'
+  formula: string      // '#owner.mana.current >= 15'
   errorMessage: string
 }
 
 type Compute = {
   key: string     // ім'я змінної для наступних кроків
-  formula: string // 'ROLL(1,20) + @self.trait["core-stats"].str_mod'
+  formula: string // 'ROLL(1,20) + @core_stats.str_mod'
 }
 
 type MethodCall = {
@@ -96,7 +100,7 @@ type MethodCall = {
     {
       "name": "Кидок влучання",
       "compute": [
-        { "key": "hit", "formula": "ROLL(1,20) + @owner.trait['core-stats'].str_mod" }
+        { "key": "hit", "formula": "ROLL(1,20) + #owner.core_stats.str_mod" }
       ],
       "log": "{owner} кидає на влучання: {hit}"
     },
@@ -104,12 +108,12 @@ type MethodCall = {
       "name": "Шкода",
       "conditions": [
         {
-          "formula": "{hit} >= @target.trait['combat'].ac",
+          "formula": "{hit} >= #target.combat.ac",
           "errorMessage": "Промах!"
         }
       ],
       "compute": [
-        { "key": "damage", "formula": "ROLL(1,6) + @owner.trait['core-stats'].str_mod" }
+        { "key": "damage", "formula": "ROLL(1,6) + #owner.core_stats.str_mod" }
       ],
       "call": [
         {

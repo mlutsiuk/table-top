@@ -1,11 +1,14 @@
-# sheet-v1 — Sheet Builder
+# Sheet — Sheet Builder
+
+> `Sheet` — нативна сутність двигуна, а не механіка ([ADR-014](../architecture/decisions.md)).
+> Шаблон спільний і призначається асетам, а не копіюється в трейт кожного асета.
 
 ## Концепція
 
 `sheet-v1` — механіка для побудови листа персонажа. Зберігає **тільки шаблон відображення** (дерево нод). Самі дані завжди живуть у values трейтах.
 
 ```
-MechanicInstance "Player Sheet" [sheet-v1]
+TraitDef "Player Sheet" [sheet-v1]
   └── AssetTrait на Asset "Barbarian"
         data: { layout: { ...дерево нод... } }
 ```
@@ -50,7 +53,7 @@ Container (flex-row)
 ```typescript
 // Посилання на поле трейту
 binding: {
-  instance: 'health',  // назва MechanicInstance
+  instance: 'health',  // назва TraitDef
   field: 'hp'          // key поля
 }
 

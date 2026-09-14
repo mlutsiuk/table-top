@@ -2,25 +2,33 @@
 
 ## Синтаксис
 
-### Контексти
+### Два символи (ADR-016)
 
 ```
-@self    — entity який ініціює дію або "власник" формули
-@owner   — entity який володіє предметом (в контексті Actions)
-@target  — entity ціль (в контексті Actions)
-@global  — змінні рівня кампанії (майбутнє)
+@  — поле сутності, яку зараз резолвимо. Доступне завжди.
+     @core_stats.str
+
+#  — параметр виконання дії. Існує тільки всередині дії чи ефекту.
+     #source  — хто виконує
+     #target  — ціль; дія виконується по разу на ціль
+     #owner   — власник предмета
+     #targets — увесь набір цілей, для агрегатних функцій
+     #amount, #roll — інші параметри виконання
 ```
+
+Формула в трейті, що містить `#`, відхиляється при збереженні: трейт резолвиться поза
+будь-якою дією. Це робить перевірку статичною.
 
 ### Посилання на трейт
 
 ```
-@self.trait['instance-name'].field_key
+@trait_key.field_key
 
 // Приклади:
-@self.trait['core-stats'].str
-@self.trait['health'].hp
-@self.trait['combat'].ac
-@target.trait['health'].max_hp
+@core_stats.str
+@health.hp
+@combat.ac
+#target.health.max_hp
 ```
 
 ### Вбудовані функції
@@ -39,20 +47,20 @@ IF(condition, a, b) — умовний вираз
 
 ```
 // STR модифікатор DnD
-FLOOR((@self.trait['core-stats'].str - 10) / 2)
+FLOOR((@core_stats.str - 10) / 2)
 
 // Перевірка влучання
-ROLL(1,20) + @self.trait['core-stats'].str_mod >= @target.trait['combat'].ac
+ROLL(1,20) + @core_stats.str_mod >= #target.combat.ac
 
 // Навичка з профіцієнсі
-@self.trait['core-stats'].str_mod + IF(
-  @self.trait['skills'].athletics_prof,
-  @self.trait['proficiency'].bonus,
+@core_stats.str_mod + IF(
+  @skills.athletics_prof,
+  @proficiency.bonus,
   0
 )
 
 // Пасивна уважність
-10 + @self.trait['skills'].perception_mod
+10 + @skills.perception_mod
 ```
 
 ---
@@ -105,7 +113,7 @@ prof_bonus → perception_mod
 
 **Режим редагування** (raw синтаксис):
 ```
-FLOOR((@self.trait['core-stats'].str - 10) / 2)
+FLOOR((@core_stats.str - 10) / 2)
 ```
 
 **Режим перегляду** (людський):
@@ -149,7 +157,7 @@ athletics_mod = str_mod + bonus
 
 **Runtime** (перевіряються при виконанні Action):
 ```
-@target.trait['health'].current_hp
+#target.health.current_hp
 → якщо трейт не існує → Action падає з помилкою під час виконання
 ```
 

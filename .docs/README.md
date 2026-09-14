@@ -26,15 +26,15 @@
 │   └── decisions.md                 ← ADR: чому саме такі рішення прийняті
 │
 ├── engine/
-│   ├── mechanic-system.md           ← як оголошувати Mechanic, MechanicRegistry, хуки
-│   ├── layered-state-resolve.md     ← пріоритети: Effect → Override → Asset → Default
+│   ├── trait-system.md              ← TraitDef: поля, валідація, зміни конфігу, дії
+│   ├── layered-state-resolve.md     ← рекурсивний resolve і порядок операцій ефектів
 │   ├── formula-parser.md            ← синтаксис формул, де рахується, DFS, граф залежностей
 │   ├── entity-relations.md          ← EntityRelation API, інвентар, симетричні зв'язки
 │   ├── actions.md                   ← ActionConfig структура, методи механік, приклади
 │   └── effects.md                   ← Active Effects через EntityRelation, types
 │
 ├── mechanics/
-│   ├── values-v1.md                 ← головна механіка: static/dynamic/formula поля
+│   ├── values-v1.md                 ← типи полів трейта: static/dynamic/formula
 │   ├── sheet-v1.md                  ← Sheet Builder: Figma Auto Layout концепція, ноди
 │   └── effects-v1.md                ← структура модифікацій і тривалості
 │
@@ -53,7 +53,8 @@
 
 - **Data-Driven:** ігрова логіка — це дані, не код. Майстер налаштовує через UI.
 - **Asset = клас, Entity = об'єкт.** Asset — шаблон. Entity — живий екземпляр.
-- **Mechanic — плагін.** `values-v1` покриває ~80% потреб RPG через три типи полів.
+- **Механік як плагінів немає.** Є один примітив зберігання — `TraitDef`, а розширення живе на
+  рівні типів поля. Див. ADR-013.
 - **EntityRelation — механізм движка.** Інвентар, ефекти, спорядження — все через нього.
 - **Статуси кампанії поки ігноруються** — реалізуємо після Етапу 3.
 
