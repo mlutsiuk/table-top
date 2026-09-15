@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useDebounceFn } from '@vueuse/core'
+import { sanitizeLine } from '#shared/validation/text'
 
 const route = useRoute('campaigns-id-assets-assetid')
 const assetId = computed(() => route.params.assetid)
@@ -45,7 +46,9 @@ function onContentUpdate(value: Record<string, any>) {
 
 // Save title (syncs editor h1 → asset.title in DB + sidebar)
 const debouncedSaveTitle = useDebounceFn(async (newTitle: string) => {
-  await trpc.asset.rename.mutate({ id: assetId.value, title: newTitle || 'Untitled' })
+  // Cleaned here too: a heading of only invisible characters would otherwise be
+  // refused by the server instead of falling back to a readable title.
+  await trpc.asset.rename.mutate({ id: assetId.value, title: sanitizeLine(newTitle) || 'Untitled' })
   campaignStore.invalidateTree()
 }, 1000)
 

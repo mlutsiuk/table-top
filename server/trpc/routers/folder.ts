@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { MATERIAL_VISIBILITIES } from '#shared/permissions/material'
+import { lineSchema } from '#shared/validation/text'
 import { privateProcedure, router } from '../trpc'
 
 export const folderRouter = router({
@@ -11,14 +12,14 @@ export const folderRouter = router({
     .input(z.object({
       campaignId: z.uuid(),
       parentId: z.uuid().optional(),
-      title: z.string().min(1).max(100)
+      title: lineSchema(100)
     }))
     .mutation(({ input, ctx }) => ctx.folders.create(input)),
 
   rename: privateProcedure
     .input(z.object({
       id: z.uuid(),
-      title: z.string().min(1).max(100)
+      title: lineSchema(100)
     }))
     .mutation(({ input, ctx }) => ctx.folders.rename(input.id, input.title)),
 

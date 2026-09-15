@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { CAMPAIGN_STATUSES } from '#shared/types/campaign'
+import { lineSchema } from '#shared/validation/text'
 import { privateProcedure, router } from '../trpc'
 
 export const campaignRouter = router({
@@ -11,13 +12,13 @@ export const campaignRouter = router({
     .query(({ input, ctx }) => ctx.campaigns.getById(input.campaignId)),
 
   createCampaign: privateProcedure
-    .input(z.object({ title: z.string().min(1).max(100) }))
+    .input(z.object({ title: lineSchema(100) }))
     .mutation(({ input, ctx }) => ctx.campaigns.create(input.title)),
 
   updateCampaign: privateProcedure
     .input(z.object({
       campaignId: z.uuid(),
-      title: z.string().min(1).max(100).optional(),
+      title: lineSchema(100).optional(),
       // Driven by the shared union, so a new status cannot be added without the
       // API accepting it — and a typo here stops being possible.
       status: z.enum(CAMPAIGN_STATUSES).optional()

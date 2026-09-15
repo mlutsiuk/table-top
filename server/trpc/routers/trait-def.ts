@@ -1,7 +1,8 @@
 import { z } from 'zod'
+import { lineSchema } from '#shared/validation/text'
 import { privateProcedure, router } from '../trpc'
 
-const traitLabel = z.string().trim().min(1).max(60)
+const traitLabel = lineSchema(60)
 
 export const traitDefRouter = router({
   list: privateProcedure

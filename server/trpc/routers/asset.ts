@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { MATERIAL_VISIBILITIES } from '#shared/permissions/material'
+import { lineSchema } from '#shared/validation/text'
 import { privateProcedure, router } from '../trpc'
 
 export const assetRouter = router({
@@ -10,14 +11,14 @@ export const assetRouter = router({
   create: privateProcedure
     .input(z.object({
       folderId: z.uuid(),
-      title: z.string().min(1).max(100)
+      title: lineSchema(100)
     }))
     .mutation(({ input, ctx }) => ctx.assets.create(input.folderId, input.title)),
 
   rename: privateProcedure
     .input(z.object({
       id: z.uuid(),
-      title: z.string().min(1).max(100)
+      title: lineSchema(100)
     }))
     .mutation(({ input, ctx }) => ctx.assets.rename(input.id, input.title)),
 

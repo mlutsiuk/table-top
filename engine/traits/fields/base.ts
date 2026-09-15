@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { lineSchema } from '#shared/validation/text'
 import { identifierSchema } from '../key'
 import { FIELD_KINDS_LIST } from '../types'
 
@@ -10,6 +11,6 @@ import { FIELD_KINDS_LIST } from '../types'
  */
 export const baseFieldSchema = z.object({
   key: identifierSchema,
-  label: z.string().min(1).max(60),
+  label: lineSchema(60),
   kind: z.enum(FIELD_KINDS_LIST)
 })
