@@ -23,12 +23,14 @@ type FolderRow = { id: string, path: string[], visibility: MaterialVisibility }
  * Someone who may write material sees everything: hiding is aimed at players.
  */
 export function hiddenFolderIds(folders: FolderRow[], viewer: MaterialViewer): Set<string> {
-  if (viewer.canWriteMaterials) return new Set()
+  if (viewer.canWriteMaterials)
+    return new Set()
 
   const hiddenRoots = new Set(
     folders.filter(folder => folder.visibility === 'master_only').map(folder => folder.id)
   )
-  if (hiddenRoots.size === 0) return new Set()
+  if (hiddenRoots.size === 0)
+    return new Set()
 
   const hidden = new Set<string>()
   for (const folder of folders) {
@@ -45,8 +47,10 @@ export function hiddenFolderIds(folders: FolderRow[], viewer: MaterialViewer): S
 export function materialAbilities(viewer: MaterialViewer): MaterialAbility[] {
   const abilities: MaterialAbility[] = []
 
-  if (viewer.canReadMaterials) abilities.push('material:read')
-  if (viewer.canWriteMaterials) abilities.push('material:write')
+  if (viewer.canReadMaterials)
+    abilities.push('material:read')
+  if (viewer.canWriteMaterials)
+    abilities.push('material:write')
 
   return abilities
 }

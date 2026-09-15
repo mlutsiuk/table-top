@@ -1,11 +1,11 @@
 import type { PrismaClient, TraitDef } from '@prisma/client'
-import type { TraitConfigImpact } from '#shared/types/trait'
-import type { TraitDefDto } from '~~/engine/traits/dto'
 import type { TraitConfig } from '~~/engine/traits'
+import type { TraitDefDto } from '~~/engine/traits/dto'
 import type { CampaignAccessService } from '~~/server/features/campaigns/services/campaign-access.service'
-import { BadRequestError, NotFoundError } from '~~/server/infrastructure/errors'
+import type { TraitConfigImpact } from '#shared/types/trait'
 import { orphanedKeys, traitConfigSchema, traitKeySchema } from '~~/engine/traits'
 import { toTraitDefDto } from '~~/server/features/trait-defs/trait-def-dto'
+import { BadRequestError, NotFoundError } from '~~/server/infrastructure/errors'
 
 /**
  * Turns a Zod rejection into something a master can act on. The schema is the only
@@ -53,7 +53,8 @@ export function createTraitDefsService(prisma: PrismaClient, access: CampaignAcc
   /** Resolves a definition the caller holds `ability` over. */
   async function require(id: string, ability: 'traits:read' | 'traits:manage') {
     const traitDef = await prisma.traitDef.findUnique({ where: { id } })
-    if (!traitDef) throw new NotFoundError('Trait not found')
+    if (!traitDef)
+      throw new NotFoundError('Trait not found')
 
     await access.requireAbility(traitDef.campaignId, ability)
 
@@ -79,8 +80,10 @@ export function createTraitDefsService(prisma: PrismaClient, access: CampaignAcc
       where: { campaignId: input.campaignId, OR: [{ key }, { label: input.label }] },
       select: { key: true }
     })
-    if (taken?.key === key) throw new BadRequestError(`The key "${key}" is already used in this campaign`)
-    if (taken) throw new BadRequestError(`A trait named "${input.label}" already exists`)
+    if (taken?.key === key)
+      throw new BadRequestError(`The key "${key}" is already used in this campaign`)
+    if (taken)
+      throw new BadRequestError(`A trait named "${input.label}" already exists`)
 
     const traitDef = await prisma.traitDef.create({
       data: { campaignId: input.campaignId, key, label: input.label, config }
@@ -125,7 +128,8 @@ export function createTraitDefsService(prisma: PrismaClient, access: CampaignAcc
 
     for (const trait of traits) {
       const orphans = orphanedKeys(next, trait.data)
-      if (orphans.length === 0) continue
+      if (orphans.length === 0)
+        continue
 
       affectedAssets++
       for (const key of orphans) removedKeys.add(key)
@@ -153,7 +157,8 @@ export function createTraitDefsService(prisma: PrismaClient, access: CampaignAcc
 
     const cleanups = traits.flatMap((trait) => {
       const orphans = orphanedKeys(next, trait.data)
-      if (orphans.length === 0) return []
+      if (orphans.length === 0)
+        return []
 
       const kept = Object.fromEntries(
         Object.entries(trait.data).filter(([key]) => !orphans.includes(key))

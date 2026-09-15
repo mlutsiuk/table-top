@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { TraitConfigImpact } from '#shared/types/trait'
-import type { TraitDefDto } from '~~/engine/traits/dto'
 import type { TraitConfig } from '~~/engine/traits'
+import type { TraitDefDto } from '~~/engine/traits/dto'
+import type { TraitConfigImpact } from '#shared/types/trait'
 import {
   Dialog,
   DialogContent,

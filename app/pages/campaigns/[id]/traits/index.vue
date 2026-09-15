@@ -52,15 +52,18 @@ const adding = ref(false)
 const keyTouched = ref(false)
 
 watch(addLabel, (label) => {
-  if (!keyTouched.value) addKey.value = deriveTraitKey(label)
+  if (!keyTouched.value)
+    addKey.value = deriveTraitKey(label)
 })
 
 /** The same schema the server checks with, so the form never promises a save it will refuse. */
 const keyCheck = computed(() => traitKeySchema.safeParse(addKey.value))
 
 const keyError = computed(() => {
-  if (!addLabel.value.trim() && !keyTouched.value) return null
-  if (!addKey.value) return 'Enter a key, the label has nothing to build one from'
+  if (!addLabel.value.trim() && !keyTouched.value)
+    return null
+  if (!addKey.value)
+    return 'Enter a key, the label has nothing to build one from'
 
   return keyCheck.value.success ? null : keyCheck.value.error.issues[0]?.message ?? 'Invalid key'
 })
@@ -75,7 +78,8 @@ function openAdd() {
 }
 
 async function add() {
-  if (!canAdd.value) return
+  if (!canAdd.value)
+    return
 
   adding.value = true
   try {
@@ -107,7 +111,8 @@ function openRename(traitDef: TraitDefDto) {
 
 async function rename() {
   const label = renameValue.value.trim()
-  if (!renaming.value || !label) return
+  if (!renaming.value || !label)
+    return
 
   try {
     await trpc.traitDef.rename.mutate({ id: renaming.value.id, label })
@@ -124,7 +129,8 @@ async function rename() {
 const deleting = ref<TraitDefDto | null>(null)
 
 async function remove() {
-  if (!deleting.value) return
+  if (!deleting.value)
+    return
 
   try {
     await trpc.traitDef.delete.mutate({ id: deleting.value.id })

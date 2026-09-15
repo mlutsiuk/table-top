@@ -20,7 +20,8 @@ export function useColumnWidths(initial: number[], minWidth = 72) {
   let dragging: { index: number, startX: number, startWidth: number } | null = null
 
   function onMove(event: PointerEvent) {
-    if (!dragging) return
+    if (!dragging)
+      return
 
     const next = dragging.startWidth + (event.clientX - dragging.startX)
     widths.value[dragging.index] = Math.max(minWidth, next)

@@ -6,7 +6,8 @@ export function createAssetsService(prisma: PrismaClient, access: CampaignAccess
   /** Readable by players too — for now they see the same materials as the master. */
   async function getById(id: string) {
     const asset = await prisma.asset.findUnique({ where: { id } })
-    if (!asset) throw new NotFoundError('Asset not found')
+    if (!asset)
+      throw new NotFoundError('Asset not found')
 
     await access.requireAbility(asset.campaignId, 'materials:read')
 
@@ -57,7 +58,8 @@ export function createAssetsService(prisma: PrismaClient, access: CampaignAccess
       where: { id: folderId, campaignId: asset.campaignId },
       select: { id: true }
     })
-    if (!target) throw new NotFoundError('Target folder not found')
+    if (!target)
+      throw new NotFoundError('Target folder not found')
 
     return prisma.asset.update({
       where: { id: asset.id },

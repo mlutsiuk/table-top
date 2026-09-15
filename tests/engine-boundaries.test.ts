@@ -28,7 +28,7 @@ function importsOf(file: string): string[] {
   return [...source.matchAll(/from\s+['"]([^'"]+)['"]/g)].map(match => match[1]!)
 }
 
-const sources = filesUnder(ENGINE).filter(file => /\.(ts|vue)$/.test(file))
+const sources = filesUnder(ENGINE).filter(file => /\.(?:ts|vue)$/.test(file))
 
 const forbidden: RegExp[] = [
   // The UI framework, and components of any kind.

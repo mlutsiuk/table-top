@@ -53,7 +53,8 @@ const proposed = computed(() => assetTraitSchema(props.config).safeParse(values.
 const canSave = computed(() => dirty.value && proposed.value.success)
 
 function save() {
-  if (proposed.value.success) emit('save', proposed.value.data)
+  if (proposed.value.success)
+    emit('save', proposed.value.data)
 }
 
 function reset() {

@@ -12,9 +12,9 @@ import type { TraitConfig } from './config.schema'
  * be left behind by a change to the field types, or edited by hand. Saying so in
  * the type beats an unchecked cast that pretends otherwise.
  */
-export type TraitDefDto =
-  | { id: string, key: string, label: string, valid: true, config: TraitConfig }
-  | { id: string, key: string, label: string, valid: false, config: RawTraitConfig }
+export type TraitDefDto
+  = | { id: string, key: string, label: string, valid: true, config: TraitConfig }
+    | { id: string, key: string, label: string, valid: false, config: RawTraitConfig }
 
 /**
  * One definition's values on one asset.

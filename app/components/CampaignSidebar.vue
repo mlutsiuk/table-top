@@ -15,8 +15,8 @@ const statusLabel: Record<CampaignStatus, string> = {
 <template>
   <div class="flex h-full flex-col text-sidebar-foreground">
     <!-- Campaign header -->
-    <div class="px-3 py-3">
-      <div class="truncate text-sm font-semibold leading-tight">
+    <div class="p-3">
+      <div class="truncate text-sm leading-tight font-semibold">
         {{ campaignStore.campaign?.title ?? '...' }}
       </div>
       <div class="mt-0.5 text-xs text-muted-foreground">
@@ -44,8 +44,8 @@ const statusLabel: Record<CampaignStatus, string> = {
         :to="{
           name: 'campaigns-id-traits',
           params: {
-            id: campaignId
-          }
+            id: campaignId,
+          },
         }"
         active-class="bg-sidebar-accent text-sidebar-accent-foreground"
         class="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"

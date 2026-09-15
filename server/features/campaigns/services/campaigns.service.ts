@@ -1,7 +1,7 @@
 import type { PrismaClient } from '@prisma/client'
 import type { CampaignDto, CampaignStatus } from '#shared/types/campaign'
-import { toCampaignDto } from '../responses/campaign.dto'
 import type { CampaignAccessService } from './campaign-access.service'
+import { toCampaignDto } from '../responses/campaign.dto'
 
 export function createCampaignsService(
   prisma: PrismaClient,

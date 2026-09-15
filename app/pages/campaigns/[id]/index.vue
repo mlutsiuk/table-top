@@ -19,11 +19,17 @@ const campaignStore = useCampaignStore()
       <Tabs default-value="players" class="w-full">
         <TabsList>
           <TabsTrigger value="sheets">
-            <Icon name="material-symbols:edit-document-rounded" class="size-4 mr-1.5" />
+            <Icon
+              name="material-symbols:edit-document-rounded"
+              class="mr-1.5 size-4"
+            />
             Player sheets
           </TabsTrigger>
           <TabsTrigger value="players">
-            <Icon name="lucide:users" class="size-4 mr-1.5" />
+            <Icon
+              name="lucide:users"
+              class="mr-1.5 size-4"
+            />
             Players
           </TabsTrigger>
         </TabsList>

@@ -45,16 +45,6 @@ export const TREE_CONTEXT_KEY = Symbol('treeContext')
 </script>
 
 <script setup lang="ts">
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-
 const props = defineProps<{ campaignId: string }>()
 
 const trpc = useTrpc()
@@ -85,7 +75,8 @@ async function fetchTree() {
   pending.value = true
   try {
     rawData.value = await trpc.folder.getTree.query({ campaignId: props.campaignId })
-  } finally {
+  }
+  finally {
     pending.value = false
   }
 }
@@ -96,7 +87,8 @@ onMounted(fetchTree)
 watch(() => campaignStore.treeVersion, fetchTree)
 
 const treeItems = computed<TreeNode[]>(() => {
-  if (!rawData.value) return []
+  if (!rawData.value)
+    return []
   const { folders, assets } = rawData.value
 
   const folderMap = new Map<string, FolderNode>()
@@ -108,7 +100,8 @@ const treeItems = computed<TreeNode[]>(() => {
   for (const folder of folderMap.values()) {
     if (folder.parentId && folderMap.has(folder.parentId)) {
       folderMap.get(folder.parentId)!.children.push(folder)
-    } else {
+    }
+    else {
       roots.push(folder)
     }
   }
@@ -136,11 +129,15 @@ function startRename(type: 'folder' | 'asset', id: string, currentTitle: string)
 
 async function submitRename(type: 'folder' | 'asset', id: string) {
   const title = editingTitle.value.trim()
-  if (!title) { editingId.value = null; return }
+  if (!title) {
+    editingId.value = null
+    return
+  }
 
   if (type === 'folder') {
     await trpc.folder.rename.mutate({ id, title })
-  } else {
+  }
+  else {
     await trpc.asset.rename.mutate({ id, title })
   }
   editingId.value = null
@@ -191,7 +188,8 @@ async function setVisibility(
 ) {
   if (type === 'folder') {
     await trpc.folder.setVisibility.mutate({ id, visibility })
-  } else {
+  }
+  else {
     await trpc.asset.setVisibility.mutate({ id, visibility })
   }
   await fetchTree()
@@ -222,13 +220,15 @@ function requestMove(
 }
 
 async function confirmMove() {
-  if (!pendingMove.value) return
+  if (!pendingMove.value)
+    return
   const { sourceId, sourceType, targetFolderId } = pendingMove.value
   pendingMove.value = null
 
   if (sourceType === 'folder') {
     await trpc.folder.move.mutate({ id: sourceId, parentId: targetFolderId })
-  } else {
+  }
+  else {
     await trpc.asset.move.mutate({ id: sourceId, folderId: targetFolderId })
   }
   await fetchTree()
@@ -253,20 +253,20 @@ provide<TreeContext>(TREE_CONTEXT_KEY, {
   deleteFolder,
   deleteAsset,
   draggedNode,
-  requestMove,
+  requestMove
 })
 </script>
 
 <template>
-  <div class="flex flex-col h-full">
+  <div class="flex h-full flex-col">
     <!-- Header -->
     <div class="flex items-center justify-between px-3 py-2">
-      <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+      <span class="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
         Materials
       </span>
       <button
         v-if="canEdit"
-        class="rounded p-0.5 text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
+        class="rounded p-0.5 text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
         title="New folder"
         @click="addFolder(null)"
       >
@@ -317,8 +317,12 @@ provide<TreeContext>(TREE_CONTEXT_KEY, {
         </DialogDescription>
       </DialogHeader>
       <DialogFooter>
-        <Button variant="outline" @click="cancelMove">Cancel</Button>
-        <Button @click="confirmMove">Move</Button>
+        <Button variant="outline" @click="cancelMove">
+          Cancel
+        </Button>
+        <Button @click="confirmMove">
+          Move
+        </Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>

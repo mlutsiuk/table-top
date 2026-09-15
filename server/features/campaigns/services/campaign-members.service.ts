@@ -1,7 +1,7 @@
 import type { PrismaClient } from '@prisma/client'
 import type { CampaignMemberDto } from '#shared/types/campaign'
-import { BadRequestError, NotFoundError } from '~~/server/infrastructure/errors'
 import type { CampaignAccessService } from './campaign-access.service'
+import { BadRequestError, NotFoundError } from '~~/server/infrastructure/errors'
 
 /**
  * Administration of who plays in a campaign. Kept apart from the campaign service

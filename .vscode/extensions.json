@@ -1,9 +1,9 @@
 {
-    "recommendations": [
-      "bradlc.vscode-tailwindcss",
-      "dbaeumer.vscode-eslint",
-      "Vue.volar",
-      "yoavbls.pretty-ts-errors",
-      "antfu.iconify"
-    ]
-  }
+  "recommendations": [
+    "bradlc.vscode-tailwindcss",
+    "dbaeumer.vscode-eslint",
+    "Vue.volar",
+    "yoavbls.pretty-ts-errors",
+    "antfu.iconify"
+  ]
+}

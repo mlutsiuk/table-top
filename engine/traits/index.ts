@@ -1,7 +1,9 @@
-import { traitConfigSchema } from './config.schema'
 import type { TraitConfig } from './config.schema'
-import { FIELD_TYPES, fieldSchema } from './fields'
 import type { TraitField } from './fields'
+import type { TraitData } from './trait.schema'
+import type { FieldType, FieldValue } from './types'
+import { traitConfigSchema } from './config.schema'
+import { FIELD_TYPES, fieldSchema } from './fields'
 import { deriveTraitKey, RESERVED_TRAIT_KEYS, traitKeySchema } from './key'
 import {
   assetTraitDefaults,
@@ -9,9 +11,7 @@ import {
   normalizeTraitData,
   orphanedKeys
 } from './trait.schema'
-import type { TraitData } from './trait.schema'
 import { FIELD_TYPES_LIST } from './types'
-import type { FieldType, FieldValue } from './types'
 
 /**
  * How the engine stores values: the only way, per ADR-013.
@@ -24,17 +24,23 @@ import type { FieldType, FieldValue } from './types'
  * typed. Nothing here accepts an unparsed config.
  */
 export {
-  traitConfigSchema,
-  traitKeySchema,
-  RESERVED_TRAIT_KEYS,
-  deriveTraitKey,
-  assetTraitSchema,
   assetTraitDefaults,
-  orphanedKeys,
-  normalizeTraitData,
+  assetTraitSchema,
+  deriveTraitKey,
   FIELD_TYPES,
   FIELD_TYPES_LIST,
-  fieldSchema
+  fieldSchema,
+  normalizeTraitData,
+  orphanedKeys,
+  RESERVED_TRAIT_KEYS,
+  traitConfigSchema,
+  traitKeySchema
 }
 
-export type { TraitConfig, TraitData, TraitField, FieldType, FieldValue }
+export type {
+  FieldType,
+  FieldValue,
+  TraitConfig,
+  TraitData,
+  TraitField
+}

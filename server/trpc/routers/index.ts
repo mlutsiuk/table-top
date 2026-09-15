@@ -1,9 +1,9 @@
 import { router } from '../trpc'
+import { assetRouter } from './asset'
+import { assetTraitRouter } from './asset-trait'
 import { authRouter } from './auth'
 import { campaignRouter } from './campaign'
 import { folderRouter } from './folder'
-import { assetRouter } from './asset'
-import { assetTraitRouter } from './asset-trait'
 import { traitDefRouter } from './trait-def'
 
 export const appRouter = router({

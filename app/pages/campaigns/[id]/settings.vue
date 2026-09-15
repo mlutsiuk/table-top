@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useDebounceFn } from '@vueuse/core'
 import type { CampaignStatus } from '#shared/types/campaign'
-import { RadioGroupRoot, RadioGroupItem } from 'reka-ui'
+import { useDebounceFn } from '@vueuse/core'
+import { RadioGroupItem, RadioGroupRoot } from 'reka-ui'
 
 definePageMeta({
   middleware: requireCampaignAbility('campaign:update')
@@ -15,13 +15,15 @@ const saveStatus = ref<'saved' | 'saving' | 'unsaved'>('saved')
 watch(
   () => campaignStore.campaign,
   (campaign) => {
-    if (campaign) title.value = campaign.title
+    if (campaign)
+      title.value = campaign.title
   },
-  { immediate: true },
+  { immediate: true }
 )
 
 const debouncedSaveTitle = useDebounceFn(async (value: string) => {
-  if (!value.trim()) return
+  if (!value.trim())
+    return
   saveStatus.value = 'saving'
   await campaignStore.updateCampaign({ title: value.trim() })
   saveStatus.value = 'saved'
@@ -34,31 +36,37 @@ function onTitleInput(e: Event) {
 }
 
 async function setStatus(status: CampaignStatus) {
-  if (campaignStore.campaign?.status === status) return
+  if (campaignStore.campaign?.status === status)
+    return
   await campaignStore.updateCampaign({ status })
 }
 
 const statuses = [
   { value: 'draft', label: 'Draft', description: 'Work in progress' },
   { value: 'active', label: 'Active', description: 'Campaign is running' },
-  { value: 'archived', label: 'Archived', description: 'No longer active' },
+  { value: 'archived', label: 'Archived', description: 'No longer active' }
 ] satisfies { value: CampaignStatus, label: string, description: string }[]
 
 const createdAt = computed(() => {
-  if (!campaignStore.campaign) return ''
+  if (!campaignStore.campaign)
+    return ''
   return new Intl.DateTimeFormat('en', { dateStyle: 'medium' }).format(
-    new Date(campaignStore.campaign.createdAt),
+    new Date(campaignStore.campaign.createdAt)
   )
 })
 </script>
 
 <template>
-  <div class="flex flex-col gap-10 px-8 py-6 max-w-xl">
+  <div class="flex max-w-xl flex-col gap-10 px-8 py-6">
     <!-- General -->
     <section class="flex flex-col gap-5">
       <div>
-        <h2 class="text-base font-semibold">General</h2>
-        <p class="text-sm text-muted-foreground">Basic campaign information</p>
+        <h2 class="text-base font-semibold">
+          General
+        </h2>
+        <p class="text-sm text-muted-foreground">
+          Basic campaign information
+        </p>
       </div>
 
       <!-- Title -->
@@ -73,7 +81,7 @@ const createdAt = computed(() => {
             @input="onTitleInput"
           />
           <span
-            class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground transition-opacity"
+            class="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-xs text-muted-foreground transition-opacity"
             :class="saveStatus === 'saved' ? 'opacity-0' : 'opacity-100'"
           >
             {{ saveStatus === 'saving' ? 'Saving…' : '●' }}
@@ -113,7 +121,9 @@ const createdAt = computed(() => {
 
     <!-- Meta -->
     <section class="flex flex-col gap-3">
-      <h2 class="text-base font-semibold">Info</h2>
+      <h2 class="text-base font-semibold">
+        Info
+      </h2>
       <div class="flex flex-col gap-2 text-sm">
         <div class="flex items-center justify-between">
           <span class="text-muted-foreground">Campaign ID</span>

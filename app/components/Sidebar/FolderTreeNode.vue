@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { TreeNode, TreeContext, FolderNode } from './FolderTree.vue'
-import { TREE_CONTEXT_KEY } from './FolderTree.vue'
-import FolderTreeNode from './FolderTreeNode.vue'
+import type { FolderNode, TreeContext, TreeNode } from './FolderTree.vue'
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuSeparator,
-  ContextMenuTrigger,
+  ContextMenuTrigger
 } from '@/components/ui/context-menu'
+import { TREE_CONTEXT_KEY } from './FolderTree.vue'
+import FolderTreeNode from './FolderTreeNode.vue'
 
 const props = defineProps<{
   node: TreeNode
@@ -36,13 +36,16 @@ const canWrite = computed(() => canOn(props.node, 'material:write'))
 const isHidden = computed(() => props.node.visibility === 'master_only')
 
 const isActiveAsset = computed(() => {
-  if (!isAsset.value) return false
+  if (!isAsset.value)
+    return false
   return params.value.assetid === props.node.id
 })
 
 function onRenameKeydown(e: KeyboardEvent) {
-  if (e.key === 'Enter') ctx.submitRename(props.node.type, props.node.id)
-  if (e.key === 'Escape') ctx.cancelRename()
+  if (e.key === 'Enter')
+    ctx.submitRename(props.node.type, props.node.id)
+  if (e.key === 'Escape')
+    ctx.cancelRename()
 }
 
 // --- Drag-and-drop ---
@@ -51,7 +54,8 @@ const dragOverCount = ref(0)
 const isDragOver = computed(() => isFolder.value && dragOverCount.value > 0)
 
 function onDragStart(e: DragEvent) {
-  if (!e.dataTransfer) return
+  if (!e.dataTransfer)
+    return
   e.dataTransfer.effectAllowed = 'move'
   e.dataTransfer.setData('application/x-tree-node', JSON.stringify({
     id: props.node.id,
@@ -67,17 +71,22 @@ function onDragEnd() {
 }
 
 function onDragEnter(e: DragEvent) {
-  if (!isFolder.value) return
-  if (ctx.draggedNode.value?.id === props.node.id) return
+  if (!isFolder.value)
+    return
+  if (ctx.draggedNode.value?.id === props.node.id)
+    return
   e.preventDefault()
   dragOverCount.value++
 }
 
 function onDragOver(e: DragEvent) {
-  if (!isFolder.value) return
-  if (ctx.draggedNode.value?.id === props.node.id) return
+  if (!isFolder.value)
+    return
+  if (ctx.draggedNode.value?.id === props.node.id)
+    return
   e.preventDefault()
-  if (e.dataTransfer) e.dataTransfer.dropEffect = 'move'
+  if (e.dataTransfer)
+    e.dataTransfer.dropEffect = 'move'
 }
 
 function onDragLeave() {
@@ -86,13 +95,16 @@ function onDragLeave() {
 
 function onDrop(e: DragEvent) {
   dragOverCount.value = 0
-  if (!isFolder.value || !e.dataTransfer) return
+  if (!isFolder.value || !e.dataTransfer)
+    return
   e.preventDefault()
 
   const raw = e.dataTransfer.getData('application/x-tree-node')
-  if (!raw) return
-  const data = JSON.parse(raw) as { id: string; type: 'folder' | 'asset'; title: string }
-  if (data.id === props.node.id) return
+  if (!raw)
+    return
+  const data = JSON.parse(raw) as { id: string, type: 'folder' | 'asset', title: string }
+  if (data.id === props.node.id)
+    return
 
   ctx.requestMove(data.id, data.type, data.title, props.node.id, props.node.title)
   ctx.draggedNode.value = null
@@ -108,7 +120,7 @@ function onDrop(e: DragEvent) {
           class="group/row relative flex items-center gap-1 rounded py-0.5 pr-1 text-sm transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
           :class="{
             'bg-sidebar-accent text-sidebar-accent-foreground': isActiveAsset,
-            'ring-1 ring-inset ring-primary/50 bg-primary/5': isDragOver,
+            'bg-primary/5 ring-1 ring-primary/50 ring-inset': isDragOver,
           }"
           :style="{ paddingLeft }"
           :draggable="canWrite"
@@ -149,18 +161,18 @@ function onDrop(e: DragEvent) {
             v-if="isEditing"
             :id="`rename-input-${node.id}`"
             v-model="ctx.editingTitle.value"
-            class="min-w-0 flex-1 bg-transparent text-sm outline-none border-b border-ring"
+            class="min-w-0 flex-1 border-b border-ring bg-transparent text-sm outline-none"
             @keydown="onRenameKeydown"
             @blur="ctx.cancelRename"
-          />
+          >
           <NuxtLink
             v-else-if="isAsset"
             :to="{
               name: 'campaigns-id-assets-assetid',
               params: {
                 id: params.id,
-                assetid: node.id
-              }
+                assetid: node.id,
+              },
             }"
             class="min-w-0 flex-1 truncate"
             @click.stop
@@ -183,14 +195,14 @@ function onDrop(e: DragEvent) {
           >
             <template v-if="isFolder">
               <button
-                class="rounded p-0.5 hover:bg-sidebar-ring/20 transition-colors"
+                class="rounded p-0.5 transition-colors hover:bg-sidebar-ring/20"
                 title="New asset"
                 @click.stop="ctx.addAsset(node.id)"
               >
                 <Icon name="lucide:file-plus" class="size-3.5" />
               </button>
               <button
-                class="rounded p-0.5 hover:bg-sidebar-ring/20 transition-colors"
+                class="rounded p-0.5 transition-colors hover:bg-sidebar-ring/20"
                 title="New subfolder"
                 @click.stop="ctx.addFolder(node.id)"
               >
@@ -198,14 +210,14 @@ function onDrop(e: DragEvent) {
               </button>
             </template>
             <button
-              class="rounded p-0.5 hover:bg-sidebar-ring/20 transition-colors"
+              class="rounded p-0.5 transition-colors hover:bg-sidebar-ring/20"
               title="Rename"
               @click.stop="ctx.startRename(node.type, node.id, node.title)"
             >
               <Icon name="lucide:pencil" class="size-3.5" />
             </button>
             <button
-              class="rounded p-0.5 text-destructive/70 hover:bg-destructive/10 hover:text-destructive transition-colors"
+              class="rounded p-0.5 text-destructive/70 transition-colors hover:bg-destructive/10 hover:text-destructive"
               title="Delete"
               @click.stop="isFolder ? ctx.deleteFolder(node.id) : ctx.deleteAsset(node.id)"
             >
@@ -221,17 +233,17 @@ function onDrop(e: DragEvent) {
       >
         <template v-if="isFolder">
           <ContextMenuItem @click="ctx.addAsset(node.id)">
-            <Icon name="lucide:file-plus" class="size-3.5 mr-2" />
+            <Icon name="lucide:file-plus" class="mr-2 size-3.5" />
             New Asset
           </ContextMenuItem>
           <ContextMenuItem @click="ctx.addFolder(node.id)">
-            <Icon name="lucide:folder-plus" class="size-3.5 mr-2" />
+            <Icon name="lucide:folder-plus" class="mr-2 size-3.5" />
             New Subfolder
           </ContextMenuItem>
           <ContextMenuSeparator />
         </template>
         <ContextMenuItem @click="ctx.startRename(node.type, node.id, node.title)">
-          <Icon name="lucide:pencil" class="size-3.5 mr-2" />
+          <Icon name="lucide:pencil" class="mr-2 size-3.5" />
           Rename
         </ContextMenuItem>
         <ContextMenuItem
@@ -239,7 +251,7 @@ function onDrop(e: DragEvent) {
         >
           <Icon
             :name="isHidden ? 'lucide:eye' : 'lucide:eye-off'"
-            class="size-3.5 mr-2"
+            class="mr-2 size-3.5"
           />
           {{ isHidden ? 'Make visible to players' : 'Hide from players' }}
         </ContextMenuItem>
@@ -248,7 +260,7 @@ function onDrop(e: DragEvent) {
           class="text-destructive focus:text-destructive"
           @click="isFolder ? ctx.deleteFolder(node.id) : ctx.deleteAsset(node.id)"
         >
-          <Icon name="lucide:trash-2" class="size-3.5 mr-2" />
+          <Icon name="lucide:trash-2" class="mr-2 size-3.5" />
           Delete
         </ContextMenuItem>
       </ContextMenuContent>

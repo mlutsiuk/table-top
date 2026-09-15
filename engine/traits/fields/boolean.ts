@@ -1,5 +1,5 @@
-import { z } from 'zod'
 import type { FieldTypeDef } from '../types'
+import { z } from 'zod'
 import { baseFieldSchema } from './base'
 
 export const booleanFieldSchema = baseFieldSchema.extend({

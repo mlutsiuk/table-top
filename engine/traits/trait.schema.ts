@@ -1,6 +1,6 @@
-import { z } from 'zod'
 import type { TraitConfig } from './config.schema'
 import type { FieldValue } from './types'
+import { z } from 'zod'
 import { valueSchemaFor } from './fields'
 
 /** `AssetTrait.data` once parsed: one value per field the config declares. */
@@ -55,6 +55,11 @@ export function normalizeTraitData(
   return Object.fromEntries(config.fields.map((field) => {
     const stored = valueSchemaFor(field).safeParse(data[field.key])
 
-    return [field.key, stored.success ? stored.data : field.default]
+    return [
+      field.key,
+      stored.success
+        ? stored.data
+        : field.default
+    ]
   }))
 }

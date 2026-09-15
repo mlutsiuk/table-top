@@ -18,7 +18,8 @@ async function fetchAsset() {
     const asset = await trpc.asset.getById.query({ id: assetId.value })
     content.value = asset.content as Record<string, any> | null
     assetTitle.value = asset.title
-  } finally {
+  }
+  finally {
     pending.value = false
   }
 }
@@ -30,7 +31,8 @@ const debouncedSaveContent = useDebounceFn(async (value: Record<string, any>) =>
   try {
     await trpc.asset.saveContent.mutate({ id: assetId.value, content: value })
     saveStatus.value = 'saved'
-  } catch {
+  }
+  catch {
     saveStatus.value = 'unsaved'
   }
 }, 1500)
@@ -48,16 +50,17 @@ const debouncedSaveTitle = useDebounceFn(async (newTitle: string) => {
 }, 1000)
 
 function onTitleUpdate(newTitle: string) {
-  if (newTitle === assetTitle.value) return
+  if (newTitle === assetTitle.value)
+    return
   assetTitle.value = newTitle
   debouncedSaveTitle(newTitle)
 }
 </script>
 
 <template>
-  <div class="flex flex-1 flex-row min-h-0">
-    <div class="flex flex-1 flex-col min-h-0">
-      <div class="flex justify-end px-8 pb-1 pt-2 shrink-0">
+  <div class="flex min-h-0 flex-1 flex-row">
+    <div class="flex min-h-0 flex-1 flex-col">
+      <div class="flex shrink-0 justify-end px-8 pt-2 pb-1">
         <span
           class="text-xs text-muted-foreground transition-opacity"
           :class="saveStatus === 'saved' ? 'opacity-0' : 'opacity-100'"
@@ -74,7 +77,7 @@ function onTitleUpdate(newTitle: string) {
         v-else
         :key="assetId"
         :model-value="content"
-        class="flex-1 min-h-0"
+        class="min-h-0 flex-1"
         @update:model-value="onContentUpdate"
         @update:title="onTitleUpdate"
       />

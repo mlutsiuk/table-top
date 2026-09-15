@@ -6,10 +6,12 @@ declare module 'h3' {
 
 export default eventHandler(async (event) => {
   const authorizationHeader = event.headers.get('authorization')
-  if (!authorizationHeader) return
+  if (!authorizationHeader)
+    return
 
   const [scheme, token] = authorizationHeader.split(' ')
-  if (scheme?.toLowerCase() !== 'bearer' || !token) return
+  if (scheme?.toLowerCase() !== 'bearer' || !token)
+    return
 
   try {
     const decoded = await verifyUserJwt(token)

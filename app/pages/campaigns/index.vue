@@ -34,7 +34,7 @@ const createCampaign = async () => {
         <Button
           @click="createCampaign"
         >
-          Create Campaign  
+          Create Campaign
         </Button>
       </div>
     </div>

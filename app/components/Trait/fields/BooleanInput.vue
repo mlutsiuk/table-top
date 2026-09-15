@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { SwitchRoot, SwitchThumb } from 'reka-ui'
 
-const model = defineModel<boolean>({ required: true })
+defineProps<{
+  disabled?: boolean
+}>()
 
-defineProps<{ disabled?: boolean }>()
+const model = defineModel<boolean>({ required: true })
 </script>
 
 <template>

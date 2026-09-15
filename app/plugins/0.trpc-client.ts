@@ -1,6 +1,6 @@
-import { createTRPCNuxtClient, httpBatchLink } from 'trpc-nuxt/client'
-import superjson from 'superjson'
 import type { AppRouter } from '~~/server/trpc/routers'
+import superjson from 'superjson'
+import { createTRPCNuxtClient, httpBatchLink } from 'trpc-nuxt/client'
 
 export default defineNuxtPlugin(() => {
   /**
@@ -16,9 +16,9 @@ export default defineNuxtPlugin(() => {
         headers: () => ({
           Authorization: accessToken.value ? `Bearer ${accessToken.value}` : undefined
         }),
-        transformer: superjson,
+        transformer: superjson
       })
-    ],
+    ]
   })
 
   return {

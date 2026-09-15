@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { User } from '@prisma/client';
+import type { User } from '@prisma/client'
 
 const props = defineProps<{
   user: Pick<User, 'name'>

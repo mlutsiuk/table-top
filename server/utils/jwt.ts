@@ -1,5 +1,5 @@
-import { SignJWT, jwtVerify } from 'jose'
 import type { JWTPayload } from '#shared/types/jwt'
+import { jwtVerify, SignJWT } from 'jose'
 
 const getEncodedSecret = () => {
   const { secret } = useRuntimeConfig().jwt

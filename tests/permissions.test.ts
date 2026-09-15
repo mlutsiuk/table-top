@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CAMPAIGN_ABILITIES, abilitiesFor, hasAbility } from '#shared/permissions/campaign'
+import { abilitiesFor, CAMPAIGN_ABILITIES, hasAbility } from '#shared/permissions/campaign'
 
 describe('abilitiesFor', () => {
   it('gives the master everything', () => {

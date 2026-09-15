@@ -110,7 +110,8 @@ async function attach(traitDef: TraitDefDto) {
 const detaching = ref<AssetTraitDto | null>(null)
 
 async function detach() {
-  if (!detaching.value) return
+  if (!detaching.value)
+    return
 
   const id = detaching.value.id
   try {

@@ -113,7 +113,7 @@ export default defineNuxtConfig({
         '@tiptap/extension-hard-break',
         '@tiptap/extension-horizontal-rule',
         '@tiptap/extension-dropcursor',
-        '@tiptap/extension-placeholder',
+        '@tiptap/extension-placeholder'
       ]
     }
   }

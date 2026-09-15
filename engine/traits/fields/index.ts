@@ -1,8 +1,8 @@
-import { z } from 'zod'
 import type { FieldType, FieldTypeDef } from '../types'
+import { z } from 'zod'
+import { booleanField, booleanFieldSchema } from './boolean'
 import { numberField, numberFieldSchema } from './number'
 import { textField, textFieldSchema } from './text'
-import { booleanField, booleanFieldSchema } from './boolean'
 
 /**
  * Every field type the engine supports.

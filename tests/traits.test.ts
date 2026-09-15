@@ -181,7 +181,7 @@ describe('deriving a key from the label', () => {
 
   it('drops apostrophes instead of splitting the word', () => {
     // All three apostrophes a Ukrainian keyboard might produce.
-    for (const label of ["Здоров'я", 'Здоров’я', 'Здоровʼя']) {
+    for (const label of ['Здоров\'я', 'Здоров’я', 'Здоровʼя']) {
       expect(deriveTraitKey(label)).toBe('zdorovia')
     }
   })
@@ -197,7 +197,7 @@ describe('deriving a key from the label', () => {
   })
 
   it('always suggests a key the schema accepts', () => {
-    for (const label of ['Core Stats', 'Бойові навички', "Здоров'я", 'Armor Class (AC)']) {
+    for (const label of ['Core Stats', 'Бойові навички', 'Здоров\'я', 'Armor Class (AC)']) {
       expect(traitKeySchema.safeParse(deriveTraitKey(label)).success).toBe(true)
     }
   })

@@ -1,20 +1,20 @@
 <script lang="ts" setup>
-import { useEditor, EditorContent } from '@tiptap/vue-3'
-import Document from '@tiptap/extension-document'
-import Text from '@tiptap/extension-text'
-import Paragraph from '@tiptap/extension-paragraph'
-import Heading from '@tiptap/extension-heading'
-import BulletList from '@tiptap/extension-bullet-list'
-import OrderedList from '@tiptap/extension-ordered-list'
-import ListItem from '@tiptap/extension-list-item'
-import Bold from '@tiptap/extension-bold'
-import Italic from '@tiptap/extension-italic'
-import Strike from '@tiptap/extension-strike'
 import Blockquote from '@tiptap/extension-blockquote'
-import HardBreak from '@tiptap/extension-hard-break'
-import HorizontalRule from '@tiptap/extension-horizontal-rule'
+import Bold from '@tiptap/extension-bold'
+import BulletList from '@tiptap/extension-bullet-list'
+import Document from '@tiptap/extension-document'
 import Dropcursor from '@tiptap/extension-dropcursor'
+import HardBreak from '@tiptap/extension-hard-break'
+import Heading from '@tiptap/extension-heading'
+import HorizontalRule from '@tiptap/extension-horizontal-rule'
+import Italic from '@tiptap/extension-italic'
+import ListItem from '@tiptap/extension-list-item'
+import OrderedList from '@tiptap/extension-ordered-list'
+import Paragraph from '@tiptap/extension-paragraph'
 import Placeholder from '@tiptap/extension-placeholder'
+import Strike from '@tiptap/extension-strike'
+import Text from '@tiptap/extension-text'
+import { EditorContent, useEditor } from '@tiptap/vue-3'
 
 const props = defineProps<{
   modelValue?: Record<string, any> | null
@@ -26,13 +26,13 @@ const emit = defineEmits<{
 }>()
 
 const DocumentWithTitle = Document.extend({
-  content: 'title block+',
+  content: 'title block+'
 })
 
 const Title = Heading.extend({
   name: 'title',
   group: 'title',
-  parseHTML: () => [{ tag: 'h1:first-child' }],
+  parseHTML: () => [{ tag: 'h1:first-child' }]
 }).configure({ levels: [1] })
 
 let updatingFromProp = false
@@ -58,23 +58,26 @@ const editor = useEditor({
     Placeholder.configure({
       showOnlyCurrent: false,
       placeholder: ({ node }) => {
-        if (node.type.name === 'title') return "What's the title?"
-        return "What's the story?"
-      },
-    }),
+        if (node.type.name === 'title')
+          return 'What\'s the title?'
+        return 'What\'s the story?'
+      }
+    })
   ],
   onUpdate: ({ editor }) => {
-    if (updatingFromProp) return
+    if (updatingFromProp)
+      return
     emit('update:modelValue', editor.getJSON())
     const titleText = editor.state.doc.firstChild?.textContent ?? ''
     emit('update:title', titleText)
-  },
+  }
 })
 
 watch(
   () => props.modelValue,
   (val) => {
-    if (!val || !editor.value || editor.value.isDestroyed) return
+    if (!val || !editor.value || editor.value.isDestroyed)
+      return
     const current = JSON.stringify(editor.value.getJSON())
     const incoming = JSON.stringify(val)
     if (current !== incoming) {
@@ -82,14 +85,14 @@ watch(
       editor.value.commands.setContent(val)
       updatingFromProp = false
     }
-  },
+  }
 )
 
 onBeforeUnmount(() => editor.value?.destroy())
 </script>
 
 <template>
-  <div class="flex flex-col min-h-0">
+  <div class="flex min-h-0 flex-col">
     <MaterialEditorToolbar
       v-if="editor"
       :editor="editor"

@@ -21,13 +21,13 @@ campaignStore.ensureCampaign(route.params.id)
     <SplitterPanel
       :min-size="15"
       :max-size="30"
-      class="flex flex-col items-stretch bg-sidebar border-r border-sidebar-border"
+      class="flex flex-col items-stretch border-r border-sidebar-border bg-sidebar"
     >
       <CampaignSidebar class="grow" />
     </SplitterPanel>
 
     <SplitterResizeHandle
-      class="w-px bg-sidebar-border hover:bg-sidebar-ring transition-colors"
+      class="w-px bg-sidebar-border transition-colors hover:bg-sidebar-ring"
     />
 
     <SplitterPanel

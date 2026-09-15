@@ -18,8 +18,10 @@ export const useCampaignStore = defineStore('campaign', () => {
 
     try {
       const response = await useTrpc().campaign.getCampaignDetails.query({ campaignId })
-      if (response) campaign.value = response
-    } catch (e) {
+      if (response)
+        campaign.value = response
+    }
+    catch (e) {
       notifyError(e, 'Could not load the campaign')
     }
   }
@@ -28,8 +30,10 @@ export const useCampaignStore = defineStore('campaign', () => {
   let inFlight: Promise<void> | null = null
 
   const ensureCampaign = (campaignId: string) => {
-    if (campaign.value?.id === campaignId) return Promise.resolve()
-    if (inFlight && inFlightId === campaignId) return inFlight
+    if (campaign.value?.id === campaignId)
+      return Promise.resolve()
+    if (inFlight && inFlightId === campaignId)
+      return inFlight
 
     inFlightId = campaignId
     inFlight = fetchCampaign(campaignId).finally(() => {
@@ -43,7 +47,8 @@ export const useCampaignStore = defineStore('campaign', () => {
   }
 
   const updateCampaign = async (data: { title?: string, status?: CampaignStatus }) => {
-    if (!campaign.value) return
+    if (!campaign.value)
+      return
 
     const previous = campaign.value
     try {
@@ -52,7 +57,8 @@ export const useCampaignStore = defineStore('campaign', () => {
         campaignId: campaign.value.id,
         ...data
       })
-    } catch (e) {
+    }
+    catch (e) {
       campaign.value = previous
       notifyError(e, 'Could not save the campaign')
     }

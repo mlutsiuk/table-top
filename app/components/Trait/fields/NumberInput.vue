@@ -1,7 +1,9 @@
 <script setup lang="ts">
-const model = defineModel<number>({ required: true })
+defineProps<{
+  disabled?: boolean
+}>()
 
-defineProps<{ disabled?: boolean }>()
+const model = defineModel<number>({ required: true })
 </script>
 
 <template>

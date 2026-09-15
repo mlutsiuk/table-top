@@ -29,7 +29,8 @@ async function fetchMembers() {
 
 async function invite() {
   const email = inviteEmail.value.trim()
-  if (!email) return
+  if (!email)
+    return
 
   inviting.value = true
   try {

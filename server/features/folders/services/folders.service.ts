@@ -1,9 +1,9 @@
 import type { MaterialVisibility, PrismaClient } from '@prisma/client'
 import type { CampaignAccessService } from '~~/server/features/campaigns/services/campaign-access.service'
+import type { MaterialViewer } from '../domain/material-visibility'
 import { BadRequestError, NotFoundError } from '~~/server/infrastructure/errors'
 import { hasAbility } from '#shared/permissions/campaign'
 import { canMoveUnder, childPath, reparentedPath } from '../domain/folder-path'
-import type { MaterialViewer } from '../domain/material-visibility'
 import { hiddenFolderIds, materialAbilities } from '../domain/material-visibility'
 
 export function createFoldersService(prisma: PrismaClient, access: CampaignAccessService) {
@@ -81,7 +81,8 @@ export function createFoldersService(prisma: PrismaClient, access: CampaignAcces
         where: { id: input.parentId, campaignId: input.campaignId },
         select: { path: true }
       })
-      if (!parent) throw new NotFoundError('Parent folder not found')
+      if (!parent)
+        throw new NotFoundError('Parent folder not found')
 
       parentPath = parent.path
     }
@@ -127,7 +128,8 @@ export function createFoldersService(prisma: PrismaClient, access: CampaignAcces
         where: { id: parentId, campaignId: folder.campaignId },
         select: { path: true }
       })
-      if (!target) throw new NotFoundError('Target folder not found')
+      if (!target)
+        throw new NotFoundError('Target folder not found')
 
       if (!canMoveUnder(folder.id, target.path)) {
         throw new BadRequestError('Cannot move a folder into its own subtree')

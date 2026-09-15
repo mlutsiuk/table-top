@@ -1,11 +1,11 @@
 import type { PrismaClient, TraitDef } from '@prisma/client'
-import type { AssetTraitData } from '#shared/types/trait'
-import type { AssetTraitDto } from '~~/engine/traits/dto'
 import type { TraitConfig } from '~~/engine/traits'
+import type { AssetTraitDto } from '~~/engine/traits/dto'
 import type { CampaignAccessService } from '~~/server/features/campaigns/services/campaign-access.service'
-import { BadRequestError, NotFoundError } from '~~/server/infrastructure/errors'
+import type { AssetTraitData } from '#shared/types/trait'
 import { assetTraitDefaults, assetTraitSchema, traitConfigSchema } from '~~/engine/traits'
 import { toTraitDefDto } from '~~/server/features/trait-defs/trait-def-dto'
+import { BadRequestError, NotFoundError } from '~~/server/infrastructure/errors'
 
 /**
  * A trait is part of the material it hangs on, so it follows the material rules
@@ -66,7 +66,8 @@ export function createAssetTraitsService(prisma: PrismaClient, access: CampaignA
       where: { id },
       include: { traitDef: true }
     })
-    if (!trait) throw new NotFoundError('Trait not found')
+    if (!trait)
+      throw new NotFoundError('Trait not found')
 
     // Through the asset, because that is what the ability is about, and it is also
     // where the campaign comes from rather than from anything the client sent.
@@ -90,7 +91,8 @@ export function createAssetTraitsService(prisma: PrismaClient, access: CampaignA
     const traitDef = await prisma.traitDef.findFirst({
       where: { id: traitDefId, campaignId: asset.campaignId }
     })
-    if (!traitDef) throw new NotFoundError('Trait not found')
+    if (!traitDef)
+      throw new NotFoundError('Trait not found')
 
     const config = readConfig(traitDef)
 
@@ -98,7 +100,8 @@ export function createAssetTraitsService(prisma: PrismaClient, access: CampaignA
       where: { assetId_traitDefId: { assetId: asset.id, traitDefId: traitDef.id } },
       select: { id: true }
     })
-    if (existing) throw new BadRequestError(`"${traitDef.label}" is already on this asset`)
+    if (existing)
+      throw new BadRequestError(`"${traitDef.label}" is already on this asset`)
 
     const trait = await prisma.assetTrait.create({
       data: {
@@ -149,7 +152,8 @@ export function createAssetTraitsService(prisma: PrismaClient, access: CampaignA
       where: { id },
       select: { assetId: true }
     })
-    if (!trait) throw new NotFoundError('Trait not found')
+    if (!trait)
+      throw new NotFoundError('Trait not found')
 
     await access.requireAssetAbility(trait.assetId, 'materials:write')
 

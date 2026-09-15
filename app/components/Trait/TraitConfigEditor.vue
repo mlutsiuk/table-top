@@ -61,7 +61,8 @@ const duplicateKeys = computed(() => {
   const dupes = new Set<string>()
 
   for (const field of fields.value) {
-    if (seen.has(field.key)) dupes.add(field.key)
+    if (seen.has(field.key))
+      dupes.add(field.key)
     seen.add(field.key)
   }
 
@@ -80,7 +81,8 @@ const proposed = computed(() => traitConfigSchema.safeParse({ fields: fields.val
 const canSave = computed(() => dirty.value && proposed.value.success)
 
 function save() {
-  if (proposed.value.success) emit('save', proposed.value.data)
+  if (proposed.value.success)
+    emit('save', proposed.value.data)
 }
 
 function addField(type: FieldType) {
@@ -135,7 +137,7 @@ const { template, startResize } = useColumnWidths([200, 160, 210, 140])
             {{ column }}
             <!-- Drag handle sits on the boundary, widened for the pointer. -->
             <span
-              class="absolute -right-1 top-0 z-10 h-full w-2 cursor-col-resize touch-none"
+              class="absolute top-0 -right-1 z-10 h-full w-2 cursor-col-resize touch-none"
               @pointerdown.prevent="startResize(columnIndex, $event)"
             >
               <span class="absolute left-1/2 h-full w-px -translate-x-1/2 bg-border" />

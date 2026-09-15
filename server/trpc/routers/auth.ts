@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import { TRPCError } from '@trpc/server'
 import { privateProcedure, publicProcedure, router } from '../trpc'
 
 export const authRouter = router({

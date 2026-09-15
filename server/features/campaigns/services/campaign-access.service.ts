@@ -1,7 +1,7 @@
 import type { Campaign, PrismaClient } from '@prisma/client'
-import { ForbiddenError, NotFoundError } from '~~/server/infrastructure/errors'
-import type { CampaignRole } from '#shared/types/campaign'
 import type { CampaignAbility } from '#shared/permissions/campaign'
+import type { CampaignRole } from '#shared/types/campaign'
+import { ForbiddenError, NotFoundError } from '~~/server/infrastructure/errors'
 import { abilitiesFor, hasAbility } from '#shared/permissions/campaign'
 
 /**
@@ -35,7 +35,8 @@ export function createCampaignAccessService(prisma: PrismaClient, userId: string
   /** Resolves the caller's standing in a campaign, or throws if they have none. */
   async function requireCampaign(campaignId: string): Promise<CampaignAccess> {
     const campaign = await prisma.campaign.findUnique({ where: { id: campaignId } })
-    if (!campaign) throw notFound('Campaign not found')
+    if (!campaign)
+      throw notFound('Campaign not found')
 
     if (campaign.masterId === userId) {
       return { campaign, role: 'master', abilities: abilitiesFor('master') }
@@ -45,7 +46,8 @@ export function createCampaignAccessService(prisma: PrismaClient, userId: string
       where: { campaignId_userId: { campaignId, userId } },
       select: { id: true }
     })
-    if (!membership) throw notFound('Campaign not found')
+    if (!membership)
+      throw notFound('Campaign not found')
 
     // A membership row means player, always — the master never has one.
     return { campaign, role: 'player', abilities: abilitiesFor('player') }
@@ -77,7 +79,8 @@ export function createCampaignAccessService(prisma: PrismaClient, userId: string
    */
   async function requireFolderAbility(folderId: string, ability: CampaignAbility) {
     const folder = await prisma.folder.findUnique({ where: { id: folderId } })
-    if (!folder) throw notFound('Folder not found')
+    if (!folder)
+      throw notFound('Folder not found')
 
     await requireAbility(folder.campaignId, ability)
 
@@ -87,7 +90,8 @@ export function createCampaignAccessService(prisma: PrismaClient, userId: string
   /** Same idea for assets. */
   async function requireAssetAbility(assetId: string, ability: CampaignAbility) {
     const asset = await prisma.asset.findUnique({ where: { id: assetId } })
-    if (!asset) throw notFound('Asset not found')
+    if (!asset)
+      throw notFound('Asset not found')
 
     await requireAbility(asset.campaignId, ability)
 

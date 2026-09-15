@@ -4,9 +4,9 @@ import { cn } from '@/lib/utils'
 
 const props = defineProps<{ editor: Editor }>()
 
-type ToolbarItem =
-  | { type: 'button'; icon: string; title: string; action: () => void; active: () => boolean }
-  | { type: 'separator' }
+type ToolbarItem
+  = | { type: 'button', icon: string, title: string, action: () => void, active: () => boolean }
+    | { type: 'separator' }
 
 const items = computed<ToolbarItem[]>(() => [
   {
@@ -14,21 +14,21 @@ const items = computed<ToolbarItem[]>(() => [
     icon: 'lucide:bold',
     title: 'Bold',
     action: () => props.editor.chain().focus().toggleBold().run(),
-    active: () => props.editor.isActive('bold'),
+    active: () => props.editor.isActive('bold')
   },
   {
     type: 'button',
     icon: 'lucide:italic',
     title: 'Italic',
     action: () => props.editor.chain().focus().toggleItalic().run(),
-    active: () => props.editor.isActive('italic'),
+    active: () => props.editor.isActive('italic')
   },
   {
     type: 'button',
     icon: 'lucide:strikethrough',
     title: 'Strikethrough',
     action: () => props.editor.chain().focus().toggleStrike().run(),
-    active: () => props.editor.isActive('strike'),
+    active: () => props.editor.isActive('strike')
   },
   { type: 'separator' },
   {
@@ -36,14 +36,14 @@ const items = computed<ToolbarItem[]>(() => [
     icon: 'lucide:heading-2',
     title: 'Heading 2',
     action: () => props.editor.chain().focus().toggleHeading({ level: 2 }).run(),
-    active: () => props.editor.isActive('heading', { level: 2 }),
+    active: () => props.editor.isActive('heading', { level: 2 })
   },
   {
     type: 'button',
     icon: 'lucide:heading-3',
     title: 'Heading 3',
     action: () => props.editor.chain().focus().toggleHeading({ level: 3 }).run(),
-    active: () => props.editor.isActive('heading', { level: 3 }),
+    active: () => props.editor.isActive('heading', { level: 3 })
   },
   { type: 'separator' },
   {
@@ -51,14 +51,14 @@ const items = computed<ToolbarItem[]>(() => [
     icon: 'lucide:list',
     title: 'Bullet list',
     action: () => props.editor.chain().focus().toggleBulletList().run(),
-    active: () => props.editor.isActive('bulletList'),
+    active: () => props.editor.isActive('bulletList')
   },
   {
     type: 'button',
     icon: 'lucide:list-ordered',
     title: 'Ordered list',
     action: () => props.editor.chain().focus().toggleOrderedList().run(),
-    active: () => props.editor.isActive('orderedList'),
+    active: () => props.editor.isActive('orderedList')
   },
   { type: 'separator' },
   {
@@ -66,15 +66,15 @@ const items = computed<ToolbarItem[]>(() => [
     icon: 'lucide:quote',
     title: 'Blockquote',
     action: () => props.editor.chain().focus().toggleBlockquote().run(),
-    active: () => props.editor.isActive('blockquote'),
+    active: () => props.editor.isActive('blockquote')
   },
   {
     type: 'button',
     icon: 'lucide:minus',
     title: 'Horizontal rule',
     action: () => props.editor.chain().focus().setHorizontalRule().run(),
-    active: () => false,
-  },
+    active: () => false
+  }
 ])
 </script>
 
@@ -92,7 +92,7 @@ const items = computed<ToolbarItem[]>(() => [
           'inline-flex size-7 items-center justify-center rounded transition-colors',
           item.active()
             ? 'bg-accent text-accent-foreground'
-            : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+            : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
         )"
         @click="item.action()"
       >
