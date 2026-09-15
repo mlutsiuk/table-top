@@ -1,20 +1,8 @@
 <script lang="ts" setup>
-import Blockquote from '@tiptap/extension-blockquote'
-import Bold from '@tiptap/extension-bold'
-import BulletList from '@tiptap/extension-bullet-list'
-import Document from '@tiptap/extension-document'
 import Dropcursor from '@tiptap/extension-dropcursor'
-import HardBreak from '@tiptap/extension-hard-break'
-import Heading from '@tiptap/extension-heading'
-import HorizontalRule from '@tiptap/extension-horizontal-rule'
-import Italic from '@tiptap/extension-italic'
-import ListItem from '@tiptap/extension-list-item'
-import OrderedList from '@tiptap/extension-ordered-list'
-import Paragraph from '@tiptap/extension-paragraph'
 import Placeholder from '@tiptap/extension-placeholder'
-import Strike from '@tiptap/extension-strike'
-import Text from '@tiptap/extension-text'
 import { EditorContent, useEditor } from '@tiptap/vue-3'
+import { materialExtensions } from '#shared/editor/extensions'
 
 const props = defineProps<{
   modelValue?: Record<string, any> | null
@@ -25,35 +13,14 @@ const emit = defineEmits<{
   (e: 'update:title', value: string): void
 }>()
 
-const DocumentWithTitle = Document.extend({
-  content: 'title block+'
-})
-
-const Title = Heading.extend({
-  name: 'title',
-  group: 'title',
-  parseHTML: () => [{ tag: 'h1:first-child' }]
-}).configure({ levels: [1] })
-
 let updatingFromProp = false
 
 const editor = useEditor({
   content: props.modelValue ?? undefined,
   extensions: [
-    DocumentWithTitle,
-    Title,
-    Heading.configure({ levels: [2, 3, 4] }),
-    Text,
-    Paragraph,
-    BulletList,
-    OrderedList,
-    ListItem,
-    Bold,
-    Italic,
-    Strike,
-    Blockquote,
-    HardBreak,
-    HorizontalRule,
+    // The schema itself is shared with the server, which checks saved documents
+    // against it; only editing aids are added here.
+    ...materialExtensions,
     Dropcursor,
     Placeholder.configure({
       showOnlyCurrent: false,

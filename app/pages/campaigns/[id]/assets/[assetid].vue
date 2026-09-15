@@ -28,13 +28,25 @@ async function fetchAsset() {
 watch(assetId, fetchAsset, { immediate: true })
 
 // Save content
+/**
+ * The reason the last save failed, so it is shown once rather than on every retry:
+ * each edit saves again, and a document over the size limit fails every time.
+ */
+let lastSaveError = ''
+
 const debouncedSaveContent = useDebounceFn(async (value: Record<string, any>) => {
   try {
     await trpc.asset.saveContent.mutate({ id: assetId.value, content: value })
     saveStatus.value = 'saved'
+    lastSaveError = ''
   }
-  catch {
+  catch (e) {
     saveStatus.value = 'unsaved'
+
+    const message = e instanceof Error ? e.message : String(e)
+    if (message !== lastSaveError)
+      notifyError(e, 'Could not save the page')
+    lastSaveError = message
   }
 }, 1500)
 

@@ -1,5 +1,6 @@
 import type { MaterialVisibility, PrismaClient } from '@prisma/client'
 import type { CampaignAccessService } from '~~/server/features/campaigns/services/campaign-access.service'
+import { parseMaterialContent } from '~~/server/features/assets/material-content'
 import { NotFoundError } from '~~/server/infrastructure/errors'
 
 export function createAssetsService(prisma: PrismaClient, access: CampaignAccessService) {
@@ -34,12 +35,20 @@ export function createAssetsService(prisma: PrismaClient, access: CampaignAccess
     return prisma.asset.update({ where: { id: asset.id }, data: { title } })
   }
 
+  /**
+   * Stores a document only once it matches the editor's schema.
+   *
+   * Access is checked first, so someone without write access learns nothing about
+   * why a document would or would not have been accepted.
+   */
   async function saveContent(id: string, content: unknown) {
     const asset = await access.requireAssetAbility(id, 'materials:write')
 
+    const document = parseMaterialContent(content)
+
     return prisma.asset.update({
       where: { id: asset.id },
-      data: { content: content as never }
+      data: { content: document }
     })
   }
 

@@ -22,10 +22,11 @@ export const assetRouter = router({
     }))
     .mutation(({ input, ctx }) => ctx.assets.rename(input.id, input.title)),
 
+  /** `unknown` here on purpose: the service checks the document against the editor schema. */
   saveContent: privateProcedure
     .input(z.object({
       id: z.uuid(),
-      content: z.any()
+      content: z.unknown()
     }))
     .mutation(({ input, ctx }) => ctx.assets.saveContent(input.id, input.content)),
 
