@@ -1,8 +1,8 @@
 # Модель даних
 
-> **Стан:** нижче описана цільова модель після [ADR-013](./decisions.md). У поточній базі
-> модель усе ще зветься `Mechanic` і несе колонку `key` з видом механіки. Перейменування на
-> `TraitDef` і зняття `key` — окрема міграція, ще не виконана.
+> **Стан:** модель після [ADR-013](./decisions.md), міграція `rename_mechanic_to_trait_def`.
+> `TraitDef.key` задається при створенні й далі не змінюється; `label` можна перейменовувати.
+> Обидва унікальні в межах кампанії.
 
 ## Ієрархія сутностей
 
@@ -141,17 +141,18 @@ model Asset {
 
 model TraitDef {
   id           String        @id @default(uuid())
-  key          String        // ідентифікатор для формул: 'core_stats'
-  name         String        // підпис для майстра: 'Core Stats'
-  /// [TraitConfig]
+  key          String        // ідентифікатор для формул: 'core_stats', фіксований
+  label        String        // підпис для майстра: 'Core Stats'
+  /// [RawTraitConfig]
   config       Json
   campaignId   String        @map("campaign_id")
   campaign     Campaign      @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   assetTraits  AssetTrait[]
   entityTraits EntityTrait[]
 
-  @@unique([campaignId, name])
-  @@map("mechanic_instances")
+  @@unique([campaignId, key])
+  @@unique([campaignId, label])
+  @@map("trait_defs")
 }
 
 model AssetTrait {
@@ -228,7 +229,7 @@ model Action {
 # Вже існує: User, Campaign, Folder, Asset (базові)
 prisma migrate dev --name add_campaign_status    # + enum CampaignStatus + поле status
 prisma migrate dev --name add_media              # + Media модель
-prisma migrate dev --name add_mechanic_engine    # + TraitDef + AssetTrait
+prisma migrate dev --name add_mechanic_engine    # + Mechanic (тепер TraitDef) + AssetTrait
 prisma migrate dev --name add_entity_system      # + Entity + EntityTrait + EntityRelation
 prisma migrate dev --name add_actions            # + Action
 ```

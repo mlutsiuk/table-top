@@ -1,15 +1,10 @@
 <script setup lang="ts">
-// Imported explicitly rather than leaning on the host app's auto-imports: a
-// mechanic is a self-contained unit, and its dependencies should be visible.
-import { computed, ref, watch } from 'vue'
-import { Button } from '@/components/ui/button'
-import type { ValuesConfig } from '../shared/config.schema'
-import type { ValuesTraitData } from '../shared/trait.schema'
-import { assetTraitSchema, normalizeTraitData } from '../shared/trait.schema'
-import { FIELD_INPUTS } from './fields'
+import type { TraitConfig, TraitData } from '~~/engine/traits'
+import { assetTraitSchema, normalizeTraitData } from '~~/engine/traits'
+import { FIELD_INPUTS } from '@/lib/trait-field-inputs'
 
 /**
- * One asset's values for a `values-v1` instance.
+ * One asset's values for one trait definition.
  *
  * The same component whether it is being read or filled in: a player's view of a
  * sheet and a master's edit of it differ in what may be touched, not in what is on
@@ -21,7 +16,7 @@ import { FIELD_INPUTS } from './fields'
  */
 
 const props = defineProps<{
-  config: ValuesConfig
+  config: TraitConfig
   data: Record<string, unknown>
   editable?: boolean
   saving?: boolean
@@ -40,7 +35,7 @@ const emit = defineEmits<{
  */
 const stored = computed(() => normalizeTraitData(props.config, props.data))
 
-const values = ref<ValuesTraitData>({ ...stored.value })
+const values = ref<TraitData>({ ...stored.value })
 
 // The panel reloads the trait after saving; take the server's version as truth.
 watch(stored, next => (values.value = { ...next }))
@@ -72,7 +67,7 @@ function reset() {
       v-if="config.fields.length === 0"
       class="text-sm text-muted-foreground"
     >
-      This mechanic has no fields yet, so there is nothing to fill in.
+      This trait has no fields yet, so there is nothing to fill in.
     </p>
 
     <div

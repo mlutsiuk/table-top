@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import type { MechanicConfigImpact } from '#shared/types/mechanic'
-import type { MechanicDto } from '~~/engine/mechanics/dto'
-import type { ValuesConfig } from '~~/engine/mechanics/values-v1'
-import ConfigEditor from '~~/engine/mechanics/values-v1/ui/ConfigEditor.vue'
+import type { TraitConfigImpact } from '#shared/types/trait'
+import type { TraitDefDto } from '~~/engine/traits/dto'
+import type { TraitConfig } from '~~/engine/traits'
 import {
   Dialog,
   DialogContent,
@@ -13,43 +12,43 @@ import {
 } from '@/components/ui/dialog'
 
 definePageMeta({
-  middleware: requireCampaignAbility('mechanics:manage')
+  middleware: requireCampaignAbility('traits:manage')
 })
 
-const route = useRoute('campaigns-id-mechanics-mechanicId')
+const route = useRoute('campaigns-id-traits-traitDefId')
 const campaignId = computed(() => route.params.id)
-const mechanicId = computed(() => route.params.mechanicId)
+const traitDefId = computed(() => route.params.traitDefId)
 const trpc = useTrpc()
 
-const mechanic = ref<MechanicDto | null>(null)
+const traitDef = ref<TraitDefDto | null>(null)
 const pending = ref(false)
 const saving = ref(false)
 
-async function fetchMechanic() {
+async function fetchTraitDef() {
   pending.value = true
   try {
-    const mechanics = await trpc.mechanic.list.query({ campaignId: campaignId.value })
-    mechanic.value = mechanics.find(item => item.id === mechanicId.value) ?? null
+    const traitDefs = await trpc.traitDef.list.query({ campaignId: campaignId.value })
+    traitDef.value = traitDefs.find(item => item.id === traitDefId.value) ?? null
   }
   catch (e) {
-    notifyError(e, 'Could not load the mechanic')
+    notifyError(e, 'Could not load the trait')
   }
   finally {
     pending.value = false
   }
 }
 
-onMounted(fetchMechanic)
+onMounted(fetchTraitDef)
 
 // --- Saving, with a warning when it would destroy values ---
 
-const pendingConfig = ref<ValuesConfig | null>(null)
-const impact = ref<MechanicConfigImpact | null>(null)
+const pendingConfig = ref<TraitConfig | null>(null)
+const impact = ref<TraitConfigImpact | null>(null)
 
-async function requestSave(config: ValuesConfig) {
+async function requestSave(config: TraitConfig) {
   saving.value = true
   try {
-    const next = await trpc.mechanic.configImpact.query({ id: mechanicId.value, config })
+    const next = await trpc.traitDef.configImpact.query({ id: traitDefId.value, config })
 
     if (next.removedKeys.length > 0) {
       // Ask before destroying anything: the master gets the scale, not a shrug.
@@ -68,15 +67,15 @@ async function requestSave(config: ValuesConfig) {
   }
 }
 
-async function commit(config: ValuesConfig) {
+async function commit(config: TraitConfig) {
   saving.value = true
   try {
-    mechanic.value = await trpc.mechanic.updateConfig.mutate({ id: mechanicId.value, config })
+    traitDef.value = await trpc.traitDef.updateConfig.mutate({ id: traitDefId.value, config })
     impact.value = null
     pendingConfig.value = null
   }
   catch (e) {
-    notifyError(e, 'Could not save the mechanic')
+    notifyError(e, 'Could not save the trait')
   }
   finally {
     saving.value = false
@@ -93,18 +92,22 @@ function cancelDestructive() {
   <div class="flex max-w-3xl flex-col gap-6 px-8 py-6">
     <div>
       <NuxtLink
-        :to="{ name: 'campaigns-id-mechanics', params: { id: campaignId } }"
+        :to="{ name: 'campaigns-id-traits', params: { id: campaignId } }"
         class="mb-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
       >
         <Icon name="lucide:chevron-left" class="size-3.5" />
-        Mechanics
+        Traits
       </NuxtLink>
 
       <h2 class="text-base font-semibold">
-        {{ mechanic?.name ?? '…' }}
+        {{ traitDef?.label ?? '…' }}
+        <span
+          v-if="traitDef"
+          class="ml-1 font-mono text-sm font-normal text-muted-foreground"
+        >@{{ traitDef.key }}</span>
       </h2>
       <p class="text-sm text-muted-foreground">
-        Fields every asset using this mechanic can fill in.
+        Fields every asset carrying this trait can fill in.
       </p>
     </div>
 
@@ -113,15 +116,15 @@ function cancelDestructive() {
     </div>
 
     <p
-      v-else-if="!mechanic"
+      v-else-if="!traitDef"
       class="text-sm text-muted-foreground"
     >
-      This mechanic no longer exists.
+      This trait no longer exists.
     </p>
 
     <template v-else>
       <p
-        v-if="!mechanic.valid"
+        v-if="!traitDef.valid"
         class="rounded-lg border border-destructive/40 px-4 py-3 text-sm text-muted-foreground"
       >
         The stored configuration is not something this build can read — it may have
@@ -129,8 +132,8 @@ function cancelDestructive() {
         from here replaces it.
       </p>
 
-      <ConfigEditor
-        :config="mechanic.valid ? mechanic.config : null"
+      <TraitConfigEditor
+        :config="traitDef.valid ? traitDef.config : null"
         :saving="saving"
         @save="requestSave"
       />

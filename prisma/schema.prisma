@@ -48,7 +48,7 @@ model Campaign {
   media           Media[]
   folders         Folder[]
   assets          Asset[]
-  mechanics       Mechanic[]
+  traitDefs       TraitDef[]
   entities        Entity[]
   members         CampaignMember[]
 
@@ -131,11 +131,15 @@ model Asset {
   @@map("assets")
 }
 
-model Mechanic {
+/// A set of fields declared for one campaign: the engine's only way to store values
+/// (ADR-013). Holds no values itself; those live in AssetTrait and EntityTrait.
+model TraitDef {
   id         String   @id @default(uuid())
+  /// Identifier that formulas address, e.g. `@core_stats.str`. Fixed after creation.
   key        String
-  name       String
-  /// [MechanicConfig]
+  /// What the master sees. Renaming it never breaks a formula.
+  label      String
+  /// [RawTraitConfig]
   config     Json
 
   campaignId String   @map("campaign_id")
@@ -144,8 +148,9 @@ model Mechanic {
   assetTraits  AssetTrait[]
   entityTraits EntityTrait[]
 
-  @@unique([campaignId, name])
-  @@map("mechanics")
+  @@unique([campaignId, key])
+  @@unique([campaignId, label])
+  @@map("trait_defs")
 }
 
 model AssetTrait {
@@ -156,11 +161,11 @@ model AssetTrait {
   assetId    String   @map("asset_id")
   asset      Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 
-  mechanicId String   @map("mechanic_id")
-  mechanic   Mechanic @relation(fields: [mechanicId], references: [id], onDelete: Cascade)
+  traitDefId String   @map("trait_def_id")
+  traitDef   TraitDef @relation(fields: [traitDefId], references: [id], onDelete: Cascade)
 
-  @@unique([assetId, mechanicId])
-  @@index([mechanicId])
+  @@unique([assetId, traitDefId])
+  @@index([traitDefId])
   @@map("asset_traits")
 }
 
@@ -190,11 +195,11 @@ model EntityTrait {
   entityId   String   @map("entity_id")
   entity     Entity   @relation(fields: [entityId], references: [id], onDelete: Cascade)
 
-  mechanicId String   @map("mechanic_id")
-  mechanic   Mechanic @relation(fields: [mechanicId], references: [id], onDelete: Cascade)
+  traitDefId String   @map("trait_def_id")
+  traitDef   TraitDef @relation(fields: [traitDefId], references: [id], onDelete: Cascade)
 
-  @@unique([entityId, mechanicId])
-  @@index([mechanicId])
+  @@unique([entityId, traitDefId])
+  @@index([traitDefId])
   @@map("entity_traits")
 }
 

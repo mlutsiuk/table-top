@@ -1,11 +1,10 @@
 {
-  // `engine/` sits outside app/ server/ shared/, so no generated Nuxt project
-  // covers it. Without this the compile-time guarantees in the registries —
-  // Record<MechanicKey, …> and Record<FieldType, …> — would never be checked.
+  // `engine/` sits outside app/ server/ shared/, so no generated Nuxt project owns
+  // it. Most of it is reached through imports anyway; this check also covers a file
+  // nothing imports yet, and keeps the engine checkable on its own.
   //
-  // Extends the app project because a mechanic's `ui/` half imports design-system
-  // components, which rely on Nuxt's auto-import declarations. Overriding
-  // `include` drops those, so `nuxt.d.ts` is listed back explicitly.
-  "extends": "../.nuxt/tsconfig.app.json",
-  "include": ["**/*.ts", "**/*.vue", "../.nuxt/nuxt.d.ts"]
+  // The shared project on purpose: engine code runs on both sides and may use
+  // neither the app's auto-imports nor Nitro's. The boundary test enforces the same.
+  "extends": "../.nuxt/tsconfig.shared.json",
+  "include": ["**/*.ts"]
 }

@@ -20,7 +20,7 @@
 ├── README.md                        ← ти тут
 │
 ├── architecture/
-│   ├── overview.md                  ← місія, стек, рівні системи (Engine/Mechanic/Campaign/Runtime)
+│   ├── overview.md                  ← місія, стек, рівні системи (Engine/Типи полів/Campaign/Runtime)
 │   ├── data-model.md                ← Prisma схема, ієрархія Campaign→Asset→Entity
 │   ├── terminology.md               ← глосарій: що як називається і що НЕ використовувати
 │   └── decisions.md                 ← ADR: чому саме такі рішення прийняті

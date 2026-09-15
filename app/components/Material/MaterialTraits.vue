@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { AssetTraitDto, MechanicDto } from '~~/engine/mechanics/dto'
-import TraitEditor from '~~/engine/mechanics/values-v1/ui/TraitEditor.vue'
+import type { AssetTraitDto, TraitDefDto } from '~~/engine/traits/dto'
 import {
   Dialog,
   DialogContent,
@@ -63,43 +62,43 @@ async function save(trait: AssetTraitDto, data: Record<string, unknown>) {
 // --- Attaching ---
 
 const addOpen = ref(false)
-const mechanics = ref<MechanicDto[]>([])
-const mechanicsPending = ref(false)
+const traitDefs = ref<TraitDefDto[]>([])
+const traitDefsPending = ref(false)
 const attachingId = ref<string | null>(null)
 
 /** What the campaign has that this asset is not already carrying. */
 const attachable = computed(() => {
-  const taken = new Set(traits.value.map(trait => trait.mechanic.id))
+  const taken = new Set(traits.value.map(trait => trait.traitDef.id))
 
-  return mechanics.value.filter(mechanic => !taken.has(mechanic.id))
+  return traitDefs.value.filter(traitDef => !taken.has(traitDef.id))
 })
 
 /** Fetched when the dialog opens rather than upfront, so the list is never stale. */
 async function openAdd() {
   addOpen.value = true
-  mechanicsPending.value = true
+  traitDefsPending.value = true
   try {
-    mechanics.value = await trpc.mechanic.list.query({ campaignId: props.campaignId })
+    traitDefs.value = await trpc.traitDef.list.query({ campaignId: props.campaignId })
   }
   catch (e) {
-    notifyError(e, 'Could not load the campaign mechanics')
+    notifyError(e, 'Could not load the campaign traits')
   }
   finally {
-    mechanicsPending.value = false
+    traitDefsPending.value = false
   }
 }
 
-async function attach(mechanic: MechanicDto) {
-  attachingId.value = mechanic.id
+async function attach(traitDef: TraitDefDto) {
+  attachingId.value = traitDef.id
   try {
     traits.value = [...traits.value, await trpc.assetTrait.attach.mutate({
       assetId: props.assetId,
-      mechanicId: mechanic.id
-    })].sort((a, b) => a.mechanic.name.localeCompare(b.mechanic.name))
+      traitDefId: traitDef.id
+    })].sort((a, b) => a.traitDef.label.localeCompare(b.traitDef.label))
     addOpen.value = false
   }
   catch (e) {
-    notifyError(e, 'Could not add the mechanic')
+    notifyError(e, 'Could not add the trait')
   }
   finally {
     attachingId.value = null
@@ -120,7 +119,7 @@ async function detach() {
     detaching.value = null
   }
   catch (e) {
-    notifyError(e, 'Could not remove the mechanic')
+    notifyError(e, 'Could not remove the trait')
   }
 }
 </script>
@@ -139,7 +138,7 @@ async function detach() {
         v-if="editable"
         variant="ghost"
         size="icon-sm"
-        title="Add a mechanic"
+        title="Add a trait"
         @click="openAdd"
       >
         <Icon name="lucide:plus" class="size-4" />
@@ -154,7 +153,7 @@ async function detach() {
       v-else-if="traits.length === 0"
       class="rounded-lg border border-dashed border-border px-3 py-6 text-center text-xs text-muted-foreground"
     >
-      No mechanics on this asset yet. Add one to give it stats.
+      No traits on this asset yet. Add one to give it stats.
     </p>
 
     <div
@@ -163,7 +162,7 @@ async function detach() {
       class="flex flex-col gap-3 rounded-lg border border-border p-3"
     >
       <div class="flex flex-row items-center justify-between gap-2">
-        <span class="min-w-0 truncate text-sm font-medium">{{ trait.mechanic.name }}</span>
+        <span class="min-w-0 truncate text-sm font-medium">{{ trait.traitDef.label }}</span>
         <Button
           v-if="editable"
           variant="ghost"
@@ -178,7 +177,7 @@ async function detach() {
       <!-- A config this build cannot read leaves nothing to draw: the fields are
            exactly what it would have described. -->
       <p
-        v-if="!trait.mechanic.valid"
+        v-if="!trait.traitDef.valid"
         class="text-xs text-muted-foreground"
       >
         This definition's configuration cannot be read, so its values cannot be shown.
@@ -186,7 +185,7 @@ async function detach() {
 
       <TraitEditor
         v-else
-        :config="trait.mechanic.config"
+        :config="trait.traitDef.config"
         :data="trait.data"
         :editable="editable"
         :saving="savingId === trait.id"
@@ -198,13 +197,13 @@ async function detach() {
     <Dialog :open="addOpen" @update:open="val => (addOpen = val)">
       <DialogContent class="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Add a mechanic</DialogTitle>
+          <DialogTitle>Add a trait</DialogTitle>
           <DialogDescription>
             Everything this campaign has, minus what this asset already carries.
           </DialogDescription>
         </DialogHeader>
 
-        <div v-if="mechanicsPending" class="flex justify-center py-6">
+        <div v-if="traitDefsPending" class="flex justify-center py-6">
           <Loader class="size-5" />
         </div>
 
@@ -212,19 +211,19 @@ async function detach() {
           v-else-if="attachable.length === 0"
           class="py-4 text-center text-sm text-muted-foreground"
         >
-          Nothing left to add. New mechanics are created in the campaign settings.
+          Nothing left to add. New traits are created on the Traits page of the campaign.
         </p>
 
         <div v-else class="flex flex-col gap-2">
           <button
-            v-for="mechanic in attachable"
-            :key="mechanic.id"
+            v-for="traitDef in attachable"
+            :key="traitDef.id"
             type="button"
             class="rounded-lg border border-border px-3 py-2.5 text-left transition-colors outline-none hover:bg-accent/50 focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
             :disabled="attachingId !== null"
-            @click="attach(mechanic)"
+            @click="attach(traitDef)"
           >
-            <span class="text-sm font-medium">{{ mechanic.name }}</span>
+            <span class="text-sm font-medium">{{ traitDef.label }}</span>
           </button>
         </div>
       </DialogContent>
@@ -234,12 +233,12 @@ async function detach() {
     <Dialog :open="!!detaching" @update:open="val => !val && (detaching = null)">
       <DialogContent class="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Remove this mechanic?</DialogTitle>
+          <DialogTitle>Remove this trait?</DialogTitle>
           <DialogDescription>
             <template v-if="detaching">
               Everything this asset has stored for
-              <span class="font-medium text-foreground">{{ detaching.mechanic.name }}</span>
-              goes with it. The mechanic itself stays in the campaign.
+              <span class="font-medium text-foreground">{{ detaching.traitDef.label }}</span>
+              goes with it. The trait itself stays in the campaign.
             </template>
           </DialogDescription>
         </DialogHeader>

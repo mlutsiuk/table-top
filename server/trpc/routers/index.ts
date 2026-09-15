@@ -4,7 +4,7 @@ import { campaignRouter } from './campaign'
 import { folderRouter } from './folder'
 import { assetRouter } from './asset'
 import { assetTraitRouter } from './asset-trait'
-import { mechanicRouter } from './mechanic'
+import { traitDefRouter } from './trait-def'
 
 export const appRouter = router({
   auth: authRouter,
@@ -12,7 +12,7 @@ export const appRouter = router({
   folder: folderRouter,
   asset: assetRouter,
   assetTrait: assetTraitRouter,
-  mechanic: mechanicRouter
+  traitDef: traitDefRouter
 })
 
 // export type definition of API

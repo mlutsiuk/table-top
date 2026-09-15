@@ -1,20 +1,20 @@
-import type { Mechanic, PrismaClient } from '@prisma/client'
-import type { AssetTraitData } from '#shared/types/mechanic'
-import type { AssetTraitDto } from '~~/engine/mechanics/dto'
-import type { ValuesConfig } from '~~/engine/mechanics/values-v1'
+import type { PrismaClient, TraitDef } from '@prisma/client'
+import type { AssetTraitData } from '#shared/types/trait'
+import type { AssetTraitDto } from '~~/engine/traits/dto'
+import type { TraitConfig } from '~~/engine/traits'
 import type { CampaignAccessService } from '~~/server/features/campaigns/services/campaign-access.service'
 import { BadRequestError, NotFoundError } from '~~/server/infrastructure/errors'
-import { assetTraitDefaults, assetTraitSchema, valuesConfigSchema } from '~~/engine/mechanics/values-v1'
-import { toMechanicDto } from '~~/server/features/mechanics/mechanic-dto'
+import { assetTraitDefaults, assetTraitSchema, traitConfigSchema } from '~~/engine/traits'
+import { toTraitDefDto } from '~~/server/features/trait-defs/trait-def-dto'
 
 /**
  * A trait is part of the material it hangs on, so it follows the material rules
  * rather than the definition ones: anyone who may read the asset sees its values,
  * and only someone who may write materials fills them in. The definition itself is
- * campaign-wide and stays behind `mechanics:manage`.
+ * campaign-wide and stays behind `traits:manage`.
  *
  * Reading a trait hands its definition over with it, because without the fields
- * there is nothing to draw — which is why the ability table gives `mechanics:read`
+ * there is nothing to draw — which is why the ability table gives `traits:read`
  * to everyone who can read materials at all.
  */
 type TraitAbility = 'materials:read' | 'materials:write'
@@ -26,11 +26,11 @@ type TraitAbility = 'materials:read' | 'materials:write'
  * an older build can be anything, and a trait derived from one would be worse than
  * no trait at all.
  */
-function readConfig(mechanic: Mechanic): ValuesConfig {
-  const parsed = valuesConfigSchema.safeParse(mechanic.config)
+function readConfig(traitDef: TraitDef): TraitConfig {
+  const parsed = traitConfigSchema.safeParse(traitDef.config)
 
   if (!parsed.success) {
-    throw new BadRequestError(`"${mechanic.name}" has a configuration this build cannot read`)
+    throw new BadRequestError(`"${traitDef.label}" has a configuration this build cannot read`)
   }
 
   return parsed.data
@@ -49,13 +49,13 @@ export function createAssetTraitsService(prisma: PrismaClient, access: CampaignA
 
     const rows = await prisma.assetTrait.findMany({
       where: { assetId: asset.id },
-      include: { mechanic: true },
-      orderBy: { mechanic: { name: 'asc' } }
+      include: { traitDef: true },
+      orderBy: { traitDef: { label: 'asc' } }
     })
 
     return rows.map(row => ({
       id: row.id,
-      mechanic: toMechanicDto(row.mechanic),
+      traitDef: toTraitDefDto(row.traitDef),
       data: row.data
     }))
   }
@@ -64,7 +64,7 @@ export function createAssetTraitsService(prisma: PrismaClient, access: CampaignA
   async function require(id: string, ability: TraitAbility) {
     const trait = await prisma.assetTrait.findUnique({
       where: { id },
-      include: { mechanic: true }
+      include: { traitDef: true }
     })
     if (!trait) throw new NotFoundError('Trait not found')
 
@@ -72,7 +72,7 @@ export function createAssetTraitsService(prisma: PrismaClient, access: CampaignA
     // where the campaign comes from rather than from anything the client sent.
     await access.requireAssetAbility(trait.assetId, ability)
 
-    return { trait, mechanic: trait.mechanic }
+    return { trait, traitDef: trait.traitDef }
   }
 
   /**
@@ -82,33 +82,33 @@ export function createAssetTraitsService(prisma: PrismaClient, access: CampaignA
    * sheet they configured from the first moment, and every key the config declares is
    * present before anyone edits anything.
    */
-  async function attach(assetId: string, mechanicId: string): Promise<AssetTraitDto> {
+  async function attach(assetId: string, traitDefId: string): Promise<AssetTraitDto> {
     const asset = await access.requireAssetAbility(assetId, 'materials:write')
 
     // Scoped to the asset's own campaign: an id from elsewhere must not become
     // attachable just because the caller may write in this one.
-    const mechanic = await prisma.mechanic.findFirst({
-      where: { id: mechanicId, campaignId: asset.campaignId }
+    const traitDef = await prisma.traitDef.findFirst({
+      where: { id: traitDefId, campaignId: asset.campaignId }
     })
-    if (!mechanic) throw new NotFoundError('Mechanic not found')
+    if (!traitDef) throw new NotFoundError('Trait not found')
 
-    const config = readConfig(mechanic)
+    const config = readConfig(traitDef)
 
     const existing = await prisma.assetTrait.findUnique({
-      where: { assetId_mechanicId: { assetId: asset.id, mechanicId: mechanic.id } },
+      where: { assetId_traitDefId: { assetId: asset.id, traitDefId: traitDef.id } },
       select: { id: true }
     })
-    if (existing) throw new BadRequestError(`"${mechanic.name}" is already on this asset`)
+    if (existing) throw new BadRequestError(`"${traitDef.label}" is already on this asset`)
 
     const trait = await prisma.assetTrait.create({
       data: {
         assetId: asset.id,
-        mechanicId: mechanic.id,
+        traitDefId: traitDef.id,
         data: assetTraitDefaults(config)
       }
     })
 
-    return { id: trait.id, mechanic: toMechanicDto(mechanic), data: trait.data }
+    return { id: trait.id, traitDef: toTraitDefDto(traitDef), data: trait.data }
   }
 
   /**
@@ -119,9 +119,9 @@ export function createAssetTraitsService(prisma: PrismaClient, access: CampaignA
    * strict about which keys may be there at all.
    */
   async function save(id: string, data: unknown): Promise<AssetTraitDto> {
-    const { mechanic } = await require(id, 'materials:write')
+    const { traitDef } = await require(id, 'materials:write')
 
-    const config = readConfig(mechanic)
+    const config = readConfig(traitDef)
 
     // The schema is the only thing that knows what these values may be, so the
     // complaint has to come from there rather than be restated here.
@@ -140,7 +140,7 @@ export function createAssetTraitsService(prisma: PrismaClient, access: CampaignA
       data: { data: result.data as AssetTraitData }
     })
 
-    return { id: updated.id, mechanic: toMechanicDto(mechanic), data: updated.data }
+    return { id: updated.id, traitDef: toTraitDefDto(traitDef), data: updated.data }
   }
 
   /** Detaches a definition from an asset, with everything stored for it. */

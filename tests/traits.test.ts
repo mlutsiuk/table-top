@@ -2,12 +2,15 @@ import { describe, expect, it } from 'vitest'
 import {
   assetTraitDefaults,
   assetTraitSchema,
+  deriveTraitKey,
+  FIELD_TYPES,
+  FIELD_TYPES_LIST,
+  fieldSchema,
   normalizeTraitData,
   orphanedKeys,
-  valuesConfigSchema
-} from '~~/engine/mechanics/values-v1'
-import { FIELD_TYPES, fieldSchema } from '~~/engine/mechanics/values-v1/shared/fields'
-import { FIELD_TYPES_LIST } from '~~/engine/mechanics/values-v1/shared/types'
+  traitConfigSchema,
+  traitKeySchema
+} from '~~/engine/traits'
 
 const field = (over: Record<string, unknown> = {}) => ({
   key: 'str',
@@ -36,7 +39,7 @@ describe('field type registry', () => {
 
 describe('config schema', () => {
   it('accepts the three static field types', () => {
-    const result = valuesConfigSchema.safeParse(config([
+    const result = traitConfigSchema.safeParse(config([
       field(),
       field({ key: 'name', type: 'text', default: '' }),
       field({ key: 'proficient', type: 'boolean', default: false })
@@ -44,38 +47,38 @@ describe('config schema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('accepts a mechanic with no fields yet', () => {
-    expect(valuesConfigSchema.safeParse(config([])).success).toBe(true)
+  it('accepts a trait with no fields yet', () => {
+    expect(traitConfigSchema.safeParse(config([])).success).toBe(true)
   })
 
   it('rejects a default that does not match the field type', () => {
-    expect(valuesConfigSchema.safeParse(config([field({ default: 'ten' })])).success).toBe(false)
+    expect(traitConfigSchema.safeParse(config([field({ default: 'ten' })])).success).toBe(false)
   })
 
   it('rejects duplicate keys', () => {
-    const result = valuesConfigSchema.safeParse(config([field(), field({ label: 'Again' })]))
+    const result = traitConfigSchema.safeParse(config([field(), field({ label: 'Again' })]))
     expect(result.success).toBe(false)
   })
 
   it('rejects a key that could not be used in a formula', () => {
     for (const key of ['Str', '1st', 'my-key', 'with space', '']) {
-      expect(valuesConfigSchema.safeParse(config([field({ key })])).success).toBe(false)
+      expect(traitConfigSchema.safeParse(config([field({ key })])).success).toBe(false)
     }
   })
 
   it('rejects field kinds that Stage 2 cannot store', () => {
     // `dynamic` needs EntityTrait, which does not exist yet — better refused than
     // accepted and silently ignored.
-    expect(valuesConfigSchema.safeParse(config([field({ kind: 'dynamic' })])).success).toBe(false)
+    expect(traitConfigSchema.safeParse(config([field({ kind: 'dynamic' })])).success).toBe(false)
   })
 
   it('rejects an unknown field type', () => {
-    expect(valuesConfigSchema.safeParse(config([field({ type: 'formula' })])).success).toBe(false)
+    expect(traitConfigSchema.safeParse(config([field({ type: 'formula' })])).success).toBe(false)
   })
 })
 
 describe('asset trait schema', () => {
-  const parsed = valuesConfigSchema.parse(config([
+  const parsed = traitConfigSchema.parse(config([
     field(),
     field({ key: 'name', type: 'text', default: '' })
   ]))
@@ -98,7 +101,7 @@ describe('asset trait schema', () => {
 })
 
 describe('defaults and orphans', () => {
-  const parsed = valuesConfigSchema.parse(config([
+  const parsed = traitConfigSchema.parse(config([
     field(),
     field({ key: 'name', type: 'text', default: 'Unnamed' })
   ]))
@@ -117,7 +120,7 @@ describe('defaults and orphans', () => {
 })
 
 describe('reading a trait through the current config', () => {
-  const parsed = valuesConfigSchema.parse(config([
+  const parsed = traitConfigSchema.parse(config([
     field(),
     field({ key: 'name', type: 'text', default: 'Unnamed' })
   ]))
@@ -146,5 +149,56 @@ describe('reading a trait through the current config', () => {
     const normalized = normalizeTraitData(parsed, { str: 'strong', hp: 3 })
 
     expect(assetTraitSchema(parsed).safeParse(normalized).success).toBe(true)
+  })
+})
+
+describe('trait key', () => {
+  it('accepts an identifier-shaped key', () => {
+    expect(traitKeySchema.safeParse('core_stats').success).toBe(true)
+  })
+
+  it('rejects a key a formula could not address', () => {
+    for (const key of ['Core', '1st', 'core-stats', 'with space', '']) {
+      expect(traitKeySchema.safeParse(key).success).toBe(false)
+    }
+  })
+
+  it('rejects a reserved key', () => {
+    // `#target` and `@target` cannot collide, but a trait keyed `target` would still
+    // read as if it meant the action parameter.
+    expect(traitKeySchema.safeParse('target').success).toBe(false)
+  })
+})
+
+describe('deriving a key from the label', () => {
+  it('turns a Latin label into snake case', () => {
+    expect(deriveTraitKey('Core Stats')).toBe('core_stats')
+  })
+
+  it('transliterates Ukrainian', () => {
+    expect(deriveTraitKey('Бойові навички')).toBe('boiovi_navychky')
+  })
+
+  it('drops apostrophes instead of splitting the word', () => {
+    // All three apostrophes a Ukrainian keyboard might produce.
+    for (const label of ["Здоров'я", 'Здоров’я', 'Здоровʼя']) {
+      expect(deriveTraitKey(label)).toBe('zdorovia')
+    }
+  })
+
+  it('trims separators at the edges', () => {
+    expect(deriveTraitKey('  -- HP --  ')).toBe('hp')
+  })
+
+  it('suggests nothing when no letter can start the key', () => {
+    // The form asks for a key rather than inventing one the master never chose.
+    expect(deriveTraitKey('123')).toBe('')
+    expect(deriveTraitKey('!!!')).toBe('')
+  })
+
+  it('always suggests a key the schema accepts', () => {
+    for (const label of ['Core Stats', 'Бойові навички', "Здоров'я", 'Armor Class (AC)']) {
+      expect(traitKeySchema.safeParse(deriveTraitKey(label)).success).toBe(true)
+    }
   })
 })

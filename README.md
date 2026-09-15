@@ -71,6 +71,6 @@ pnpm dev            # http://localhost:3000
 
 ## Notes
 
-- `pnpm test:typecheck` prints `ERR_PACKAGE_PATH_NOT_EXPORTED` stack traces about
-  `vue-router/volar/*`. These are plugin-resolution warnings from `vue-tsc`, not type
-  errors — check the exit code.
+- `postinstall` runs only `nuxt prepare`, not `prisma generate`. After a Prisma upgrade
+  or a fresh install, run `pnpm prisma generate`, or typecheck fails on every
+  `@prisma/client` import.

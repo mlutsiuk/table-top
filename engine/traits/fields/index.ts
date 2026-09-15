@@ -5,7 +5,7 @@ import { textField, textFieldSchema } from './text'
 import { booleanField, booleanFieldSchema } from './boolean'
 
 /**
- * Every field type this mechanic supports.
+ * Every field type the engine supports.
  *
  * `Record<FieldType, …>` is the guarantee: add `'formula'` to `FIELD_TYPES_LIST`
  * and this stops compiling until the definition exists.
@@ -17,7 +17,7 @@ export const FIELD_TYPES: Record<FieldType, FieldTypeDef> = {
 }
 
 /**
- * What one entry in `Mechanic.config.fields` must look like.
+ * What one entry in `TraitDef.config.fields` must look like.
  *
  * Listed explicitly rather than derived from the map above, because
  * `discriminatedUnion` needs the concrete object schemas to keep the `type`
@@ -30,9 +30,9 @@ export const fieldSchema = z.discriminatedUnion('type', [
   booleanFieldSchema
 ])
 
-export type ValuesField = z.infer<typeof fieldSchema>
+export type TraitField = z.infer<typeof fieldSchema>
 
 /** Validates a stored value against the field that declares it. */
-export function valueSchemaFor(field: ValuesField) {
+export function valueSchemaFor(field: TraitField) {
   return FIELD_TYPES[field.type].valueSchema
 }

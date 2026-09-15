@@ -10,13 +10,13 @@ TableTop Engine — VTT (Virtual Tabletop) система де **ігрова л
 
 **Рішення TableTop:**
 - Система надає абстрактні інструменти ("контейнери") які майстер наповнює через UI.
-- Система не "знає" що таке "Сила" чи "Хіти" поки майстер не створить відповідну механіку.
+- Система не "знає" що таке "Сила" чи "Хіти" поки майстер не створить відповідний трейт.
 - Гнучкість рівня розробника — доступна без знання програмування.
 
 **Аналогія з Terraform:**
 ```
 Terraform        →  TableTop Engine
-Provider         →  Mechanic (код, логіка)
+Provider         →  Типи полів і механізми ядра (код)
 Resource         →  TraitDef (конфіг під кампанію)
 Variable         →  Field (static/dynamic)
 Output           →  Formula field
@@ -59,21 +59,19 @@ Dependency graph →  FieldReference таблиця (відкладено)
 │  EntityRelation API                             │
 │  Layered State Resolve                          │
 │  Formula Parser                                 │
-│  Action Engine                                  │
-│  MechanicRegistry                               │
+│  Action Engine, Sheet, Effect                   │
 └─────────────────────────────────────────────────┘
             ↕ використовують
 ┌─────────────────────────────────────────────────┐
-│  MECHANIC LEVEL (код розробника)                │
-│  values-v1, sheet-v1, effects-v1               │
-│  Реєструються в MechanicRegistry               │
-│  Надають: schemas, components, methods, hooks   │
+│  FIELD TYPES (код розробника)                   │
+│  number, text, boolean, formula                 │
+│  Реєстр FIELD_TYPES — єдина точка розширення    │
 └─────────────────────────────────────────────────┘
             ↕ налаштовується через
 ┌─────────────────────────────────────────────────┐
 │  CAMPAIGN LEVEL (налаштування майстра через UI) │
-│  TraitDef (які механіки підключені)     │
-│  Конфіг інстансів (поля, формули)              │
+│  TraitDef (набори полів кампанії)               │
+│  Конфіг полів і формул                          │
 │  Assets і їх AssetTraits                        │
 │  Actions на Assets                              │
 └─────────────────────────────────────────────────┘

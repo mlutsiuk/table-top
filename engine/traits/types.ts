@@ -1,7 +1,7 @@
 import type { z } from 'zod'
 
 /**
- * Field types this mechanic understands.
+ * Field types a trait definition can declare.
  *
  * Stage 2 ships the three that store a value on the asset. `formula` arrives with
  * the parser in Stage 3 — adding it here forces `FIELD_TYPES` to be filled in

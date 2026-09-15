@@ -33,7 +33,7 @@
 |---|---|
 | `Token` | `Entity` |
 | `Trait` (без префіксу) | `AssetTrait` або `EntityTrait` (залежно від контексту) |
-| `Mechanic`, `MechanicDef`, `TraitDef` | `TraitDef`. Механік як плагінів немає — ADR-013 |
+| `Mechanic`, `MechanicDef`, `MechanicInstance` | `TraitDef`. Механік як плагінів немає — ADR-013 |
 | `Stats mechanic` | Окремий `TraitDef` з потрібними полями |
 | `inventory-v1` (як окрема механіка) | Інвентар — це `EntityRelation` з `key: 'inventory'` |
 | `sheet-v1`, `effects-v1` | `Sheet` і `Effect` — нативні сутності, ADR-014 |

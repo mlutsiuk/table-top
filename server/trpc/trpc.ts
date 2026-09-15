@@ -16,7 +16,7 @@ import { createCampaignsService } from '~~/server/features/campaigns/services/ca
 import { createFoldersService } from '~~/server/features/folders/services/folders.service'
 import { createAssetsService } from '~~/server/features/assets/services/assets.service'
 import { createAssetTraitsService } from '~~/server/features/asset-traits/services/asset-traits.service'
-import { createMechanicsService } from '~~/server/features/mechanics/services/mechanics.service'
+import { createTraitDefsService } from '~~/server/features/trait-defs/services/trait-defs.service'
 import { BadRequestError, ForbiddenError, NotFoundError } from '~~/server/infrastructure/errors'
 
 const t = initTRPC.context<Context>().create({
@@ -72,7 +72,7 @@ export const privateProcedure = publicProcedure.use((opts) => {
       folders: createFoldersService(prisma, campaignAccess),
       assets: createAssetsService(prisma, campaignAccess),
       assetTraits: createAssetTraitsService(prisma, campaignAccess),
-      mechanics: createMechanicsService(prisma, campaignAccess)
+      traitDefs: createTraitDefsService(prisma, campaignAccess)
     }
   })
 })

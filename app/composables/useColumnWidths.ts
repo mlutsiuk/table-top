@@ -3,7 +3,7 @@ import { computed, onBeforeUnmount, ref } from 'vue'
 /**
  * Column widths for a grid whose columns can be dragged.
  *
- * Kept out of the editor component because it is plumbing, not domain: a mechanic
+ * Kept out of the editor component because it is plumbing, not domain: the editor
  * knows what a field is, not how a pointer drag becomes a track size.
  *
  * Widths are held in pixels and turned into a `grid-template-columns` string, so

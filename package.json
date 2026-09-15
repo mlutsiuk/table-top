@@ -13,7 +13,7 @@
     "start": "node .output/server/index.mjs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "test:typecheck": "nuxt typecheck && vue-tsc --noEmit -p engine/tsconfig.json",
+    "test:typecheck": "nuxt typecheck && tsc --noEmit -p engine/tsconfig.json",
     "test:unit": "vitest run"
   },
   "dependencies": {

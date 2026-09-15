@@ -1,5 +1,5 @@
-import type { AssetTraitData, MechanicConfig } from '#shared/types/mechanic'
-import type { ValuesConfig } from './values-v1'
+import type { AssetTraitData, RawTraitConfig } from '#shared/types/trait'
+import type { TraitConfig } from './config.schema'
 
 /**
  * A trait definition as the API exposes it.
@@ -12,9 +12,9 @@ import type { ValuesConfig } from './values-v1'
  * be left behind by a change to the field types, or edited by hand. Saying so in
  * the type beats an unchecked cast that pretends otherwise.
  */
-export type MechanicDto =
-  | { id: string, name: string, valid: true, config: ValuesConfig }
-  | { id: string, name: string, valid: false, config: MechanicConfig }
+export type TraitDefDto =
+  | { id: string, key: string, label: string, valid: true, config: TraitConfig }
+  | { id: string, key: string, label: string, valid: false, config: RawTraitConfig }
 
 /**
  * One definition's values on one asset.
@@ -28,6 +28,6 @@ export type MechanicDto =
  */
 export type AssetTraitDto = {
   id: string
-  mechanic: MechanicDto
+  traitDef: TraitDefDto
   data: AssetTraitData
 }

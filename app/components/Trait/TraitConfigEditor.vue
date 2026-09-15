@@ -1,26 +1,15 @@
 <script setup lang="ts">
-// Imported explicitly rather than leaning on the host app's auto-imports: a
-// mechanic is a self-contained unit, and its dependencies should be visible.
-import { computed, ref, toRaw, watch } from 'vue'
-import { Plus, Trash2 } from 'lucide-vue-next'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { FIELD_TYPES_LIST } from '../shared/types'
-import type { FieldType } from '../shared/types'
-import { FIELD_TYPES } from '../shared/fields'
-import type { ValuesConfig } from '../shared/config.schema'
-import { valuesConfigSchema } from '../shared/config.schema'
-import { FIELD_BLANK_DEFAULTS, FIELD_INPUTS } from './fields'
-import { useColumnWidths } from './useColumnWidths'
+import type { FieldType, TraitConfig } from '~~/engine/traits'
+import { FIELD_TYPES, FIELD_TYPES_LIST, traitConfigSchema } from '~~/engine/traits'
+import { FIELD_BLANK_DEFAULTS, FIELD_INPUTS } from '@/lib/trait-field-inputs'
 
 /**
- * The master's editor for one `values-v1` instance.
+ * The master's editor for one trait definition.
  *
- * Belongs to the mechanic rather than to a page: what a field is, and how its
- * default is edited, is knowledge this mechanic owns. A page only asks the UI
- * registry for whichever editor matches the mechanic's key.
+ * A component rather than part of the page: the page decides when to show it and
+ * what to do with a save, while what a field is comes from `engine/traits`.
  *
- * The config arrives already typed: the API parsed it with this mechanic's schema
+ * The config arrives already typed: the API parsed it with the trait schema
  * and said so, so there is nothing left to check here. `null` means the stored row
  * could not be read at all — the page says as much, and editing starts empty.
  *
@@ -30,7 +19,7 @@ import { useColumnWidths } from './useColumnWidths'
 /**
  * A field while it is being edited.
  *
- * Looser than the schema's `ValuesField` on purpose: a field the master has just
+ * Looser than the schema's `TraitField` on purpose: a field the master has just
  * added has an empty key and label, which the schema rightly refuses. Saving is
  * blocked until it would pass.
  */
@@ -43,15 +32,15 @@ type EditableField = {
 }
 
 const props = defineProps<{
-  config: ValuesConfig | null
+  config: TraitConfig | null
   saving?: boolean
 }>()
 
 const emit = defineEmits<{
-  save: [config: ValuesConfig]
+  save: [config: TraitConfig]
 }>()
 
-function readFields(config: ValuesConfig | null): EditableField[] {
+function readFields(config: TraitConfig | null): EditableField[] {
   // `toRaw` first: the prop arrives as a reactive proxy, and `structuredClone`
   // refuses to clone a Proxy. The raw object underneath is plain data.
   return config ? structuredClone(toRaw(config).fields) : []
@@ -59,7 +48,7 @@ function readFields(config: ValuesConfig | null): EditableField[] {
 
 const fields = ref<EditableField[]>(readFields(props.config))
 
-// The page reloads the mechanic after saving; take the server's version as truth.
+// The page reloads the definition after saving; take the server's version as truth.
 watch(() => props.config, config => (fields.value = readFields(config)))
 
 const dirty = computed(() =>
@@ -86,7 +75,7 @@ const duplicateKeys = computed(() => {
  * means exactly "the schema accepts this" — there is no second set of rules here
  * to drift away from the first.
  */
-const proposed = computed(() => valuesConfigSchema.safeParse({ fields: fields.value }))
+const proposed = computed(() => traitConfigSchema.safeParse({ fields: fields.value }))
 
 const canSave = computed(() => dirty.value && proposed.value.success)
 
@@ -208,7 +197,7 @@ const { template, startResize } = useColumnWidths([200, 160, 210, 140])
               title="Remove field"
               @click="removeField(index)"
             >
-              <Trash2 class="size-4 text-destructive" />
+              <Icon name="lucide:trash-2" class="size-4 text-destructive" />
             </Button>
           </div>
         </div>
@@ -225,7 +214,7 @@ const { template, startResize } = useColumnWidths([200, 160, 210, 140])
         size="sm"
         @click="addField(type)"
       >
-        <Plus class="size-3.5" />
+        <Icon name="lucide:plus" class="size-3.5" />
         {{ FIELD_TYPES[type].label }}
       </Button>
     </div>

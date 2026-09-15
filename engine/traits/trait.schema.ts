@@ -1,10 +1,10 @@
 import { z } from 'zod'
-import type { ValuesConfig } from './config.schema'
+import type { TraitConfig } from './config.schema'
 import type { FieldValue } from './types'
 import { valueSchemaFor } from './fields'
 
-/** `AssetTrait.data` for this mechanic: one value per field the config declares. */
-export type ValuesTraitData = Record<string, FieldValue>
+/** `AssetTrait.data` once parsed: one value per field the config declares. */
+export type TraitData = Record<string, FieldValue>
 
 /**
  * Validates `AssetTrait.data` against the config of the instance it belongs to.
@@ -16,7 +16,7 @@ export type ValuesTraitData = Record<string, FieldValue>
  * and accepting it would store data no UI can reach — the config editor cleans
  * such keys up explicitly instead, after warning about what will be lost.
  */
-export function assetTraitSchema(config: ValuesConfig) {
+export function assetTraitSchema(config: TraitConfig) {
   const shape = Object.fromEntries(
     config.fields.map(field => [field.key, valueSchemaFor(field).optional()])
   )
@@ -24,13 +24,13 @@ export function assetTraitSchema(config: ValuesConfig) {
   return z.strictObject(shape)
 }
 
-/** What a trait starts with when a mechanic is first attached to an asset. */
-export function assetTraitDefaults(config: ValuesConfig): Record<string, unknown> {
+/** What a trait starts with when a definition is first attached to an asset. */
+export function assetTraitDefaults(config: TraitConfig): Record<string, unknown> {
   return Object.fromEntries(config.fields.map(field => [field.key, field.default]))
 }
 
 /** Keys held by a trait that the config no longer declares. */
-export function orphanedKeys(config: ValuesConfig, data: Record<string, unknown>): string[] {
+export function orphanedKeys(config: TraitConfig, data: Record<string, unknown>): string[] {
   const declared = new Set(config.fields.map(field => field.key))
 
   return Object.keys(data).filter(key => !declared.has(key))
@@ -49,9 +49,9 @@ export function orphanedKeys(config: ValuesConfig, data: Record<string, unknown>
  * this and save straight back without a repair step in between.
  */
 export function normalizeTraitData(
-  config: ValuesConfig,
+  config: TraitConfig,
   data: Record<string, unknown>
-): ValuesTraitData {
+): TraitData {
   return Object.fromEntries(config.fields.map((field) => {
     const stored = valueSchemaFor(field).safeParse(data[field.key])
 
